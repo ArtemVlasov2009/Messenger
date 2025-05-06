@@ -4,15 +4,45 @@
 {% block title %}Messenger{% endblock %}
 
 {% block links %}
-    {{ block.super }}  
+    {{ block.super }}
     <link rel="stylesheet" href="{% static 'css/Messenger.css' %}">
 {% endblock %}
 
 {% block content %}
-
-
+<div class="content-container">
+    <div class="left-user-frame">
+        <div class="user-frame">
+            <div class="user"></div>
+            <div class="info-frame"></div>
+        </div>
+        <div class="requests-frame">
+            <div class="requests"></div>
+            <div class="users-requests"></div>
+        </div>
+        <div class="messege-frame">
+            <div class="messeges"></div>
+            <div class="users-messeges"></div>
+        </div>
+    </div>
+    <div class="Scroll-frame">
+        <div class="Chat-input-frame">
+            <div class="question-frame">
+                <p>Про що ти зараз думаєш?</p>
+            </div>
+            <div class="input-bottom-row">
+                <button class="public-btn">
+                    <span>Публікація</span>
+                    <img src="{% static 'images/btn.svg' %}" alt="Button">
+                </button>
+                <div class="icons-left">
+                    <img src="{% static 'images/image.svg' %}" alt="Image">
+                    <img src="{% static 'images/smile.svg' %}" alt="Smile">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>  
 {% endblock %}
 
 {% block scripts %}
-
 {% endblock %}
