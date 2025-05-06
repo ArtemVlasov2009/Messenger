@@ -1,15 +1,57 @@
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}{% endblock %}</title>
-    {% block links %}{% endblock %}
+    <title>{% block title %}Home Page{% endblock %}</title>
+    {% block links %}
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% endblock %}
 </head>
 <body>
+    {% block header %}
+    <div class="header-frame">
+        <div class="logo-image">
+            <img src="{% static 'images/logo.svg' %}" alt="Logo image">
+        </div>
+        <div class="header-icons-nav-frame">
+            <div class="header-icons">
+                <div class="main-frame {% if current_page == 'home' %}active{% endif %}">
+                    <img src="{% static 'images/House.svg' %}" alt="Main logo">
+                    <p>Головна</p>
+                </div>
+                <div class="my-posts-frame">
+                    <img src="{% static 'images/posts.svg' %}" alt="Posts logo">
+                    <p>Мої публікації</p>
+                </div>
+                <div class="friends-frame">
+                    <img src="{% static 'images/friends.svg' %}" alt="Friends logo">
+                    <p>Друзі</p>
+                </div>
+                <div class="chats-frame">
+                    <img src="{% static 'images/chat.svg' %}" alt="Chats logo">
+                    <p>Чати</p>
+                </div>
+                <div class="settings-frame">
+                    <img src="{% static 'images/Setting.svg' %}" alt="Settings logo">
+                    <p>Налаштування</p>
+                </div>
+            </div>
+            <a href="#" class="btn-frame">
+                <img class="exit-btn-img" src="{% static 'images/exit.svg' %}" alt="Exit icon">
+                <p class="logout-text">Вихід</p>
+            </a>
+        </div>
+    </div>
+    {% endblock %}
+
     {% block content %}
+    <!-- Основной контент будет здесь -->
     {% endblock %}
 
     {% block scripts %}
+    <!-- Скрипты можно подключать здесь -->
     {% endblock %}
 </body>
 </html>

@@ -122,7 +122,8 @@ STATIC_URL = 'static/'
 
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
-    BASE_DIR / 'chat_app' / 'static',
+    BASE_DIR / 'Messenger_App' / 'static',
+    BASE_DIR / 'Messenger' / 'static',
 ]
 
 # Default primary key field type
