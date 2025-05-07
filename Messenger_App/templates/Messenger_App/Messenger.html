@@ -4,15 +4,21 @@
 {% block title %}Messenger{% endblock %}
 
 {% block links %}
-    {{ block.super }}
-    <link rel="stylesheet" href="{% static 'css/Messenger.css' %}">
+{{ block.super }} <link rel="stylesheet" href="{% static 'css/Messenger.css' %}">
 {% endblock %}
 
 {% block content %}
+
 <div class="content-container">
     <div class="left-user-frame">
         <div class="user-frame">
-            <div class="user"></div>
+            <div class="user">
+                <img src="{% static 'images/user-avatar.png' %}" alt="User-Avatar">
+                <div class = 'users-nickname'>
+                    <p>Lina Li</p>
+                    <p>@thelili</p>
+                </div>
+            </div>
             <div class="info-frame"></div>
         </div>
         <div class="requests-frame">
@@ -26,22 +32,172 @@
     </div>
     <div class="Scroll-frame">
         <div class="Chat-input-frame">
-            <div class="question-frame">
-                <p>Про що ти зараз думаєш?</p>
+            <div class='internal-chat-input-frame'>
+                <div class="question-frame">
+                    <input type="text" placeholder="Про що ти зараз думаєш?" class="question-input">
+                </div>                
+                <div class="icons-frame">
+                    <div class="icon-group">
+                        <img src="{% static 'images/image.svg' %}" alt="Image">
+                        <img src="{% static 'images/smile.svg' %}" alt="Smile">
+                    </div>
+                    <button class="publish-button">
+                        Публікація
+                        <img src="{% static 'images/btn.svg' %}" alt="Icon" class="btn-icon">
+                    </button>
+                </div>                
             </div>
-            <div class="input-bottom-row">
-                <button class="public-btn">
-                    <span>Публікація</span>
-                    <img src="{% static 'images/btn.svg' %}" alt="Button">
-                </button>
-                <div class="icons-left">
-                    <img src="{% static 'images/image.svg' %}" alt="Image">
-                    <img src="{% static 'images/smile.svg' %}" alt="Smile">
+        </div>
+
+        <!-- Пост -->
+        <div class="post-frame">
+            <div class="header-post-frame">
+                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+                <div class="internal-header-post-frame">
+                    <img src="{% static 'images/avatar.png' %}" alt="avatar" class="avatar">
+                    <p>X_AE_A-13</p>
+                    <img src="{% static 'images/painting.png' %}" alt="painting" class="painting">
+                </div>
+            </div>
+            <div class="post-content">
+                <p>
+                    Інколи найкращі ідеї народжуються в тиші 🌿
+                    Природа, книга і спокій — усе, що потрібно, аби перезавантажитись.
+                    #відпочинок #натхнення #життя #природа #читання #спокій #гармонія
+                </p>
+                <div class="users-photos-content">
+                    <div class="photos-1">
+                        <img src="{% static 'images/Frame.png' %}" alt="users-photo" class="Frame1">
+                        <img src="{% static 'images/Frame2.png' %}" alt="users-photo" class="Frame2">
+                    </div>
+                    <div class="photos-2">
+                        <img src="{% static 'images/Frame3.png' %}" alt="users-photo" class="Frame3">
+                        <img src="{% static 'images/Frame4.png' %}" alt="users-photo" class="Frame4">
+                        <img src="{% static 'images/Frame5.png' %}" alt="users-photo" class="Frame5">
+                    </div>
+                </div>
+                <div class="likes-views">
+                    <div class="like-item">
+                        <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                        <span>120 Вподобань</span>
+                    </div>
+                    <div class="view-item">
+                        <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                        <span>890 Переглядів</span>
+                    </div>
                 </div>
             </div>
         </div>
+
+        <!-- Коментар 1 -->
+        <div class='comment-frame1'>
+            <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+            <div class='header-comment-frame1'>
+                <div class="avatar-text-container">
+                    <img src="{% static 'images/avatar2.png' %}" alt="avatar2" class="avatar2">
+                    <p>Alex_03</p>
+                </div>
+            </div>
+            <div class='content-comment-frame1'>
+                <p>
+                    буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
+                </p>
+                <div class="likes-views">
+                    <div class="like-item">
+                        <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                        <span>120 Вподобань</span>
+                    </div>
+                    <div class="view-item">
+                        <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                        <span>890 Переглядів</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Коментар 2 -->
+        <div class='comment-frame1'>
+            <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+            <div class='header-comment-frame1'>
+                <div class="avatar-text-container">
+                    <img src="{% static 'images/avatar3.png' %}" alt="avatar3" class="avatar3">
+                    <p>Alex_03</p>
+                </div>
+            </div>
+            <div class='content-comment-frame1'>
+                <p>
+                    буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
+                </p>
+                <div class="likes-views">
+                    <div class="like-item">
+                        <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                        <span>120 Вподобань</span>
+                    </div>
+                    <div class="view-item">
+                        <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                        <span>890 Переглядів</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Коментар 3 -->
+        <div class='comment-frame1'>
+            <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+            <div class='header-comment-frame1'>
+                <div class="avatar-text-container">
+                    <img src="{% static 'images/avatar4.png' %}" alt="avatar4" class="avatar4">
+                    <p>Alex_03</p>
+                </div>
+            </div>
+            <div class='content-comment-frame1'>
+                <p>
+                    буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
+                </p>
+                <div class="likes-views">
+                    <div class="like-item">
+                        <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                        <span>120 Вподобань</span>
+                    </div>
+                    <div class="view-item">
+                        <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                        <span>890 Переглядів</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Коментар 4 -->
+        <div class='comment-frame1'>
+            <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+            <div class='header-comment-frame1'>
+                <div class="avatar-text-container">
+                    <img src="{% static 'images/avatar5.png' %}" alt="avatar5" class="avatar5">
+                    <p>Alex_03</p>
+                </div>
+            </div>
+            <div class='content-comment-frame1'>
+                <p>
+                    буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
+                </p>
+                <div class="likes-views">
+                    <div class="like-item">
+                        <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                        <span>120 Вподобань</span>
+                    </div>
+                    <div class="view-item">
+                        <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                        <span>890 Переглядів</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
-</div>  
+</div>
+
 {% endblock %}
 
 {% block scripts %}

@@ -16,68 +16,353 @@ body {
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
+    overflow: hidden;
 }
 
 .Chat-input-frame {
     width: 923px;
     height: 120px;
+    gap: 10px;
     border-radius: 10px;
-    border: 1px solid #cdcfd3;
+    border-width: 1px;
     padding: 16px;
-    background-color: white;
+    background: var(--100, #FFFFFF);
+    border: 1px solid var(--20, #CDCED2);
+    box-sizing: border-box;
+}
+
+.internal-chat-input-frame {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 891px;
+    height: 88px;
+}
+
+.question-input {
+    width: 100%;
+    height: 22px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.007em;
+    color: var(--50, #81818D);
+}
+
+.icons-frame {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    height: 40px;
+}
+
+.icon-group {
+    display: flex;
+    gap: 13px;
+    cursor: pointer;
+}
+
+.publish-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 130px;
+    height: 40px;
+    border-radius: 1234px;
+    padding: 10px 16px;
+    background: #543C52;
+    color: #FFFFFF;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.publish-button .btn-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.post-frame {
+    border-radius: 10px;
+    border-width: 1px;
+    background: var(--100, #FFFFFF);
+    border: 1px solid var(--20, #CDCED2);
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 923px;
+    box-sizing: border-box;
+}
+
+.header-post-frame {
+    position: relative;
+    width: 100%;
+    height: 89px;
+    gap: 16px;
+    padding: 20px;
+    background: var(--100, #FFFFFF);
+    border-bottom: 1px solid var(--20, #CDCED2);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 10px 10px 0 0;
+    box-sizing: border-box;
+}
+
+.header-post-frame .internal-header-post-frame {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+}
+
+.internal-header-post-frame .avatar {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+}
+
+.internal-header-post-frame p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    color: var(--, #070A1C);
+    margin: 0;
+}
+
+.internal-header-post-frame .painting {
+    width: 220px;
+    height: 49px;
+    border-radius: 6px;
+    margin-left: auto;
+    object-fit: cover;
+}
+
+.post-content {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-sizing: border-box;
+}
+
+.dots-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.post-content p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: 0%;
+    color: var(--, #070A1C);
+    margin-top: 0;
+    margin-right: 0;
+    margin-left: 0;
+    margin-bottom: 16px;
+}
+
+.users-photos-content {
+    width: 100%;
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
 
-.question-frame {
-    font-size: 16px;
-    color: #000;
-    width: 891px;
-    height: 22px;
+.photos-1 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    gap: 16px;
+}
+
+.photos-1 .Frame1,
+.photos-1 .Frame2 {
+    width: calc(50% - 8px);
+    height: auto;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.photos-2 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    gap: 16px;
+}
+
+.photos-2 .Frame3 {
+    width: calc(33.333% - 10.666px);
+    height: auto;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.photos-2 .Frame4 {
+    width: calc(33.333% - 10.666px);
+    height: auto;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.photos-2 .Frame5 {
+    width: calc(33.333% - 10.666px);
+    height: auto;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.likes-views {
+    width: 100%;
+    height: 20px;
+    gap: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.like-item,
+.view-item {
+    display: flex;
+    align-items: center;
     gap: 8px;
 }
 
-.input-bottom-row {
-    display: flex;
-    justify-content: space-between; 
-    align-items: center;
-    width: 891px;
-    height: 88px;
+.likes-views img {
+    width: 20px;
+    height: 20px;
 }
 
-.public-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: auto; 
-    height: 40px;
-    border-radius: 9999px;
-    background-color: #543C52;
-    color: white;
+.likes-views span {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
     font-size: 14px;
-    cursor: pointer;
-    padding: 0 16px;
-    border: none;
-    font-weight: 500;
     line-height: 20px;
-    letter-spacing: -0.6%;
+    letter-spacing: -0.006em;
+    color: var(--, #81818D);
 }
 
-.icons-left {
+.comment-frame1 {
+    width: 923px;
+    border-radius: 10px;
+    border-width: 1px;
+    background: var(--100, #FFFFFF);
+    border: 1px solid var(--20, #CDCED2);
+    margin-bottom: 8px;
+    position: relative;
+    box-sizing: border-box;
+}
+
+.header-comment-frame1 {
+    width: 100%;
+    height: 86px;
+    gap: 16px;
+    padding: 20px;
+    border-bottom: 1px solid var(--20, #CDCED2);
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-radius: 10px 10px 0 0;
+    box-sizing: border-box;
     display: flex;
-    gap: 10px;
     align-items: center;
-    height: 40px;
-    margin-left: 13px; 
+    justify-content: space-between;
 }
 
-.icons-left img {
-    display: block; 
-    width: auto;
-    height: auto; 
+.avatar-text-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; 
+}
+
+.avatar2 {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+}
+
+.avatar-text-container p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    color: var(--, #070A1C);
+    margin: 0;
+}
+
+.content-comment-frame1 {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-sizing: border-box;
+}
+
+.content-comment-frame1 p {
+    width: 100%;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: 0%;
+    color: var(--, #070A1C);
+    margin-top: 0;
+    margin-right: 0;
+    margin-left: 0;
+    margin-bottom: 16px;
+}
+
+.content-comment-frame1 .likes-views {
+    width: 100%;
+    height: 20px;
+    gap: 24px;
+    display: flex;
+    align-items: center;
+}
+
+.content-comment-frame1 .like-item,
+.content-comment-frame1 .view-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.content-comment-frame1 .likes-views img {
+    width: 20px;
+    height: 20px;
+}
+
+.content-comment-frame1 .likes-views span {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    color: var(--, #81818D);
 }
 
 .left-user-frame {
@@ -101,4 +386,25 @@ body {
     display: flex;
     flex-direction: column;
     gap: 16px;
+    box-sizing: border-box;
+}
+
+
+.user{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 350.870361328125px;
+    height: 175px;
+    gap: 24px;
+}
+
+.users-nickname{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 350.870361328125px;
+    height: 55px;
+    gap: 10px;
+
 }
