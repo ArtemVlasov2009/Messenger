@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import AuthorizationForm
 
 # Create your views here.
@@ -14,6 +14,7 @@ def render_authorization_page(request):
             password = form.cleaned_data['password']
             verification = form.cleaned_data['email_verification']
             # ...
+            return redirect('/')
     else:
         form = AuthorizationForm()
 
