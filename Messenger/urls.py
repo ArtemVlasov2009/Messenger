@@ -16,9 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from Messenger_App.views import render_messenger_page
+from Messenger_App.views import render_messenger_page, render_authorization_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', render_messenger_page, name='messenger_page'),
+    path('authorization/', render_authorization_page, name='authorization_page'),
 ]
