@@ -127,7 +127,7 @@ body {
 .header-post-frame .internal-header-post-frame {
     display: flex;
     align-items: center;
-    gap: 10px; 
+    gap: 10px;
 }
 
 .internal-header-post-frame .avatar {
@@ -294,7 +294,7 @@ body {
 .avatar-text-container {
     display: flex;
     align-items: center;
-    gap: 10px; 
+    gap: 10px;
 }
 
 .avatar2 {
@@ -389,8 +389,7 @@ body {
     box-sizing: border-box;
 }
 
-
-.user{
+.user {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -399,12 +398,239 @@ body {
     gap: 24px;
 }
 
-.users-nickname{
+.users-nickname {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 350.870361328125px;
     height: 55px;
     gap: 10px;
+}
 
+.requests {
+    display: flex;
+    width: 318.87px;
+    height: 23px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+}
+
+.requ {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.requ img {
+    width: 20px;
+    height: 20px;
+}
+
+.requ p {
+    width: 66px;
+    height: 23px;
+    font-family: GT Walsheim Pro;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #81818D;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.requests > p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    color: #543C52;
+    margin: 0;
+}
+
+.requests p:last-child {
+    width: auto;
+    height: 18px;
+    font-family: GT Walsheim Pro;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: right;
+    color: var(--, #543C52);
+    margin: 0;
+}
+
+.users-requests {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 318.87px;
+    height: auto;
+    gap: 16px;
+    padding: 0 16px;
+}
+
+.user1, .user2, .user3 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.nick {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.2;
+    color: #070A1C;
+    margin: 0;
+}
+
+.subs {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.2;
+    color: #81818D;
+    margin: 0;
+    margin-top: 4px;
+}
+
+.user1 img, .user2 img, .user3 img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.messeges {
+    display: flex;
+    width: 318.87px;
+    height: 23px;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 16px;
+}
+
+.messeges .requ {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.messeges .requ img {
+    width: 20px;
+    height: 20px;
+    filter: brightness(0) saturate(100%) invert(63%) sepia(4%) saturate(747%) hue-rotate(185deg) brightness(93%) contrast(86%);
+}
+
+.messeges .messege-title {
+    width: 132px;
+    height: 23px;
+    font-family: GT Walsheim Pro;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #81818D;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.messeges .see-title {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    color: #543C52;
+    margin: 0;
+}
+
+.users-messeges {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 318.87px;
+    height: auto;
+    gap: 16px;
+    padding: 8px 15px;
+    background: var(--50, #E9E5EE);
+}
+
+.user-messege-1 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    cursor: pointer;
+    position: relative;
+}
+
+.user-messege-1 img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.user-messege-1 .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.user-messege-1 .nick-and-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.user-messege-1 .nick {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.2;
+    color: #070A1C;
+    margin: 0;
+}
+
+.user-messege-1 .time {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.2;
+    color: #81818D;
+    margin: 0;
+}
+
+.user-messege-1 .message-text {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.2;
+    color: #070A1C;
+    margin: 4px 0 0 0;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
