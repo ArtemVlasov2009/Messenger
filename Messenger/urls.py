@@ -16,10 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from . import settings
+from django.conf.urls.static import static
 from Messenger_App.views import render_messenger_page, render_authorization_page
+from Registration_app.views import render_registration_page
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', render_messenger_page, name='messenger_page'),
     path('authorization/', render_authorization_page, name='authorization_page'),
+    path('registration/', render_registration_page.as_view(), name='registration_page'),
 ]
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
