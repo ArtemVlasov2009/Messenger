@@ -391,6 +391,7 @@ body {
 
 .user {
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 350.870361328125px;
@@ -400,12 +401,42 @@ body {
 
 .users-nickname {
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    justify-content: space-between; /* Распределяет пространство между элементами */
+    align-items: center; /* Центрирует по горизонтали */
     width: 350.870361328125px;
     height: 55px;
-    gap: 10px;
+    overflow: hidden; /* Обрезает всё, что выходит за границы */
+    padding: 0; /* Убираем внутренние отступы, чтобы контролировать отступы вручную */
 }
+
+.nick-1 {
+    font-family: GT Walsheim Pro;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1; /* 100% */
+    letter-spacing: -0.01em;
+    color: #070A1C;
+    white-space: nowrap;
+    margin: 0; /* Убираем внешние отступы */
+    margin-top: auto; /* Прижимаем к верху */
+    margin-bottom: 10px; /* Отступ снизу 10px */
+}
+
+.user-1 {
+    font-family: GT Walsheim Pro;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1; /* 100% */
+    letter-spacing: -0.01em;
+    color: #070A1C;
+    white-space: nowrap;
+    margin: 0; /* Убираем внешние отступы */
+    margin-top: auto; /* Прижимаем к низу */
+    margin-bottom: auto; /* Убираем лишние отступы */
+}
+
+
 
 .requests {
     display: flex;
