@@ -402,38 +402,38 @@ body {
 .users-nickname {
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Распределяет пространство между элементами */
-    align-items: center; /* Центрирует по горизонтали */
+    justify-content: space-between; 
+    align-items: center;
     width: 350.870361328125px;
     height: 55px;
-    overflow: hidden; /* Обрезает всё, что выходит за границы */
-    padding: 0; /* Убираем внутренние отступы, чтобы контролировать отступы вручную */
+    overflow: hidden; 
+    padding: 0; 
 }
 
 .nick-1 {
     font-family: GT Walsheim Pro;
     font-weight: 700;
     font-size: 24px;
-    line-height: 1; /* 100% */
+    line-height: 1; 
     letter-spacing: -0.01em;
     color: #070A1C;
     white-space: nowrap;
-    margin: 0; /* Убираем внешние отступы */
-    margin-top: auto; /* Прижимаем к верху */
-    margin-bottom: 10px; /* Отступ снизу 10px */
+    margin: 0; 
+    margin-top: auto; 
+    margin-bottom: 10px; 
 }
 
 .user-1 {
     font-family: GT Walsheim Pro;
     font-weight: 500;
     font-size: 16px;
-    line-height: 1; /* 100% */
+    line-height: 1; 
     letter-spacing: -0.01em;
     color: #070A1C;
     white-space: nowrap;
-    margin: 0; /* Убираем внешние отступы */
-    margin-top: auto; /* Прижимаем к низу */
-    margin-bottom: auto; /* Убираем лишние отступы */
+    margin: 0;
+    margin-top: auto; 
+    margin-bottom: auto; 
 }
 
 
