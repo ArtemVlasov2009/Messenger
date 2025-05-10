@@ -32,11 +32,16 @@ body {
 }
 
 .header-frame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
     display: flex;
     justify-content: space-between;
-    align-items: center; 
+    align-items: center;
     height: 88px;
-    padding: 0 80px; 
+    padding: 0 80px;
     background-color: white;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
@@ -67,6 +72,7 @@ body {
     align-items: center;
     gap: 8px;
     height: 40px;
+    transition: all 0.2s ease;
 }
 
 .header-icons img {
@@ -97,26 +103,42 @@ body {
     font-size: 14px;
     font-weight: 500;
     line-height: 20px;
-    letter-spacing: -0,6%;
+    letter-spacing: -0.6%;
+    transition: all 0.2s ease;
+}
+
+.btn-frame:hover {
+    background: var(--50, #E9E5EE);
+    color: #543C52;
 }
 
 
+
 .main-frame.active {
-    width: 103px;
     height: 28px;
     border-radius: 3px;
     gap: 8px;
-    padding-top: 4px;
-    padding-right: 8px;
-    padding-bottom: 4px;
-    padding-left: 8px;
+    padding: 4px 8px;
     background: var(--50, #E9E5EE);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: GT Walsheim Pro;
+    font-family: 'GT Walsheim Pro';
 }
 
-.main-frame {
-    transition: all 0.2s ease;
+.header-icons > div:hover:not(.main-frame.active) {
+    height: 28px;
+    border-radius: 3px;
+    gap: 8px;
+    padding: 4px 8px;
+    background: var(--50, #E9E5EE);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'GT Walsheim Pro';
+}
+
+.main-content {
+    margin-top: 104px;
+    padding: 0 80px;
 }
