@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .forms import AuthorizationForm
+from django.contrib.auth.views import LogoutView
 
 # Create your views here.
 def render_messenger_page(request):
@@ -19,3 +20,7 @@ def render_authorization_page(request):
         form = AuthorizationForm()
 
     return render(request, 'Messenger_App/authorization.html', {'form': form})
+
+
+class CustomLogoutView(LogoutView):
+    next_page = 'authorization_page'

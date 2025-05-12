@@ -38,10 +38,13 @@
                     <p>Налаштування</p>
                 </div>
             </div>
-            <a href="#" class="btn-frame">
-                <img class="exit-btn-img" src="{% static 'images/exit.svg' %}" alt="Exit icon">
-                <p class="logout-text">Вихід</p>
-            </a>
+            <form action="{% url 'logout' %}" method="post">
+                {% csrf_token %} 
+                <button type="submit" class="btn-frame">
+                    <img class="exit-btn-img" src="{% static 'images/exit.svg' %}" alt="Exit icon">
+                    <span class="logout-text">Вихід</span> 
+                </button>
+            </form>
         </div>
     </div>
     {% endblock %}
