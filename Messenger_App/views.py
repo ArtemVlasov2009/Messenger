@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect
 from .forms import AuthorizationForm
 from django.contrib.auth.views import LogoutView
+from Posts_app.models import User_Post
 
 # Create your views here.
 def render_messenger_page(request):

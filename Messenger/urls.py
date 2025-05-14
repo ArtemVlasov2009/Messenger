@@ -21,6 +21,8 @@ from django.conf.urls.static import static
 from Messenger_App.views import render_messenger_page, render_authorization_page
 from Registration_app.views import render_registration_page
 from Messenger_App.views import CustomLogoutView
+from django.views.generic import TemplateView, ListView
+from Posts_app.views import PostsPageView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -28,6 +30,7 @@ urlpatterns = [
     path('authorization/', render_authorization_page, name='authorization_page'),
     path('registration/', render_registration_page.as_view(), name='registration_page'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
+    path('posts/', PostsPageView.as_view(), name='posts_page'),
 ]
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)

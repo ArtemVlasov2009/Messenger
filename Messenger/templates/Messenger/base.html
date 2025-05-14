@@ -17,14 +17,18 @@
         </div>
         <div class="header-icons-nav-frame">
             <div class="header-icons">
-                <div class="main-frame {% if current_page == 'home' %}active{% endif %}">
-                    <img src="{% static 'images/House.svg' %}" alt="Main logo">
-                    <p>Головна</p>
-                </div>
-                <div class="my-posts-frame">
-                    <img src="{% static 'images/posts.svg' %}" alt="Posts logo">
-                    <p>Мої публікації</p>
-                </div>
+                <a href="{% url 'messenger_page' %}">
+                    <div class="main-frame {% if current_page == 'home' %}active{% endif %}">
+                        <img src="{% static 'images/House.svg' %}" alt="Main logo">
+                        <p>Головна</p>
+                    </div>
+                </a>
+                <a href="{% url 'posts_page' %}">
+                    <div class="my-posts-frame {% if current_page == 'posts' %}active{% endif %}">
+                        <img src="{% static 'images/posts.svg' %}" alt="Posts logo">
+                        <p>Мої публікації</p>
+                    </div>
+                </a>
                 <div class="friends-frame">
                     <img src="{% static 'images/friends.svg' %}" alt="Friends logo">
                     <p>Друзі</p>
@@ -49,7 +53,6 @@
     </div>
     {% endblock %}
 
-    <!-- Вміст сайту -->
     <div class="main-content">
         {% block content %}
         {% endblock %}

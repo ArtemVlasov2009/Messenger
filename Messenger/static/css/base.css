@@ -112,8 +112,6 @@ body {
     color: #543C52;
 }
 
-
-
 .main-frame.active {
     height: 28px;
     border-radius: 3px;
@@ -141,4 +139,31 @@ body {
 .main-content {
     margin-top: 104px;
     padding: 0 80px;
+}
+
+.my-posts-frame.active {
+    height: 28px;
+    border-radius: 3px;
+    gap: 8px;
+    padding: 4px 8px;
+    background: var(--50, #E9E5EE);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'GT Walsheim Pro';
+}
+
+.header-icons a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center; 
+    height: 100%;
+}
+
+
+.header-icons a > div {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
