@@ -1,7 +1,7 @@
 body {
     background-color: #FAF8FF;
     margin: 0;
-    overflow: hidden; 
+    overflow: hidden;
 }
 
 .content-container {
@@ -15,20 +15,18 @@ body {
 }
 
 .Scroll-frame {
-    overflow-y: auto; 
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
     height: calc(100vh - 16px - 16px);
-    scrollbar-width: none; 
-    -ms-overflow-style: none; 
+    scrollbar-width: none;
+    -ms-overflow-style: none;
 }
-
 
 .Scroll-frame::-webkit-scrollbar {
     display: none;
 }
-
 
 .Chat-input-frame {
     width: 923px;
@@ -41,9 +39,6 @@ body {
     border: 1px solid var(--20, #CDCED2);
     box-sizing: border-box;
 }
-
-
-
 
 .internal-chat-input-frame {
     position: relative;
@@ -400,6 +395,7 @@ body {
     flex-direction: column;
     gap: 16px;
     box-sizing: border-box;
+    margin: 0; 
 }
 
 .user {
@@ -675,4 +671,49 @@ body {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.popular {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    margin: 0 0 16px 0;
+}
+
+.post {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 33%;
+    border-right: 1px solid #CDCED2;
+}
+
+.post h3 {
+    font-family: GT Walsheim Pro;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: -1%;
+    text-align: center;
+    margin: 0;
+    line-height: 1;
+}
+
+.post h4 {
+    margin: 4px 0 0 0;
+    font-weight: 500;
+    color: #81818D;
+    line-height: 1;
+    font-family: GT Walsheim Pro;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: -1%;
+    text-align: center;
+}
+
+.post:last-child {
+    border-right: none;
 }

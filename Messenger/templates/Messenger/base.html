@@ -1,4 +1,5 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,51 +7,53 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Home Page{% endblock %}</title>
     {% block links %}
-    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
     {% endblock %}
 </head>
 <body>
     {% block header %}
-    <div class="header-frame">
-        <div class="logo-image">
-            <img src="{% static 'images/logo.svg' %}" alt="Logo image">
-        </div>
-        <div class="header-icons-nav-frame">
-            <div class="header-icons">
+        <div class="header-frame">
+            <div class="logo-image">
                 <a href="{% url 'messenger_page' %}">
-                    <div class="main-frame {% if current_page == 'home' %}active{% endif %}">
-                        <img src="{% static 'images/House.svg' %}" alt="Main logo">
-                        <p>Головна</p>
-                    </div>
+                    <img src="{% static 'images/logo.svg' %}" alt="Logo image">
                 </a>
-                <a href="{% url 'posts_page' %}">
-                    <div class="my-posts-frame {% if current_page == 'posts' %}active{% endif %}">
-                        <img src="{% static 'images/posts.svg' %}" alt="Posts logo">
-                        <p>Мої публікації</p>
-                    </div>
-                </a>
-                <div class="friends-frame">
-                    <img src="{% static 'images/friends.svg' %}" alt="Friends logo">
-                    <p>Друзі</p>
-                </div>
-                <div class="chats-frame">
-                    <img src="{% static 'images/chat.svg' %}" alt="Chats logo">
-                    <p>Чати</p>
-                </div>
-                <div class="settings-frame">
-                    <img src="{% static 'images/Setting.svg' %}" alt="Settings logo">
-                    <p>Налаштування</p>
-                </div>
             </div>
-            <form action="{% url 'logout' %}" method="post">
-                {% csrf_token %} 
-                <button type="submit" class="btn-frame">
-                    <img class="exit-btn-img" src="{% static 'images/exit.svg' %}" alt="Exit icon">
-                    <span class="logout-text">Вихід</span> 
-                </button>
-            </form>
+            <div class="header-icons-nav-frame">
+                <div class="header-icons">
+                    <a href="{% url 'messenger_page' %}">
+                        <div class="main-frame {% if current_page == 'messenger' %}active{% endif %}">
+                            <img src="{% static 'images/House.svg' %}" alt="Main logo">
+                            <p>Головна</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'posts_page' %}">
+                        <div class="my-posts-frame {% if current_page == 'posts' %}active{% endif %}">
+                            <img src="{% static 'images/posts.svg' %}" alt="Posts logo">
+                            <p>Мої публікації</p>
+                        </div>
+                    </a>
+                    <div class="friends-frame">
+                        <img src="{% static 'images/friends.svg' %}" alt="Friends logo">
+                        <p>Друзі</p>
+                    </div>
+                    <div class="chats-frame">
+                        <img src="{% static 'images/chat.svg' %}" alt="Chats logo">
+                        <p>Чати</p>
+                    </div>
+                    <div class="settings-frame">
+                        <img src="{% static 'images/Setting.svg' %}" alt="Settings logo">
+                        <p>Налаштування</p>
+                    </div>
+                </div>
+                <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn-frame">
+                        <img class="exit-btn-img" src="{% static 'images/exit.svg' %}" alt="Exit icon">
+                        <span class="logout-text">Вихід</span>
+                    </button>
+                </form>
+            </div>
         </div>
-    </div>
     {% endblock %}
 
     <div class="main-content">

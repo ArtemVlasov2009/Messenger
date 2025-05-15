@@ -67,7 +67,8 @@ body {
     gap: 24px;
 }
 
-.header-icons > div {
+.header-icons > div,
+.header-icons a > div {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -112,7 +113,8 @@ body {
     color: #543C52;
 }
 
-.main-frame.active {
+.main-frame.active,
+.my-posts-frame.active {
     height: 28px;
     border-radius: 3px;
     gap: 8px;
@@ -124,7 +126,11 @@ body {
     font-family: 'GT Walsheim Pro';
 }
 
-.header-icons > div:hover:not(.main-frame.active) {
+.header-icons .main-frame:hover:not(.active),
+.header-icons .my-posts-frame:hover:not(.active),
+.header-icons .friends-frame:hover,
+.header-icons .chats-frame:hover,
+.header-icons .settings-frame:hover {
     height: 28px;
     border-radius: 3px;
     gap: 8px;
@@ -141,26 +147,13 @@ body {
     padding: 0 80px;
 }
 
-.my-posts-frame.active {
-    height: 28px;
-    border-radius: 3px;
-    gap: 8px;
-    padding: 4px 8px;
-    background: var(--50, #E9E5EE);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: 'GT Walsheim Pro';
-}
-
 .header-icons a {
     text-decoration: none;
     color: inherit;
     display: flex;
-    align-items: center; 
+    align-items: center;
     height: 100%;
 }
-
 
 .header-icons a > div {
     display: flex;
