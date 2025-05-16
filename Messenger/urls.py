@@ -18,19 +18,21 @@ from django.contrib import admin
 from django.urls import path
 from . import settings
 from django.conf.urls.static import static
-from Messenger_App.views import render_messenger_page, render_authorization_page
-from Registration_app.views import render_registration_page
-from Messenger_App.views import CustomLogoutView
-from django.views.generic import TemplateView, ListView
+from Registration_app.views import CustomLogoutView
 from Posts_app.views import PostsPageView
+from Registration_app.views import RegistrationView, CodeConfirmationView, AuthorizationView
+from Messenger_App.views import render_messenger_page  
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', render_messenger_page, name='messenger_page'),
-    path('authorization/', render_authorization_page, name='authorization_page'),
-    path('registration/', render_registration_page.as_view(), name='registration_page'),
     path('logout/', CustomLogoutView.as_view(), name='logout'),
     path('posts/', PostsPageView.as_view(), name='posts_page'),
+    path('registration/', RegistrationView.as_view(), name='registration'),
+    path('confirm_code/', CodeConfirmationView.as_view(), name='confirm_code'),
+    path('authorization/', AuthorizationView.as_view(), name='authorization'),
+    path('messenger/', render_messenger_page, name='messenger'),
 ]
+
 if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

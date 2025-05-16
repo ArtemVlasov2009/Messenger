@@ -1,0 +1,192 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>World IT Messenger</title>
+    <link rel="stylesheet" href="{% static 'Registration_app/css/auth.css' %}">
+</head>
+<body>
+    <div class="page-header">
+        <img src="{% static 'images/logo.svg' %}" alt="Logo" class="logo-img">
+    </div>
+
+    <div class="main-container">
+        {% if form_name == 'RegistrationForm' %}
+        <div class="reg-form">
+            <div class="form-nav">
+                <a href="{% url 'registration' %}" class="nav-link active">Реєстрація</a>
+                <a href="{% url 'authorization' %}" class="nav-link">Авторизація</a>
+            </div>
+            <h1 class="main-title">Приєднуйся до World IT</h1>
+            <form method="post" class="form-space">
+                {% csrf_token %}
+                <div class="input-wrapper">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Електронна пошта</label>
+                    {{ form.email }}
+                </div>
+                <div class="input-wrapper">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Пароль</label>
+                    <div class="password-container">
+                        {{ form.password }}
+                        <img src="{% static 'images/dont_see.svg' %}" alt="Show password" class="toggle-password" data-target="{{ form.password.id_for_label }}">
+                    </div>
+                </div>
+                <div class="input-wrapper">
+                    <label for="{{ form.confirm_password.id_for_label }}" class="form-label">Підтверди пароль</label>
+                    <div class="password-container">
+                        {{ form.confirm_password }}
+                        <img src="{% static 'images/dont_see.svg' %}" alt="Show password" class="toggle-password" data-target="{{ form.confirm_password.id_for_label }}">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Створити обліковий запис</button>
+            </form>
+            {% if messages %}
+            <div class="message-container">
+                {% for message in messages %}
+                <p class="success-message">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+            {% if form.errors %}
+            <div class="error-container">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <p class="error-message">{{ error }}</p>
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% elif form_name == 'CodeConfirmationForm' %}
+        <div class="confirm-code-form">
+            <h1 class="main-title">Підтвердження пошти</h1>
+            
+            <div class="confirmation-text">
+                <p>Ми надіслали 6-значний код на вашу пошту ({{ user_email }}). Введіть його нижче, щоб підтвердити акаунт</p>
+            </div>
+
+
+            
+           
+            
+            <form method="post" class="form-space">
+                {% csrf_token %}
+                <div class="input-wrapper">
+                    <label class="form-label">Код підтвердження</label>
+                    <div class="code-inputs-container">
+                        {{ form.code_1 }}
+                        {{ form.code_2 }}
+                        {{ form.code_3 }}
+                        {{ form.code_4 }}
+                        {{ form.code_5 }}
+                        {{ form.code_6 }}
+                    </div>
+                </div>
+                <div class="confirmation-buttons">
+                    <button type="submit" class="submit-btn">Підтвердити</button>
+                    <a href="{% url 'registration' %}" class="back-link">Назад</a>
+                </div>
+            </form>
+            
+            {% if form.errors %}
+            <div class="error-container">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <p class="error-message">{{ error }}</p>
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+
+        {% elif form_name == 'AuthorizationForm' %}
+        <div class="auth-form">
+            <div class="form-nav">
+                <a href="{% url 'registration' %}" class="nav-link">Реєстрація</a>
+                <a href="{% url 'authorization' %}" class="nav-link active">Авторизація</a>
+            </div>
+            <h1 class="main-title">Раді тебе знову бачити!</h1>
+            <form method="post" class="form-space">
+                {% csrf_token %}
+                <div class="input-wrapper">
+                    <label for="{{ form.email.id_for_label }}" class="form-label">Електронна пошта</label>
+                    {{ form.email }}
+                </div>
+                <div class="input-wrapper">
+                    <label for="{{ form.password.id_for_label }}" class="form-label">Пароль</label>
+                    <div class="password-container">
+                        {{ form.password }}
+                        <img src="{% static 'images/dont_see.svg' %}" alt="Show password" class="toggle-password" data-target="{{ form.password.id_for_label }}">
+                    </div>
+                </div>
+                <button type="submit" class="submit-btn">Увійти</button>
+            </form>
+            <div class="qr-login">
+                <div class="qr-login-text">
+                    <img src="{% static 'images/Line.svg' %}" alt="LINE" class="line-img">
+                    <p>або увійти за допомогою QR-коду</p>
+                    <img src="{% static 'images/Line.svg' %}" alt="LINE" class="line-img">
+                </div>
+                <img src="{% static 'images/qrcode.png' %}" alt="QRCODE" class="qrcode-img">
+            </div>
+            {% if form.errors %}
+            <div class="error-container">
+                {% for field in form %}
+                {% for error in field.errors %}
+                <p class="error-message">{{ error }}</p>
+                {% endfor %}
+                {% endfor %}
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <img src="{% static 'images/device.png' %}" alt="Device" class="device-img">
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleButtons = document.querySelectorAll('.toggle-password');
+            toggleButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const targetId = this.getAttribute('data-target');
+                    const passwordField = document.getElementById(targetId);
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        this.src = "{% static 'images/see.svg' %}";
+                        this.setAttribute('alt', 'Hide password');
+                    } else {
+                        passwordField.type = 'password';
+                        this.src = "{% static 'images/dont_see.svg' %}";
+                        this.setAttribute('alt', 'Show password');
+                    }
+                });
+            });
+
+
+            const codeInputs = document.querySelectorAll('.code-input');
+            if (codeInputs.length > 0) {
+                codeInputs[0].focus();
+                
+                codeInputs.forEach((input, index) => {
+                    input.addEventListener('input', function() {
+                        if (this.value.length === 1 && index < codeInputs.length - 1) {
+                            codeInputs[index + 1].focus();
+                        }
+                    });
+                    
+                    input.addEventListener('keydown', function(e) {
+                        if (e.key === 'Backspace' && this.value.length === 0 && index > 0) {
+                            codeInputs[index - 1].focus();
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
