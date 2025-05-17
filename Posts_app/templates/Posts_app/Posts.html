@@ -1,10 +1,264 @@
 {% extends "Messenger/base.html" %}
+{% load static %}
+
+{% block title %}Posts{% endblock %}
+
+{% block links %}
+    {{ block.super }} <link rel="stylesheet" href="{% static 'css/Posts.css' %}">
+{% endblock %}
+
 
 {% block content %}
-  <h2>Новая публикация</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Створити</button>
-  </form>
+  <div class="content-container">
+        <div class="left-user-frame">
+            <div class="user-frame">
+                <div class="user">
+                    <img src="{% static 'images/user-avatar.png' %}" alt="User-Avatar">
+                    <div class='users-nickname'>
+                        <p class = 'nick-1'>Lina Li</p>
+                        <p class = 'user-1'>@thelili</p>
+                    </div>
+                </div>
+                <div class="info-frame">
+                </div>
+            </div>
+        </div>
+        
+        <div class="Scroll-frame">
+            <div class="Chat-input-frame">
+                <div class='internal-chat-input-frame'>
+                    <div class="question-frame">
+                        <input type="text" placeholder="Про що ти зараз думаєш?" class="question-input">
+                    </div>
+                    <div class="icons-frame">
+                        <div class="icon-group">
+                            <img src="{% static 'images/smile.svg' %}" alt="Smile">
+                        </div>
+                        <button class="publish-button">
+                            Перейти до оформлення
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Пост -->
+            <div class="post-frame">
+                <div class="header-post-frame">
+                    <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+                    <div class="internal-header-post-frame">
+                        <img src="{% static 'images/avatar.png' %}" alt="avatar" class="avatar">
+                        <p>X_AE_A-13</p>
+                        <img src="{% static 'images/painting.png' %}" alt="painting" class="painting">
+                    </div>
+                </div>
+                <div class="post-content">
+                    <p>
+                        Інколи найкращі ідеї народжуються в тиші 🌿<br>
+                        Природа, книга і спокій — усе, що потрібно, аби перезавантажитись.<br>
+                        #відпочинок #натхнення #життя #природа #читання #спокій #гармонія
+                    </p>
+                    <div class="users-photos-content">
+                        <div class="photos-1">
+                            <img src="{% static 'images/Frame.png' %}" alt="users-photo" class="Frame1">
+                            <img src="{% static 'images/Frame2.png' %}" alt="users-photo" class="Frame2">
+                        </div>
+                        <div class="photos-2">
+                            <img src="{% static 'images/Frame3.png' %}" alt="users-photo" class="Frame3">
+                            <img src="{% static 'images/Frame4.png' %}" alt="users-photo" class="Frame4">
+                            <img src="{% static 'images/Frame5.png' %}" alt="users-photo" class="Frame5">
+                        </div>
+                    </div>
+                    <div class="likes-views">
+                        <div class="like-item">
+                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                            <span>120 Вподобань</span>
+                        </div>
+                        <div class="view-item">
+                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                            <span>890 Переглядів</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Коментар 1 -->
+            <div class='comment-frame1'>
+                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+                <div class='header-comment-frame1'>
+                    <div class="avatar-text-container">
+                        <img src="{% static 'images/avatar2.png' %}" alt="avatar2" class="avatar2">
+                        <p>Alex_03</p>
+                    </div>
+                </div>
+                <div class='content-comment-frame1'>
+                    <p>
+                        буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
+                    </p>
+                    <div class="likes-views">
+                        <div class="like-item">
+                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                            <span>120 Вподобань</span>
+                        </div>
+                        <div class="view-item">
+                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                            <span>890 Переглядів</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Коментар 2 -->
+            <div class='comment-frame1'>
+                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+                <div class='header-comment-frame1'>
+                    <div class="avatar-text-container">
+                        <img src="{% static 'images/avatar3.png' %}" alt="avatar3" class="avatar3">
+                        <p>Alex_03</p>
+                    </div>
+                </div>
+                <div class='content-comment-frame1'>
+                    <p>
+                        буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
+                    </p>
+                    <div class="likes-views">
+                        <div class="like-item">
+                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                            <span>120 Вподобань</span>
+                        </div>
+                        <div class="view-item">
+                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                            <span>890 Переглядів</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Коментар 3 -->
+            <div class='comment-frame1'>
+                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+                <div class='header-comment-frame1'>
+                    <div class="avatar-text-container">
+                        <img src="{% static 'images/avatar4.png' %}" alt="avatar4" class="avatar4">
+                        <p>Alex_03</p>
+                    </div>
+                </div>
+                <div class='content-comment-frame1'>
+                    <p>
+                        буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
+                    </p>
+                    <div class="likes-views">
+                        <div class="like-item">
+                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                            <span>120 Вподобань</span>
+                        </div>
+                        <div class="view-item">
+                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                            <span>890 Переглядів</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Коментар 4 -->
+            <div class='comment-frame1'>
+                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
+                <div class='header-comment-frame1'>
+                    <div class="avatar-text-container">
+                        <img src="{% static 'images/avatar5.png' %}" alt="avatar5" class="avatar5">
+                        <p>Alex_03</p>
+                    </div>
+                </div>
+                <div class='content-comment-frame1'>
+                    <p>
+                        буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
+                    </p>
+                    <div class="likes-views">
+                        <div class="like-item">
+                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                            <span>120 Вподобань</span>
+                        </div>
+                        <div class="view-item">
+                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                            <span>890 Переглядів</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+           <form method="post" enctype="multipart/form-data" class="custom-post-form">
+
+                {% csrf_token %}
+
+                <h2 class="text-2xl font-semibold text-gray-800">Створення публікації</h2>
+
+                <!-- Назва публікації -->
+                <div>
+                    <label for="id_title" class="block mb-1 text-sm font-medium text-gray-700">Назва публікації</label>
+                    <input type="text" name="title" id="id_title"
+                           placeholder="Напишіть назву публікації"
+                           value="{{ form.title.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition" />
+                </div>
+            
+                <!-- Тема публікації -->
+                <div>
+                    <label for="id_theme" class="block mb-1 text-sm font-medium text-gray-700">Тема публікації</label>
+                    <input type="text" name="theme" id="id_theme"
+                            placeholder="Напишіть тему публікації..."
+                           value="{{ form.theme.value|default:'' }}"
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition" />
+                </div>
+            
+                <!-- Текст -->
+                <div>
+                    <textarea name="text" id="id_text" rows="4"
+                              class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition resize-none"
+                              placeholder="Введіть текст...">{{ form.text.value|default:'' }}</textarea>
+                </div>
+            
+                <!-- Посилання -->
+                <div>
+                    <label for="id_article_link" class="block mb-1 text-sm font-medium text-gray-700">Посилання</label>
+                    <input type="url" name="article_link" id="id_article_link"
+                           value="{{ form.article_link.value|default:'' }}"
+                           placeholder="Введіть посилання..."
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-purple-500 transition" />
+                </div>
+            
+                <!-- Кнопка -->
+                <div class="button-container-absolute">
+                    <button type="submit">Публікація</button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('modal');
+        const openBtn = document.querySelector('.publish-button');
+        const closeBtn = document.querySelector('.close-button');
+
+        openBtn.addEventListener('click', function() {
+            modal.style.display = 'flex';
+        });
+
+        closeBtn.addEventListener('click', function() {
+            modal.style.display = 'none';
+        });
+
+        window.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    });
+</script>
+
 {% endblock content %}
