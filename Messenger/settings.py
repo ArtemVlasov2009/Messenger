@@ -129,6 +129,7 @@ STATICFILES_DIRS = [
     BASE_DIR / 'Messenger_App' / 'static',
     BASE_DIR / 'Messenger' / 'static',
     BASE_DIR / 'Posts_app' / 'static',
+    BASE_DIR / 'my_publications' / 'static',
 ]
 
 MEDIA_URL = '/media/'
@@ -148,3 +149,8 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'av3411261@gmail.com'
 EMAIL_HOST_PASSWORD = 'fvdn nxca gdth qynw'  
+
+LOGIN_URL = '/authorization/' 
+
+# URL, на який перенаправляти користувачів після успішного входу (наприклад, сторінка постів або месенджера)
+LOGIN_REDIRECT_URL = '/posts/' # Або '/messenger/' якщо ви хочете перенаправляти на головну сторінку месенджера

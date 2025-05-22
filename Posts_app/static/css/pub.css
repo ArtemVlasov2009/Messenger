@@ -1,0 +1,677 @@
+/* Base styles */
+body {
+    background-color: #FAF8FF;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'GT Walsheim Pro', sans-serif;
+}
+
+/* Main content container */
+.content-container {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+    margin-top: 16px;
+    overflow: hidden;
+}
+
+/* Left sidebar */
+.left-user-frame {
+    width: 350.87px;
+    height: 801px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.user-frame {
+    width: 100%;
+    height: 271px;
+    border-radius: 10px;
+    border: 1px solid #CDCED2;
+    padding: 16px;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-sizing: border-box;
+}
+
+.user {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 175px;
+    gap: 24px;
+}
+
+.user img {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+}
+
+.users-nickname {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    height: 55px;
+    overflow: hidden;
+}
+
+.users-nickname .nick-1 {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 700;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #070A1C;
+    white-space: nowrap;
+    margin: 0;
+    margin-top: auto;
+    margin-bottom: 10px;
+}
+
+.users-nickname .user-1 {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #070A1C;
+    white-space: nowrap;
+    margin: 0;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+/* User stats */
+.popular {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    padding: 0;
+    margin: 0 0 16px 0;
+}
+
+.popular .post {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: 33.333%;
+    border-right: 1px solid #CDCED2;
+}
+
+.popular .post h3 {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    text-align: center;
+    color: #070A1C;
+    margin: 0;
+}
+
+.popular .post h4 {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #81818D;
+    text-align: center;
+    margin: 4px 0 0 0;
+}
+
+.popular .post:last-child {
+    border-right: none;
+}
+
+/* Posts feed */
+.Scroll-frame {
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    height: calc(100vh - 32px);
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+
+.Scroll-frame::-webkit-scrollbar {
+    display: none;
+}
+
+/* Post input */
+.Chat-input-frame {
+    width: 923px;
+    height: 120px;
+    border-radius: 10px;
+    padding: 16px;
+    background: #FFFFFF;
+    border: 1px solid #CDCED2;
+    box-sizing: border-box;
+}
+
+.internal-chat-input-frame {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    width: 891px;
+    height: 88px;
+}
+
+.question-input {
+    width: 100%;
+    height: 22px;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.007em;
+    color: #81818D;
+}
+
+.icons-frame {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    height: 40px;
+}
+
+.icon-group {
+    display: flex;
+    gap: 13px;
+    cursor: pointer;
+}
+
+/* Post styles */
+.post-frame {
+    border-radius: 10px;
+    background: #FFFFFF;
+    border: 1px solid #CDCED2;
+    margin-bottom: 8px;
+    display: flex;
+    flex-direction: column;
+    width: 923px;
+    box-sizing: border-box;
+}
+
+.post-frame .header-post-frame {
+    position: relative;
+    width: 100%;
+    height: 89px;
+    padding: 20px;
+    background: #FFFFFF;
+    border-bottom: 1px solid #CDCED2;
+    border-radius: 10px 10px 0 0;
+    box-sizing: border-box;
+}
+
+.post-frame .internal-header-post-frame {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.post-frame .internal-header-post-frame .avatar {
+    width: 46px;
+    height: 46px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.post-frame .internal-header-post-frame p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    color: #070A1C;
+    margin: 0;
+}
+
+.post-frame .dots-icon {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.post-frame .post-content {
+    flex-grow: 1;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-sizing: border-box;
+}
+
+.post-frame .post-content h3 {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 700;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #070A1C;
+    margin: 0;
+}
+
+.post-frame .post-content .post-theme {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1;
+    color: #543C52;
+    margin: 0;
+}
+
+.post-frame .post-content p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: 0;
+    color: #070A1C;
+    margin: 0 0 16px 0;
+}
+
+.post-frame .post-content .post-tag {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    color: #543C52;
+    background: #E9E5EE;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.post-frame .users-photos-content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.post-frame .photos-1,
+.post-frame .photos-2 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    gap: 16px;
+}
+
+.post-frame .photos-1 .post-image {
+    width: calc(50% - 8px);
+    height: auto;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.post-frame .photos-2 .post-image {
+    width: calc(33.333% - 10.666px);
+    height: auto;
+    border-radius: 16px;
+    object-fit: cover;
+}
+
+.post-frame .likes-views {
+    width: 100%;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+}
+
+.post-frame .like-item,
+.post-frame .view-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.post-frame .likes-views img {
+    width: 20px;
+    height: 20px;
+}
+
+.post-frame .likes-views span {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    color: #81818D;
+}
+
+/* Buttons */
+.publish-button,
+.pub-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 130px;
+    height: 40px;
+    border-radius: 1234px;
+    padding: 10px 16px;
+    background: #543C52;
+    color: #FFFFFF;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+
+.publish-button .btn-icon,
+.pub-buttons .btn-icon {
+    width: 16px;
+    height: 16px;
+}
+
+.buttons-load-img-lable {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid #CDCED2;
+    padding: 8px;
+    background: #FFFFFF;
+    cursor: pointer;
+}
+
+.buttons-load-img-lable img {
+    width: 50px;
+    height: 50px;
+}
+.button-wrapper-bottom {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 10;
+}
+
+/* Чтобы форма не перекрывала кнопки */
+.modal-content {
+    position: relative;
+    padding-bottom: 100px;
+}
+
+/* Modal styles */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    padding: 24px 44px 44px;
+    background: #FFFFFF;
+    border-radius: 20px;
+    width: 90%;
+    padding-bottom: 80px;
+    max-width: 770px;
+    max-height: 90vh;
+    overflow-y: auto;
+    margin: 20px;
+    box-sizing: border-box;
+    position: relative;
+}
+
+.modal-content .close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+}
+
+.modal-content h2.title {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: #070A1C;
+    margin: 0 0 24px 0;
+}
+
+/* Form styles */
+.custom-post-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.custom-post-form label {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1;
+    letter-spacing: -0.007em;
+    color: #070A1C;
+    margin-bottom: 4px;
+}
+
+.custom-post-form input:not([type="file"]),
+.custom-post-form textarea,
+.custom-post-form select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #CDCED2;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.007em;
+    color: #070A1C;
+}
+
+.custom-post-form textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-group {
+    margin-bottom: 15px;
+    width: 100%;
+}
+
+.image-upload-group {
+    margin-bottom: 15px;
+}
+
+.image-upload-group input[type="file"] {
+    display: none;
+}
+
+.button-container-absolute {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+/* Delete modal */
+.delete-modal {
+    position: absolute;
+    z-index: 1000;
+    display: none;
+}
+
+.delete-modal-content {
+    background: #FFFFFF;
+    border: 1px solid #CDCED2;
+    border-radius: 10px;
+    padding: 16px;
+    width: 200px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.delete-modal-content p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    color: #070A1C;
+    margin: 0;
+}
+
+.delete-confirm-button,
+.delete-cancel-button {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 1234px;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: center;
+}
+
+.delete-confirm-button {
+    background: #FF4D4F;
+    color: #FFFFFF;
+}
+
+.delete-cancel-button {
+    background: #E9E5EE;
+    color: #070A1C;
+}
+
+/* Error messages */
+.errorlist {
+    color: #FF4D4F;
+    list-style: none;
+    padding: 0;
+    margin: 5px 0 0 0;
+    font-size: 12px;
+}
+
+.errorlist li {
+    margin-bottom: 3px;
+}
+
+/* Empty state */
+.Scroll-frame > p {
+    padding: 20px;
+    color: #81818D;
+    text-align: center;
+}
+
+/* General styles for all labels */
+label {
+    display: block;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: -0.007em;
+    color: #070A1C;
+    margin-bottom: 6px;
+}
+
+/* General styles for all input fields with class 'form-control' */
+.form-control {
+    width: 100%;
+    height: 42px;
+    border-radius: 10px;
+    padding: 10px 16px;
+    border: 1px solid #CDCED2;
+    background: #FFFFFF;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: -0.007em;
+    color: #070A1C;
+}
+
+/* Styles for textarea */
+#id_text {
+    width: 100%;
+    height: 126px;
+    border-radius: 10px;
+    padding: 10px 16px;
+    border: 1px solid #CDCED2;
+    background: #FFFFFF;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: -0.007em;
+    color: #070A1C;
+}
+
+#id_text.form-control {
+    border-radius: 10px;
+}
+
+/* Specific styles for file input */
+.form-control-file {
+    border-radius: 10px;
+}
+
+/* Specific styles for individual input fields */
+#id_title,
+#id_theme,
+#id_article_link {
+    width: 100%;
+    height: 42px;
+    border-radius: 10px;
+    padding: 10px 16px;
+    border: 1px solid #CDCED2;
+    background: #FFFFFF;
+}
+
+#id_tags,
+#id_text {
+    border-radius: 10px;
+}
+
+/* Form group styles */
+.form-group {
+    margin-bottom: 15px;
+}

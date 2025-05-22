@@ -1,10 +1,173 @@
 {% extends "Messenger/base.html" %}
+{% load static %}
+
+{% block title %}Posts{% endblock %}
+
+{% block links %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/pub.css' %}">
+{% endblock %}
 
 {% block content %}
-  <h2>Новая публикация</h2>
-  <form method="post" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Створити</button>
-  </form>
+<div class="content-container">
+    <div class="left-user-frame">
+        <div class="user-frame">
+            <div class="user">
+                <img src="{% static 'images/user-avatar.png' %}" alt="User Avatar">
+                <div class="users-nickname">
+                    <p class="nick-1">{{ request.user.get_full_name|default:request.user.username }}</p>
+                    <p class="user-1">@{{ request.user.username }}</p>
+                </div>
+            </div>
+            <div class="info-frame">
+                <div class="popular">
+                    <div class="post">
+                        <h3>{{ request.user.user_post_set.count }}</h3>
+                        <h4>Дописи</h4>
+                    </div>
+                    <div class="post">
+                        <h3>0</h3>
+                        <h4>Читачі</h4>
+                    </div>
+                    <div class="post">
+                        <h3>0</h3>
+                        <h4>Друзі</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="Scroll-frame">
+        <div class="Chat-input-frame">
+            <div class="internal-chat-input-frame">
+                <div class="question-frame">
+                    <input type="text" placeholder="Про що ти зараз думаєш?" class="question-input">
+                </div>
+                <div class="icons-frame">
+                    <div class="icon-group">
+                        <img src="{% static 'images/smile.svg' %}" alt="Smile">
+                    </div>
+                    <button type="button" class="publish-button">
+                        Публікація
+                        <img src="{% static 'images/btn.svg' %}" alt="Icon" class="btn-icon">
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        {% for post in user_posts %}
+        <div class="post-frame">
+            <div class="header-post-frame">
+                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon" data-post-id="{{ post.id }}">
+                <div class="internal-header-post-frame">
+                    <img src="{% static 'images/avatar.png' %}" alt="avatar" class="avatar">
+                    <p>{{ post.user.username }}</p>
+                    {% if post.tags %}<span class="post-tag">{{ post.get_tags_display }}</span>{% endif %}
+                </div>
+            </div>
+            <div class="post-content">
+                {% if post.title %}<h3>{{ post.title }}</h3>{% endif %}
+                {% if post.theme %}<p class="post-theme">{{ post.theme }}</p>{% endif %}
+                <p>{{ post.text|linebreaksbr }}</p>
+                <div class="users-photos-content">
+                    {% if post.image1 or post.image2 or post.image3 %}
+                    <div class="photos-1">
+                        {% if post.image1 %}<img src="{{ post.image1.url }}" alt="Post photo 1" class="post-image">{% endif %}
+                        {% if post.image2 %}<img src="{{ post.image2.url }}" alt="Post photo 2" class="post-image">{% endif %}
+                        {% if post.image3 %}<img src="{{ post.image3.url }}" alt="Post photo 3" class="post-image">{% endif %}
+                    </div>
+                    {% endif %}
+                    {% if post.image4 or post.image5 or post.image6 %}
+                    <div class="photos-2">
+                        {% if post.image4 %}<img src="{{ post.image4.url }}" alt="Post photo 4" class="post-image">{% endif %}
+                        {% if post.image5 %}<img src="{{ post.image5.url }}" alt="Post photo 5" class="post-image">{% endif %}
+                        {% if post.image6 %}<img src="{{ post.image6.url }}" alt="Post photo 6" class="post-image">{% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+                {% if post.article_link %}<p><a href="{{ post.article_link }}" target="_blank">{{ post.article_link }}</a></p>{% endif %}
+                <div class="likes-views">
+                    <div class="like-item">
+                        <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                        <span>{{ post.like_count }} Вподобань</span>
+                    </div>
+                    <div class="view-item">
+                        <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                        <span>{{ post.view_count }} Переглядів</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p>Постів поки що немає.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button">
+            <img src="{% static 'images/krestik.svg' %}" alt="Icon" class="btn-icon">
+        </span>
+        <h2 class="title">Створення публікації</h2>
+        <form method="post" enctype="multipart/form-data" class="custom-post-form">
+            {% csrf_token %}
+            {% if form.non_field_errors %}<div class="errorlist">{{ form.non_field_errors }}</div>{% endif %}
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Назва публікації</label>
+                {{ form.title }}
+                {% if form.title.errors %}<div class="errorlist">{{ form.title.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.tags.id_for_label }}">Тема публікації (Тег)</label>
+                {{ form.tags }}
+                {% if form.tags.errors %}<div class="errorlist">{{ form.tags.errors }}</div>{% endif %}
+            </div>
+            {% if form.theme %}
+            <div class="form-group">
+                <label for="{{ form.theme.id_for_label }}">Тема публікації</label>
+                {{ form.theme }}
+                {% if form.theme.errors %}<div class="errorlist">{{ form.theme.errors }}</div>{% endif %}
+            </div>
+            {% endif %}
+            <div class="form-group">
+                <label for="{{ form.text.id_for_label }}">Текст</label>
+                <textarea id="post-text" name="{{ form.text.name }}" {% if form.text.value %}value="{{ form.text.value }}"{% endif %} {% for attr_name, attr_value in form.text.field.widget.attrs.items %}{{ attr_name }}="{{ attr_value }}" {% endfor %}></textarea>
+                {% if form.text.errors %}<div class="errorlist">{{ form.text.errors }}</div>{% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.article_link.id_for_label }}">Посилання</label>
+                {{ form.article_link }}
+                {% if form.article_link.errors %}<div class="errorlist">{{ form.article_link.errors }}</div>{% endif %}
+            </div>
+            <div class="button-wrapper-bottom">
+                <div class="form-group image-upload-group">
+                    <label for="{{ form.image1.id_for_label }}" class="buttons-load-img-lable">
+                        <img src="{% static 'images/image.svg' %}" alt="Upload Image" width="24" height="24">
+                    </label>
+                    {{ form.image1 }}
+                    {% if form.image1.errors %}<div class="errorlist">{{ form.image1.errors }}</div>{% endif %}
+                </div>
+            
+                <div class="button-container-absolute">
+                    <button type="submit" class="pub-buttons">
+                        Публікація
+                        <img src="{% static 'images/btn.svg' %}" alt="Icon" class="btn-icon">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div id="delete-modal" class="delete-modal" style="display: none;">
+    <div class="delete-modal-content">
+        <p>Видалити пост?</p>
+        <button class="delete-confirm-button">Видалити</button>
+        <button class="delete-cancel-button">Скасувати</button>
+    </div>
+</div>
+
+<script src="{% static 'js/pub.js' %}"></script>
 {% endblock content %}
