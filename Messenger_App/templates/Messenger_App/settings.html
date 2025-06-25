@@ -1,0 +1,1227 @@
+{% extends "Messenger/base.html" %}
+{% load static %}
+
+{% block title %}Settings{% endblock %}
+
+{% block links %}
+{{ block.super }}
+<link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+<link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="app-wrap">
+  <div class="sidebar scroll-area">
+    <div class="nav-item active"><a href="#" id="personalInfoLink">Особиста інформація</a></div>
+    <div class="nav-item"><a href="#" id="albumsLink">Альбоми</a></div>
+  </div>
+  <div class="main-panel" id="mainPanel">
+    <!-- Profile Card Block -->
+    <div class="block profile-block">
+      <div class="block-header">
+        <p class="block-title">Картка профілю</p>
+        <button class="btn btn-secondary btn-header icon-btn" id="editProfileBtn">
+          <img src="{% static 'images/edit.svg' %}" alt="edit" class="btn-icon">
+          Редагувати
+        </button>
+      </div>
+      <div class="block-body">
+        <div class="user-grid">
+          <div class="user-card">
+            <div class="user-card__top">
+              <p class="avatar-instruction" style="display: none;">Оберіть або завантажте фото профілю</p>
+              <form id="profilePhotoForm" method="post" enctype="multipart/form-data" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+                <input type="file" id="profilePhotoInput" name="profile_photo" accept="image/*" style="display: none;">
+              </form>
+              {% with active_avatar=user.profile.get_active_avatar %}
+                <img src="{% if active_avatar and active_avatar.image and active_avatar.image.file %}{{ active_avatar.image.file.url }}{% else %}{% static 'images/Avatarka-user-11.svg' %}{% endif %}" alt="User Avatar" class="user-card__avatar">
+              {% endwith %}
+              <div id="photoActionsContainer" style="display: none; flex-direction: row; align-items: center; gap: 24px; margin: 0;">
+                <div style="display: flex; align-items: center;" class="photo-action-add">
+                  <img src="{% static 'images/plucik.svg' %}" alt="Add Photo Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                  <p style="margin: 0; font-family: 'GT Walsheim Pro', sans-serif; font-weight: 500; font-size: 16px; color: #543C52;">Додайте фото</p>
+                </div>
+                <div style="display: flex; align-items: center;" class="photo-action-choose">
+                  <img src="{% static 'images/miniphoto.svg' %}" alt="Choose Photo Icon" style="width: 20px; height: 20px; margin-right: 8px;">
+                  <p style="margin: 0; font-family: 'GT Walsheim Pro', sans-serif; font-weight: 500; font-size: 16px; color: #543C52;">Оберіть фото</p>
+                </div>
+              </div>
+              <div class="user-card__info">
+                <p class="user-card__name" id="userName" style="display: block;">{{ user.first_name|default:'' }} {{ user.last_name|default:'' }}</p>
+                <p class="user-card__tag" id="userTag">{{ user.username }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Block -->
+    <div class="block settings-block">
+      <div class="block-header">
+        <p class="block-title">Особиста інформація</p>
+        <div class="header-actions" id="info-actions-container">
+            <button type="button" class="btn btn-secondary btn-header icon-btn" id="editInfoBtn">
+                <img src="{% static 'images/edit.svg' %}" alt="edit" class="btn-icon">
+                Редагувати
+            </button>
+            <button type="button" class="btn btn-primary btn-header icon-btn" id="saveInfoBtn" style="display: none;">
+                <img src="{% static 'images/pen.svg' %}" alt="save" class="btn-icon">
+                Зберегти
+            </button>
+        </div>
+      </div>
+      <div class="block-body">
+        <form method="post" class="settings-form" id="settingsForm">
+            {% csrf_token %}
+            <!-- Personal Info Fields -->
+            <div class="form-group">
+                <label for="id_name">Ім’я</label>
+                <div class="input-with-icon">
+                    <input type="text" name="name" id="id_name" value="{{ user.first_name|default:'' }}" readonly>
+                    <img src="{% static 'images/see.svg' %}" alt="see" class="input-icon">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="id_surname">Прізвище</label>
+                <div class="input-with-icon">
+                    <input type="text" name="surname" id="id_surname" value="{{ user.last_name|default:'' }}" readonly>
+                    <img src="{% static 'images/see.svg' %}" alt="see" class="input-icon">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="id_date_of_birth">Дата народження</label>
+                <div class="input-with-icon">
+                    <input type="date" name="date_of_birth" id="id_date_of_birth" value="{% if user.profile.date_of_birth %}{{ user.profile.date_of_birth|date:'Y-m-d' }}{% endif %}" readonly>
+                    <img src="{% static 'images/dont-see.svg' %}" alt="don't see" class="input-icon">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="id_email">Електронна пошта</label>
+                <div class="input-with-icon">
+                    <input type="email" name="email" id="id_email" value="{{ user.email|default:'' }}" readonly>
+                    <img src="{% static 'images/dont-see.svg' %}" alt="don't see" class="input-icon">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="id_static_password">Пароль</label>
+                <div class="input-with-icon">
+                    <input type="password" id="id_static_password" placeholder="******" readonly>
+                    <img src="{% static 'images/dont-see.svg' %}" alt="don't see" class="input-icon">
+                </div>
+            </div>
+            <div id="info-error-message" class="error-message" style="display:none; color: red; margin-top: 15px;"></div>
+
+            <hr class="form-divider" style="display: none;">
+
+            <!-- Password Fields -->
+            <div class="form-group password-field" style="display: none;">
+                <label for="id_password">Новий пароль</label>
+                <div class="input-with-icon">
+                    <input type="password" name="password" id="id_password" placeholder="Введіть новий пароль" readonly>
+                    <img src="{% static 'images/dont-see.svg' %}" alt="don't see" class="input-icon password-toggle">
+                </div>
+            </div>
+            <div class="form-group password-field" style="display: none;">
+                <label for="id_password_confirm">Підтвердіть новий пароль</label>
+                <div class="input-with-icon">
+                    <input type="password" name="password_confirm" id="id_password_confirm" placeholder="Повторіть новий пароль" readonly>
+                    <img src="{% static 'images/dont-see.svg' %}" alt="don't see" class="input-icon password-toggle">
+                </div>
+            </div>
+            <div id="password-error-message" class="error-message" style="display:none; color: red; margin-top: 15px;"></div>
+        </form>
+        <!-- Password Buttons Container -->
+        <div class="form-footer-actions" id="password-actions-container">
+            <button type="button" class="btn btn-secondary btn-header icon-btn" id="editPasswordBtn">
+                <img src="{% static 'images/edit.svg' %}" alt="edit" class="btn-icon">
+                Змінити пароль
+            </button>
+            <button type="button" class="btn btn-primary btn-header icon-btn" id="savePasswordBtn" style="display: none;">
+                <img src="{% static 'images/pen.svg' %}" alt="save" class="btn-icon">
+                Підтвердити
+            </button>
+        </div>
+      </div>
+    </div>
+    
+    <div class="block options-block">
+      <div class="block-header">
+        <p class="block-title">Варіанти підпису</p>
+        <button class="btn btn-secondary btn-header icon-btn">
+          <img src="{% static 'images/edit.svg' %}" alt="edit" class="btn-icon">
+          Редагувати
+        </button>
+      </div>
+      <div class="block-body">
+        <div class="signature-group">
+          <div class="signature-option">
+            <img src="{% static 'images/chek.svg' %}" alt="Check Icon" class="signature-icon">
+            <p class="signature-label">Ім’я та прізвище</p>
+          </div>
+          <p class="signature-value">{{ user.first_name }} {{ user.last_name }}</p>
+        </div>
+        <div class="signature-group signature-group--separated">
+          <div class="signature-option">
+            <img src="{% static 'images/chek.svg' %}" alt="Check Icon" class="signature-icon">
+            <p class="signature-label">Мій електронний підпис</p>
+          </div>
+          <img src="{% static 'images/pidpis.svg' %}" alt="Signature" class="signature-icon1">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="main-panel" id="albumsPanel" style="display: none;">
+    <div class="block albums-block-top">
+      <div class="block-header">
+        <p class="block-title">Мої фото</p>
+        <div class="header-actions">
+            <form id="uploadPhotoForm" method="post" enctype="multipart/form-data" style="display: inline;">
+                {% csrf_token %}
+                <input type="hidden" name="upload_photo_form" value="true">
+                <input type="file" id="photoInput" name="file" accept="image/*" style="display: none;">
+                <button type="button" class="btn btn-header icon-btn add-photo-btn" id="addPhotoBtn">
+                    <img src="{% static 'images/picture.png' %}" alt="add photo" class="btn-icon">
+                    Додати фото
+                </button>
+            </form>
+        </div>
+      </div>
+      <div class="block-body">
+        <div class="photo-container">
+          {% for photo in photos %}
+            <div class="photo-image-container" data-photo-id="{{ photo.id }}">
+              <img src="{{ photo.file.url }}" alt="Uploaded Photo" class="photo-image">
+              <div class="photo-actions">
+                <img src="{% static 'images/eye.png' %}" alt="View" class="action-icon">
+                <img src="{% static 'images/trash.png' %}" alt="Delete" class="action-icon delete-photo-btn" data-photo-id="{{ photo.id }}">
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    <div class="block albums-block-create">
+      <div class="block-header" style="justify-content: center;">
+        <p class="block-title">Немає ще жодного альбому</p>
+        <div class="header-actions">
+          <button type="button" class="btn btn-header icon-btn create-album-btn-static">
+            <img src="{% static 'images/plus.png' %}" alt="create album" class="btn-icon">
+            Створити альбом
+          </button>
+        </div>
+      </div>
+    </div>
+    {% for album in albums %}
+    <div class="block albums-block-bottom" data-album-id="{{ album.id }}">
+      <div class="block-header" style="justify-content: center;">
+        <p class="block-title">{{ album.name_of_album }}</p>
+        <div class="header-actions">
+          <div class="album-actions">
+            <img src="{% static 'images/eye.png' %}" alt="View" class="action-icon">
+            <img src="{% static 'images/Dots.svg' %}" alt="More" class="action-icon_dots edit-album-btn"
+                 data-album-id="{{ album.id }}"
+                 data-name="{{ album.name_of_album }}"
+                 data-theme="{{ album.theme_of_album|default:'' }}"
+                 data-year="{{ album.year_of_album|default:'' }}">
+          </div>
+        </div>
+      </div>
+      <div class="block-body">
+        <div class="albums-grid">
+          <div class="album-card" data-album-id="{{ album.id }}">
+            <div class="album-info">
+              <p class="album-theme">{{ album.theme_of_album|default:'Без теми' }}</p>
+              <p class="album-year">{{ album.year_of_album|default:'Без року' }}</p>
+            </div>
+            <div class="album-divider"></div>
+            <p class="album-photos-label">Фотографії</p>
+            <div class="album-photo" data-album-id="{{ album.id }}">
+              <form class="album-photo-form" method="post" enctype="multipart/form-data" style="display: none;">
+                {% csrf_token %}
+                <input type="hidden" name="album_photo_form" value="true">
+                <input type="hidden" name="album_id" value="{{ album.id }}">
+                <input type="file" class="album-photo-input" name="file" accept="image/*" style="display: none;">
+              </form>
+              <div class="album-photos-container">
+                {% for photo in album.images.all %}
+                <div class="photo-image-container" data-photo-id="{{ photo.id }}">
+                  <img src="{{ photo.file.url }}" alt="Album Photo" class="photo-image">
+                  <div class="photo-actions">
+                    <img src="{% static 'images/eye.png' %}" alt="View" class="action-icon">
+                    <img src="{% static 'images/trash.png' %}" alt="Delete" class="action-icon delete-photo-btn" data-photo-id="{{ photo.id }}">
+                  </div>
+                </div>
+                {% endfor %}
+                <img src="{% static 'images/picture1.png' %}" alt="Photo Placeholder" class="photo-image album-photo-upload">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<div class="modal-overlay" id="createAlbumModal" style="display: none;">
+  <div class="modal-content">
+    <img src="{% static 'images/Vector.svg' %}" alt="Close" class="close-icon" id="closeModal">
+    <h2>Створити альбом</h2>
+    <form id="createAlbumForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="create_album_form" value="true">
+      <div class="form-group-modal">
+        <label for="id_name_of_album">Назва альбому</label>
+        {{ album_form.name_of_album }}
+      </div>
+      <div class="form-group-modal">
+        <label for="id_theme_of_album">Тема альбому</label>
+        {{ album_form.theme_of_album }}
+      </div>
+      <div class="form-group-modal">
+        <label for="id_year_of_album">Рік альбому</label>
+        {{ album_form.year_of_album }}
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-modal-primary" id="confirmCreateAlbum">Створити</button>
+        <button type="button" class="btn btn-modal-secondary" id="cancelCreateAlbum">Скасувати</button>
+      </div>
+      <div id="create-album-error-message" class="error-message" style="display:none; color: red; margin-top: 15px; text-align: center;"></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="editAlbumModal" style="display: none;">
+  <div class="modal-content">
+    <img src="{% static 'images/Vector.svg' %}" alt="Close" class="close-icon" id="closeEditModal">
+    <h2>Редагувати альбом</h2>
+    <form id="editAlbumForm" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="edit_album_form" value="true">
+      <input type="hidden" name="album_id" id="edit_album_id">
+      <div class="form-group-modal">
+        <label for="edit_name_of_album">Назва альбому</label>
+        <input type="text" name="name_of_album" id="edit_name_of_album" class="form-control" required>
+      </div>
+      <div class="form-group-modal">
+        <label for="edit_theme_of_album">Тема альбому</label>
+        <input type="text" name="theme_of_album" id="edit_theme_of_album" class="form-control">
+      </div>
+      <div class="form-group-modal">
+        <label for="edit_year_of_album">Рік альбому</label>
+        <input type="number" name="year_of_album" id="edit_year_of_album" class="form-control">
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-modal-primary" id="confirmEditAlbum">Зберегти</button>
+        <button type="button" class="btn btn-modal-secondary" id="cancelEditAlbum">Скасувати</button>
+      </div>
+      <div id="edit-album-error-message" class="error-message" style="display:none; color: red; margin-top: 15px; text-align: center;"></div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-overlay" id="passwordConfirmModal" style="display: none;">
+    <div class="modal-content modal-password-confirm">
+      <img src="{% static 'images/Vector.svg' %}" alt="Close" class="close-icon" id="closePasswordModal">
+      <h2 class="modal-password-title">Підтвердження для зміни паролю</h2>
+      <p class="modal-password-subtitle">Ми надіслали 6-значний код на вашу пошту ({{ user.email }}). Введіть його нижче, щоб підтвердити акаунт.</p>
+      <form id="passwordConfirmForm" method="post">
+        {% csrf_token %}
+        <div class="form-group-modal">
+          <label for="id_code">Код підтвердження</label>
+          <div class="code-inputs">
+            <div class="code-input-pair">
+              <input type="text" class="code-input" maxlength="1" placeholder="___" />
+              <input type="text" class="code-input" maxlength="1" placeholder="___" />
+            </div>
+            <div class="code-input-pair">
+              <input type="text" class="code-input" maxlength="1" placeholder="___" />
+              <input type="text" class="code-input" maxlength="1" placeholder="___" />
+            </div>
+            <div class="code-input-pair">
+              <input type="text" class="code-input" maxlength="1" placeholder="___" />
+              <input type="text" class="code-input" maxlength="1" placeholder="___" />
+            </div>
+          </div>
+        </div>
+        <div id="password-modal-error-message" class="error-message" style="display:none; color: red; margin-top: 15px; text-align: center;"></div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-modal-primary">Підтвердити</button>
+          <button type="button" class="btn btn-modal-secondary" id="cancelPasswordChange">Скасувати</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+  
+  const personalInfoLink = document.getElementById('personalInfoLink');
+  const albumsLink = document.getElementById('albumsLink');
+  const mainPanel = document.getElementById('mainPanel');
+  const albumsPanel = document.getElementById('albumsPanel');
+
+  const editProfileBtn = document.getElementById('editProfileBtn');
+  const photoActionsContainer = document.getElementById('photoActionsContainer');
+  const avatarInstruction = document.querySelector('.avatar-instruction');
+  const profilePhotoForm = document.getElementById('profilePhotoForm');
+  const profilePhotoInput = document.getElementById('profilePhotoInput');
+  const userAvatar = document.querySelector('.user-card__avatar');
+  const photoActionAdd = document.querySelector('.photo-action-add');
+  const photoActionChoose = document.querySelector('.photo-action-choose');
+
+  const infoInputs = ['id_name', 'id_surname', 'id_date_of_birth', 'id_email'].map(id => document.getElementById(id));
+  const passwordInputs = ['id_password', 'id_password_confirm'].map(id => document.getElementById(id));
+  const passwordFields = document.querySelectorAll('.password-field');
+  const formDivider = document.querySelector('.form-divider');
+  
+  const infoActionsContainer = document.getElementById('info-actions-container');
+  const passwordActionsContainer = document.getElementById('password-actions-container');
+  
+  const editInfoBtn = document.getElementById('editInfoBtn');
+  const saveInfoBtn = document.getElementById('saveInfoBtn');
+  const infoErrorMessage = document.getElementById('info-error-message');
+
+  const editPasswordBtn = document.getElementById('editPasswordBtn');
+  const savePasswordBtn = document.getElementById('savePasswordBtn');
+  const passwordErrorMessage = document.getElementById('password-error-message');
+  
+  const passwordConfirmModal = document.getElementById('passwordConfirmModal');
+  const closePasswordModal = document.getElementById('closePasswordModal');
+  const cancelPasswordChange = document.getElementById('cancelPasswordChange');
+  const passwordConfirmForm = document.getElementById('passwordConfirmForm');
+  const passwordModalErrorMessage = document.getElementById('password-modal-error-message');
+
+  const addPhotoBtn = document.getElementById('addPhotoBtn');
+  const photoInput = document.getElementById('photoInput');
+  const uploadPhotoForm = document.getElementById('uploadPhotoForm');
+  const photoContainer = document.querySelector('.photo-container');
+  const createAlbumModal = document.getElementById('createAlbumModal');
+  const createAlbumBtnStatic = document.querySelector('.create-album-btn-static');
+  const cancelCreateAlbumBtn = document.getElementById('cancelCreateAlbum');
+  const createAlbumForm = document.getElementById('createAlbumForm');
+  const closeModalBtn = document.getElementById('closeModal');
+  const createAlbumErrorMessage = document.getElementById('create-album-error-message');
+  const editAlbumModal = document.getElementById('editAlbumModal');
+  const cancelEditAlbumBtn = document.getElementById('cancelEditAlbum');
+  const closeEditModalBtn = document.getElementById('closeEditModal');
+  const editAlbumForm = document.getElementById('editAlbumForm');
+  const editAlbumErrorMessage = document.getElementById('edit-album-error-message');
+
+  let isProfileEditMode = false;
+
+  personalInfoLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    mainPanel.style.display = 'block';
+    albumsPanel.style.display = 'none';
+    personalInfoLink.parentElement.classList.add('active');
+    albumsLink.parentElement.classList.remove('active');
+  });
+
+  albumsLink.addEventListener('click', (e) => {
+    e.preventDefault();
+    mainPanel.style.display = 'none';
+    albumsPanel.style.display = 'block';
+    personalInfoLink.parentElement.classList.remove('active');
+    albumsLink.parentElement.classList.add('active');
+  });
+
+  editProfileBtn.addEventListener('click', () => {
+    const userNameElement = document.getElementById('userName');
+    const userCardInfo = document.querySelector('.user-card__info');
+    if (!isProfileEditMode) {
+      isProfileEditMode = true;
+      photoActionsContainer.style.display = 'flex';
+      avatarInstruction.style.display = 'block';
+      userAvatar.style.cursor = 'pointer';
+      const nameParts = userNameElement.textContent.trim().split(/\s+/);
+      const firstName = nameParts[0] || '';
+      const lastName = nameParts.slice(1).join(' ') || '';
+      const inputContainer = document.createElement('div');
+      inputContainer.className = 'user-card__name-input-container';
+      inputContainer.innerHTML = `
+        <input type="text" id="firstNameInput" name="first_name" class="user-card__name-input" value="${firstName}" placeholder="Ім’я">
+        <input type="text" id="lastNameInput" name="last_name" class="user-card__name-input" value="${lastName}" placeholder="Прізвище">`;
+      userNameElement.style.display = 'none';
+      userCardInfo.insertBefore(inputContainer, userNameElement);
+      editProfileBtn.innerHTML = `<img src="{% static 'images/pen.svg' %}" alt="save" class="btn-icon"> Зберегти`;
+      editProfileBtn.classList.remove('btn-secondary');
+      editProfileBtn.classList.add('btn-primary');
+    } else {
+      const profileFormData = new FormData(profilePhotoForm);
+      profileFormData.append('first_name', document.getElementById('firstNameInput').value);
+      profileFormData.append('last_name', document.getElementById('lastNameInput').value);
+      fetch('{% url "settings" %}', {
+        method: 'POST', body: profileFormData, headers: { 'X-CSRFToken': csrfToken, 'Accept': 'application/json' }
+      }).then(response => response.json()).then(data => {
+        if (data.success) {
+          isProfileEditMode = false;
+          photoActionsContainer.style.display = 'none';
+          avatarInstruction.style.display = 'none';
+          userAvatar.style.cursor = 'default';
+          const inputContainer = document.querySelector('.user-card__name-input-container');
+          const firstName = document.getElementById('firstNameInput').value;
+          const lastName = document.getElementById('lastNameInput').value;
+          if (inputContainer) inputContainer.remove();
+          userNameElement.textContent = `${firstName} ${lastName}`.trim();
+          userNameElement.style.display = 'block';
+          if (data.photo_url) userAvatar.src = data.photo_url + '?' + new Date().getTime();
+          document.getElementById('id_name').value = firstName;
+          document.getElementById('id_surname').value = lastName;
+          document.querySelector('.signature-value').textContent = `${firstName} ${lastName}`.trim();
+          editProfileBtn.innerHTML = `<img src="{% static 'images/edit.svg' %}" alt="edit" class="btn-icon"> Редагувати`;
+          editProfileBtn.classList.remove('btn-primary');
+          editProfileBtn.classList.add('btn-secondary');
+        } else {
+          infoErrorMessage.textContent = Object.values(data.errors).flat().join(' ') || 'Не вдалося оновити профіль.';
+          infoErrorMessage.style.display = 'block';
+        }
+      }).catch(error => {
+        console.error('Fetch error:', error);
+        infoErrorMessage.textContent = 'Сталася помилка.';
+        infoErrorMessage.style.display = 'block';
+      });
+    }
+  });
+
+  photoActionAdd.addEventListener('click', () => profilePhotoInput.click());
+  photoActionChoose.addEventListener('click', () => profilePhotoInput.click());
+  profilePhotoInput.addEventListener('change', () => {
+    if (profilePhotoInput.files.length > 0) {
+      const reader = new FileReader();
+      reader.onload = (e) => userAvatar.src = e.target.result;
+      reader.readAsDataURL(profilePhotoInput.files[0]);
+    }
+  });
+  
+  editInfoBtn.addEventListener('click', () => toggleInfoEditMode(true));
+  saveInfoBtn.addEventListener('click', () => {
+    infoErrorMessage.style.display = 'none';
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', csrfToken);
+    formData.append('action', 'update_info');
+    infoInputs.forEach(input => formData.append(input.name, input.value));
+    fetch('{% url "settings" %}', {
+      method: 'POST', body: formData, headers: { 'Accept': 'application/json' }
+    }).then(response => response.json()).then(data => {
+      if (data.success) {
+        const newData = data.new_data;
+        document.getElementById('id_name').value = newData.first_name;
+        document.getElementById('id_surname').value = newData.last_name;
+        document.getElementById('id_email').value = newData.email;
+        document.getElementById('userName').textContent = `${newData.first_name} ${newData.last_name}`.trim();
+        document.getElementById('userTag').textContent = newData.user_tag;
+        document.querySelector('.signature-value').textContent = `${newData.first_name} ${newData.last_name}`.trim();
+        toggleInfoEditMode(false);
+      } else {
+        const errorText = Object.values(data.errors).flat().join(' ');
+        infoErrorMessage.textContent = errorText;
+        infoErrorMessage.style.display = 'block';
+      }
+    }).catch(error => {
+      infoErrorMessage.textContent = 'Сталася помилка. Спробуйте ще раз.';
+      infoErrorMessage.style.display = 'block';
+    });
+  });
+
+  function toggleInfoEditMode(isEditing) {
+    infoInputs.forEach(input => input.readOnly = !isEditing);
+    editInfoBtn.style.display = isEditing ? 'none' : 'inline-flex';
+    saveInfoBtn.style.display = isEditing ? 'inline-flex' : 'none';
+    passwordActionsContainer.style.display = isEditing ? 'none' : 'flex';
+    if (!isEditing) infoErrorMessage.style.display = 'none';
+  }
+
+  editPasswordBtn.addEventListener('click', () => togglePasswordEditMode(true));
+  savePasswordBtn.addEventListener('click', () => {
+    passwordErrorMessage.style.display = 'none';
+    const newPassword = passwordInputs[0].value;
+    const newPasswordConfirm = passwordInputs[1].value;
+    if (!newPassword || !newPasswordConfirm) {
+      passwordErrorMessage.textContent = 'Введіть новий пароль і підтвердження.';
+      passwordErrorMessage.style.display = 'block';
+      return;
+    }
+    if (newPassword !== newPasswordConfirm) {
+      passwordErrorMessage.textContent = 'Паролі не співпадають.';
+      passwordErrorMessage.style.display = 'block';
+      return;
+    }
+    const formData = new FormData();
+    formData.append('csrfmiddlewaretoken', csrfToken);
+    formData.append('action', 'request_password_code');
+    formData.append('password', newPassword);
+    fetch('{% url "settings" %}', {
+      method: 'POST', body: formData, headers: { 'Accept': 'application/json' }
+    }).then(response => response.json()).then(data => {
+      if (data.success) {
+        passwordConfirmModal.style.display = 'flex';
+      } else {
+        passwordErrorMessage.textContent = Object.values(data.errors).flat().join(' ');
+        passwordErrorMessage.style.display = 'block';
+      }
+    }).catch(error => {
+      console.error('Fetch error:', error);
+      passwordErrorMessage.textContent = 'Сталася помилка при запиті коду.';
+      passwordErrorMessage.style.display = 'block';
+    });
+  });
+
+  function togglePasswordEditMode(isEditing) {
+    formDivider.style.display = isEditing ? 'block' : 'none';
+    passwordFields.forEach(field => field.style.display = isEditing ? 'block' : 'none');
+    passwordInputs.forEach(input => {
+      input.readOnly = !isEditing;
+      if (!isEditing) input.value = '';
+    });
+    editPasswordBtn.style.display = isEditing ? 'none' : 'inline-flex';
+    savePasswordBtn.style.display = isEditing ? 'inline-flex' : 'none';
+    infoActionsContainer.style.display = isEditing ? 'none' : 'flex';
+    if (!isEditing) passwordErrorMessage.style.display = 'none';
+  }
+
+  closePasswordModal.addEventListener('click', () => {
+    passwordConfirmModal.style.display = 'none';
+    togglePasswordEditMode(false);
+  });
+  cancelPasswordChange.addEventListener('click', () => {
+    passwordConfirmModal.style.display = 'none';
+    togglePasswordEditMode(false);
+  });
+  passwordConfirmForm.addEventListener('submit', function(event) {
+    event.preventDefault();
+    passwordModalErrorMessage.style.display = 'none';
+    const modalFormData = new FormData();
+    modalFormData.append('csrfmiddlewaretoken', csrfToken);
+    modalFormData.append('action', 'confirm_change');
+    const code = Array.from(document.querySelectorAll('.code-input')).map(input => input.value).join('');
+    modalFormData.append('code', code);
+    fetch('{% url "settings" %}', {
+      method: 'POST', body: modalFormData, headers: { 'Accept': 'application/json' }
+    }).then(response => response.json()).then(data => {
+      if (data.success) {
+        passwordConfirmModal.style.display = 'none';
+        document.querySelectorAll('.code-input').forEach(i => i.value = '');
+        togglePasswordEditMode(false);
+      } else {
+        passwordModalErrorMessage.textContent = data.errors || 'Невірний код.';
+        passwordModalErrorMessage.style.display = 'block';
+      }
+    }).catch(error => {
+      console.error('Fetch error:', error);
+      passwordModalErrorMessage.textContent = 'Виникла помилка. Спробуйте ще раз.';
+      passwordModalErrorMessage.style.display = 'block';
+    });
+  });
+
+  addPhotoBtn.addEventListener('click', () => photoInput.click());
+  photoInput.addEventListener('change', () => {
+    if (photoInput.files.length > 0) {
+      const formData = new FormData(uploadPhotoForm);
+      fetch('{% url "settings" %}', {
+        method: 'POST', body: formData, headers: { 'X-CSRFToken': csrfToken, 'Accept': 'application/json' }
+      }).then(response => response.json()).then(data => {
+        if (data.success) {
+          const photoDiv = document.createElement('div');
+          photoDiv.className = 'photo-image-container';
+          photoDiv.dataset.photoId = data.photo_id;
+          photoDiv.innerHTML = `
+            <img src="${data.photo_url}" alt="Uploaded Photo" class="photo-image">
+            <div class="photo-actions">
+              <img src="{% static 'images/eye.png' %}" alt="View" class="action-icon">
+              <img src="{% static 'images/trash.png' %}" alt="Delete" class="action-icon delete-photo-btn" data-photo-id="${data.photo_id}">
+            </div>`;
+          photoContainer.appendChild(photoDiv);
+          addDeletePhotoEventListeners();
+        } else {
+          const errorText = Object.values(data.errors).flat().join(' ') || 'Не вдалося завантажити фото.';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-message';
+          errorDiv.style.color = 'red';
+          errorDiv.style.marginTop = '15px';
+          errorDiv.textContent = errorText;
+          photoContainer.prepend(errorDiv);
+          setTimeout(() => errorDiv.remove(), 3000);
+        }
+      }).catch(error => {
+        console.error('Error:', error);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.style.color = 'red';
+        errorDiv.style.marginTop = '15px';
+        errorDiv.textContent = 'Сталася помилка при завантаженні фото.';
+        photoContainer.prepend(errorDiv);
+        setTimeout(() => errorDiv.remove(), 3000);
+      });
+    }
+  });
+
+  function addAlbumPhotoUploadListeners() {
+    document.querySelectorAll('.album-photo-upload').forEach(img => {
+      img.removeEventListener('click', handleAlbumPhotoClick);
+      img.addEventListener('click', handleAlbumPhotoClick);
+    });
+  }
+
+  function handleAlbumPhotoClick(event) {
+    const albumPhotoDiv = event.target.closest('.album-photo');
+    const input = albumPhotoDiv.querySelector('.album-photo-input');
+    input.click();
+  }
+
+  document.querySelectorAll('.album-photo-input').forEach(input => {
+    input.addEventListener('change', (event) => {
+      const form = event.target.closest('.album-photo-form');
+      const photosContainer = event.target.closest('.album-photo').querySelector('.album-photos-container');
+      const formData = new FormData(form);
+      fetch('{% url "settings" %}', {
+        method: 'POST', body: formData, headers: { 'X-CSRFToken': csrfToken, 'Accept': 'application/json' }
+      }).then(response => response.json()).then(data => {
+        if (data.success) {
+          const photoDiv = document.createElement('div');
+          photoDiv.className = 'photo-image-container';
+          photoDiv.dataset.photoId = data.photo_id;
+          photoDiv.innerHTML = `
+            <img src="${data.photo_url}" alt="Album Photo" class="photo-image">
+            <div class="photo-actions">
+              <img src="{% static 'images/eye.png' %}" alt="View" class="action-icon">
+              <img src="{% static 'images/trash.png' %}" alt="Delete" class="action-icon delete-photo-btn" data-photo-id="${data.photo_id}">
+            </div>`;
+          photosContainer.insertBefore(photoDiv, photosContainer.lastElementChild);
+          addDeletePhotoEventListeners();
+        } else {
+          const errorText = Object.values(data.errors).flat().join(' ') || 'Не вдалося завантажити фото.';
+          const errorDiv = document.createElement('div');
+          errorDiv.className = 'error-message';
+          errorDiv.style.color = 'red';
+          errorDiv.style.marginTop = '15px';
+          errorDiv.textContent = errorText;
+          photosContainer.prepend(errorDiv);
+          setTimeout(() => errorDiv.remove(), 3000);
+        }
+      }).catch(error => {
+        console.error('Error uploading photo:', error);
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-message';
+        errorDiv.style.color = 'red';
+        errorDiv.style.marginTop = '15px';
+        errorDiv.textContent = 'Сталася помилка при завантаженні фото.';
+        photosContainer.prepend(errorDiv);
+        setTimeout(() => errorDiv.remove(), 3000);
+      });
+    });
+  });
+
+  function addDeletePhotoEventListeners() {
+    document.querySelectorAll('.delete-photo-btn').forEach(button => {
+      button.removeEventListener('click', handleDeletePhoto);
+      button.addEventListener('click', handleDeletePhoto);
+    });
+  }
+
+  function handleDeletePhoto(event) {
+    const photoId = event.target.dataset.photoId;
+    const photoContainerElement = event.target.closest('.photo-image-container');
+    const errorDiv = document.createElement('div');
+    errorDiv.className = 'error-message';
+    errorDiv.style.color = 'red';
+    errorDiv.style.marginTop = '15px';
+    
+    if (confirm('Ви впевнені, що хочете видалити це фото?')) {
+      fetch(`{% url 'delete_photo' 0 %}`.replace('0', photoId), {
+        method: 'POST', headers: { 'X-CSRFToken': csrfToken, 'Accept': 'application/json' }
+      }).then(response => response.json()).then(data => {
+        if (data.success) {
+          photoContainerElement.remove();
+          updateNoAlbumsMessage();
+        } else {
+          errorDiv.textContent = data.message || 'Не вдалося видалити фото.';
+          photoContainerElement.parentElement.prepend(errorDiv);
+          setTimeout(() => errorDiv.remove(), 3000);
+        }
+      }).catch(error => {
+        console.error('Error deleting photo:', error);
+        errorDiv.textContent = 'Сталася помилка при видаленні фото.';
+        photoContainerElement.parentElement.prepend(errorDiv);
+        setTimeout(() => errorDiv.remove(), 3000);
+      });
+    }
+  }
+
+  addDeletePhotoEventListeners();
+  addAlbumPhotoUploadListeners();
+
+  createAlbumBtnStatic.addEventListener('click', () => { createAlbumModal.style.display = 'flex'; });
+  cancelCreateAlbumBtn.addEventListener('click', () => { 
+    createAlbumModal.style.display = 'none'; 
+    createAlbumForm.reset(); 
+    createAlbumErrorMessage.style.display = 'none';
+  });
+  closeModalBtn.addEventListener('click', () => { 
+    createAlbumModal.style.display = 'none'; 
+    createAlbumForm.reset(); 
+    createAlbumErrorMessage.style.display = 'none';
+  });
+  createAlbumForm.addEventListener('submit', event => {
+    event.preventDefault();
+    createAlbumErrorMessage.style.display = 'none';
+    const formData = new FormData(createAlbumForm);
+    fetch('{% url "settings" %}', {
+      method: 'POST', body: formData, headers: { 'X-CSRFToken': csrfToken, 'Accept': 'application/json' }
+    }).then(response => response.json()).then(data => {
+      if (data.success) {
+        window.location.reload();
+      } else {
+        createAlbumErrorMessage.textContent = Object.values(data.errors).flat().join(' ') || 'Не вдалося створити альбом.';
+        createAlbumErrorMessage.style.display = 'block';
+      }
+    }).catch(error => {
+      console.error('Error creating album:', error);
+      createAlbumErrorMessage.textContent = 'Сталася помилка при створенні альбому.';
+      createAlbumErrorMessage.style.display = 'block';
+    });
+  });
+
+  function updateNoAlbumsMessage() {
+    const albums = document.querySelectorAll('.albums-block-bottom');
+    const noAlbumsBlock = document.querySelector('.albums-block-create');
+    noAlbumsBlock.style.display = albums.length === 0 ? 'block' : 'none';
+  }
+
+  function addEditAlbumEventListeners() {
+    document.querySelectorAll('.edit-album-btn').forEach(button => {
+      button.removeEventListener('click', handleEditAlbum);
+      button.addEventListener('click', handleEditAlbum);
+    });
+  }
+
+  function handleEditAlbum(event) {
+    const button = event.currentTarget;
+    document.getElementById('edit_album_id').value = button.dataset.albumId;
+    document.getElementById('edit_name_of_album').value = button.dataset.name;
+    document.getElementById('edit_theme_of_album').value = button.dataset.theme;
+    document.getElementById('edit_year_of_album').value = button.dataset.year;
+    editAlbumModal.style.display = 'flex';
+  }
+
+  addEditAlbumEventListeners();
+
+  cancelEditAlbumBtn.addEventListener('click', () => { 
+    editAlbumModal.style.display = 'none'; 
+    editAlbumForm.reset(); 
+    editAlbumErrorMessage.style.display = 'none';
+  });
+  closeEditModalBtn.addEventListener('click', () => { 
+    editAlbumModal.style.display = 'none'; 
+    editAlbumForm.reset(); 
+    editAlbumErrorMessage.style.display = 'none';
+  });
+  editAlbumForm.addEventListener('submit', event => {
+    event.preventDefault();
+    editAlbumErrorMessage.style.display = 'none';
+    const formData = new FormData(editAlbumForm);
+    const albumId = formData.get('album_id');
+    fetch('{% url "settings" %}', {
+      method: 'POST', body: formData, headers: { 'X-CSRFToken': csrfToken, 'Accept': 'application/json' }
+    }).then(response => response.json()).then(data => {
+      if (data.success) {
+        const albumBlock = document.querySelector(`.albums-block-bottom[data-album-id="${albumId}"]`);
+        const albumCard = albumBlock.querySelector(`.album-card[data-album-id="${albumId}"]`);
+        const name = formData.get('name_of_album');
+        const theme = formData.get('theme_of_album') || 'Без теми';
+        const year = formData.get('year_of_album') || 'Без року';
+        albumBlock.querySelector('.block-title').textContent = name;
+        albumCard.querySelector('.album-theme').textContent = theme;
+        albumCard.querySelector('.album-year').textContent = year;
+        const editBtn = albumBlock.querySelector('.edit-album-btn');
+        editBtn.dataset.name = name;
+        editBtn.dataset.theme = theme;
+        editBtn.dataset.year = year;
+        editAlbumModal.style.display = 'none';
+        editAlbumForm.reset();
+      } else {
+        editAlbumErrorMessage.textContent = Object.values(data.errors).flat().join(' ') || 'Не вдалося оновити альбом.';
+        editAlbumErrorMessage.style.display = 'block';
+      }
+    }).catch(error => {
+      console.error('Error editing album:', error);
+      editAlbumErrorMessage.textContent = 'Сталася помилка при редагуванні альбому.';
+      editAlbumErrorMessage.style.display = 'block';
+    });
+  });
+
+  document.querySelectorAll('.code-input').forEach((input, index, inputs) => {
+    input.addEventListener('input', (e) => {
+      if (e.target.value.length === 1 && index < inputs.length - 1) { inputs[index + 1].focus(); }
+    });
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Backspace' && e.target.value.length === 0 && index > 0) { inputs[index - 1].focus(); }
+    });
+  });
+});
+</script>
+
+<style>
+.avatar-instruction {
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: -0.7%;
+  color: #070A1C;
+  text-align: center;
+  margin: 0 0 10px 0;
+}
+.user-card__name-input-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto 16px auto;
+}
+.user-card__name-input {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  padding: 10px 16px;
+  background: #FFFFFF;
+  border: 1px solid #81818D;
+  box-sizing: border-box;
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 22px;
+  letter-spacing: -0.7%;
+  color: #070A1C;
+  outline: none;
+  text-align: left;
+}
+.user-card__name-input::placeholder {
+  color: #81818D;
+  font-weight: 400;
+  font-size: 16px;
+}
+.user-card__avatar:hover {
+  opacity: 0.8;
+}
+.user-card__avatar[style*="cursor: pointer"]:hover {
+    opacity: 0.7;
+}
+.photo-action-add, .photo-action-choose {
+  cursor: pointer;
+}
+.photo-action-add:hover, .photo-action-choose:hover {
+  opacity: 0.8;
+}
+.close-icon {
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  cursor: pointer;
+}
+.modal-password-confirm {
+  width: 640px;
+  height: auto;
+  max-width: 90vw;
+  padding: 24px 44px 44px 44px;
+  border-radius: 20px;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  position: relative;
+}
+.modal-password-title {
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 100%;
+  letter-spacing: -1%;
+  text-align: center;
+  color: #070A1C;
+  margin-bottom: 16px;
+  white-space: normal;
+}
+.modal-password-subtitle {
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: -1%;
+  text-align: center;
+  color: #070A1C;
+  margin-bottom: 24px;
+}
+.code-inputs {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 52px;
+  width: 100%;
+  margin: 0 auto;
+}
+.code-input-pair {
+  display: flex;
+  gap: 16px;
+}
+.code-input {
+  width: 50px;
+  height: 45px;
+  padding: 10px;
+  border-radius: 10px;
+  border-width: 1px;
+  background-color: #FFFFFF;
+  border: solid 1px #CDCED2;
+  text-align: center;
+  font-family: 'GT Walsheim Pro', sans-serif;
+}
+.code-input::placeholder {
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 100%;
+  letter-spacing: -0.7%;
+  color: #81818D;
+}
+.code-input:focus {
+  outline: none;
+  border-color: var(--input-border-color, #CDCED2);
+  box-shadow: none;
+}
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+  margin-top: 20px;
+  width: 100%;
+}
+.btn.btn-modal-primary {
+  flex: 1;
+  height: 52px;
+  border-radius: 1234px;
+  background: var(--button-bg, #543C52);
+  color: #FFFFFF;
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.btn.btn-modal-secondary {
+  flex: 1;
+  height: 40px;
+  border-radius: 1234px;
+  border: 1px solid var(--border-color, #543C52);
+  background: transparent;
+  color: var(--text-color, #543C52);
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+.album-photos-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: flex-start;
+}
+.album-photo .photo-image-container {
+  position: relative;
+  display: inline-block;
+  width: 200px;
+  height: 200px;
+}
+.album-photo .photo-image {
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 10px;
+}
+.album-photo .photo-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: none;
+  gap: 10px;
+}
+.album-photo .photo-image-container:hover .photo-actions {
+  display: flex;
+}
+.album-photo .action-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+.album-photo-upload {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.album-photo-upload:hover {
+  opacity: 0.8;
+}
+.albums-block-create {
+  margin-top: 20px;
+  padding: 20px;
+  background: #FFFFFF;
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+.modal-content {
+  background: #FFFFFF;
+  border-radius: 20px;
+  padding: 24px;
+  width: 500px;
+  max-width: 90%;
+  position: relative;
+}
+.form-group-modal {
+  margin-bottom: 16px;
+}
+.form-group-modal label {
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-weight: 500;
+  font-size: 16px;
+  color: #070A1C;
+  margin-bottom: 8px;
+  display: block;
+}
+.form-control {
+  width: 100%;
+  height: 42px;
+  border-radius: 10px;
+  padding: 10px 16px;
+  border: 1px solid #CDCED2;
+  font-family: 'GT Walsheim Pro', sans-serif;
+  font-size: 16px;
+  color: #070A1C;
+}
+.form-control:focus {
+  outline: none;
+  border-color: #543C52;
+}
+.btn-header.icon-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+.block-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 20px;
+}
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-left: auto;
+}
+.settings-form .form-group {
+    margin-bottom: 0px;
+}
+.settings-form .form-group:last-of-type {
+    margin-bottom: 0;
+}
+.input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.input-with-icon input {
+    width: 100%;
+    height: 42px;
+    border-radius: 10px;
+    padding: 10px 40px 10px 16px;
+    border: 1px solid #CDCED2;
+}
+.input-with-icon .input-icon {
+    position: absolute;
+    right: 15px;
+    height: 20px;
+    width: 20px;
+    pointer-events: none;
+}
+.error-message {
+    width: 100%;
+    text-align: left;
+}
+.form-divider {
+    border: 1px solid #E0E0E0;
+    margin: 20px 0;
+}
+.block-body {
+    position: relative;
+    padding-bottom: 60px;
+}
+.form-footer-actions {
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    display: flex;
+    gap: 10px;
+}
+.photo-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.photo-image-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+.photo-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+}
+.photo-actions {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: none;
+  gap: 10px;
+}
+.photo-image-container:hover .photo-actions {
+  display: flex;
+}
+.action-icon {
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+</style>
+{% endblock %}

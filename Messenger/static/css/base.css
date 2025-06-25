@@ -37,14 +37,20 @@ body {
     left: 0;
     right: 0;
     z-index: 1000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
     height: 88px;
-    padding: 0 80px;
     background-color: white;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
     box-sizing: border-box;
+}
+
+.header-inner {
+    max-width: 1272px;
+    margin: 0 auto;
+    padding: 0 80px;
+    height: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .logo-image img {
@@ -65,6 +71,7 @@ body {
     display: flex;
     align-items: center;
     gap: 24px;
+    margin-left: 360px; 
 }
 
 .header-icons > div,
@@ -114,7 +121,10 @@ body {
 }
 
 .main-frame.active,
-.my-posts-frame.active {
+.my-posts-frame.active,
+.friends-frame.active,
+.chats-frame.active,
+.settings-frame.active {
     height: 28px;
     border-radius: 3px;
     gap: 8px;
@@ -128,9 +138,9 @@ body {
 
 .header-icons .main-frame:hover:not(.active),
 .header-icons .my-posts-frame:hover:not(.active),
-.header-icons .friends-frame:hover,
-.header-icons .chats-frame:hover,
-.header-icons .settings-frame:hover {
+.header-icons .friends-frame:hover:not(.active),
+.header-icons .chats-frame:hover:not(.active),
+.header-icons .settings-frame:hover:not(.active) {
     height: 28px;
     border-radius: 3px;
     gap: 8px;
@@ -141,6 +151,7 @@ body {
     justify-content: center;
     font-family: 'GT Walsheim Pro';
 }
+
 
 .main-content {
     margin-top: 104px;
@@ -153,10 +164,25 @@ body {
     display: flex;
     align-items: center;
     height: 100%;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .header-icons a > div {
     display: flex;
     align-items: center;
     gap: 8px;
+}
+
+
+@media screen and (min-width: 1440px) {
+    .header-frame {
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 1439px) {
+    .header-inner {
+        padding: 0 80px;
+    }
 }

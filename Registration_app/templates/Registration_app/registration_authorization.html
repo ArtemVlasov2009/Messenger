@@ -6,6 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>World IT Messenger</title>
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
     <link rel="stylesheet" href="{% static 'Registration_app/css/auth.css' %}">
 </head>
 <body>
@@ -14,13 +15,21 @@
     </div>
 
     <div class="main-container">
+        {% if messages %}
+        <div class="message-container">
+            {% for message in messages %}
+            <p class="{% if message.tags == 'error' %}error-message{% else %}success-message{% endif %}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
         {% if form_name == 'RegistrationForm' %}
         <div class="reg-form">
             <div class="form-nav">
                 <a href="{% url 'registration' %}" class="nav-link active">Реєстрація</a>
                 <a href="{% url 'authorization' %}" class="nav-link">Авторизація</a>
             </div>
-            <h1 class="main-title">Приєднуйся до World IT</h1>
+            <h1 class="main-title">{{ title }}</h1>
             <form method="post" class="form-space">
                 {% csrf_token %}
                 <div class="input-wrapper">
@@ -41,38 +50,32 @@
                         <img src="{% static 'images/dont_see.svg' %}" alt="Show password" class="toggle-password" data-target="{{ form.confirm_password.id_for_label }}">
                     </div>
                 </div>
+                {% if form.non_field_errors %}
+                <div class="error-container">
+                    {% for error in form.non_field_errors %}
+                    <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if form.errors %}
+                <div class="error-container">
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
                 <button type="submit" class="submit-btn">Створити обліковий запис</button>
             </form>
-            {% if messages %}
-            <div class="message-container">
-                {% for message in messages %}
-                <p class="success-message">{{ message }}</p>
-                {% endfor %}
-            </div>
-            {% endif %}
-            {% if form.errors %}
-            <div class="error-container">
-                {% for field in form %}
-                {% for error in field.errors %}
-                <p class="error-message">{{ error }}</p>
-                {% endfor %}
-                {% endfor %}
-            </div>
-            {% endif %}
         </div>
 
         {% elif form_name == 'CodeConfirmationForm' %}
         <div class="confirm-code-form">
-            <h1 class="main-title">Підтвердження пошти</h1>
-            
+            <h1 class="main-title">{{ title }}</h1>
             <div class="confirmation-text">
-                <p>Ми надіслали 6-значний код на вашу пошту ({{ user_email }}). Введіть його нижче, щоб підтвердити акаунт</p>
+                <p>{{ subtitle }}</p>
             </div>
-
-
-            
-           
-            
             <form method="post" class="form-space">
                 {% csrf_token %}
                 <div class="input-wrapper">
@@ -86,21 +89,27 @@
                         {{ form.code_6 }}
                     </div>
                 </div>
+                {% if form.non_field_errors %}
+                <div class="error-container">
+                    {% for error in form.non_field_errors %}
+                    <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if form.errors %}
+                <div class="error-container">
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
                 <div class="confirmation-buttons">
                     <button type="submit" class="submit-btn">Підтвердити</button>
                     <a href="{% url 'registration' %}" class="back-link">Назад</a>
                 </div>
             </form>
-            
-            {% if form.errors %}
-            <div class="error-container">
-                {% for field in form %}
-                {% for error in field.errors %}
-                <p class="error-message">{{ error }}</p>
-                {% endfor %}
-                {% endfor %}
-            </div>
-            {% endif %}
         </div>
 
         {% elif form_name == 'AuthorizationForm' %}
@@ -109,7 +118,7 @@
                 <a href="{% url 'registration' %}" class="nav-link">Реєстрація</a>
                 <a href="{% url 'authorization' %}" class="nav-link active">Авторизація</a>
             </div>
-            <h1 class="main-title">Раді тебе знову бачити!</h1>
+            <h1 class="main-title">{{ title }}</h1>
             <form method="post" class="form-space">
                 {% csrf_token %}
                 <div class="input-wrapper">
@@ -123,6 +132,22 @@
                         <img src="{% static 'images/dont_see.svg' %}" alt="Show password" class="toggle-password" data-target="{{ form.password.id_for_label }}">
                     </div>
                 </div>
+                {% if form.non_field_errors %}
+                <div class="error-container">
+                    {% for error in form.non_field_errors %}
+                    <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                {% if form.errors %}
+                <div class="error-container">
+                    {% for field in form %}
+                    {% for error in field.errors %}
+                    <p class="error-message">{{ error }}</p>
+                    {% endfor %}
+                    {% endfor %}
+                </div>
+                {% endif %}
                 <button type="submit" class="submit-btn">Увійти</button>
             </form>
             <div class="qr-login">
@@ -133,15 +158,6 @@
                 </div>
                 <img src="{% static 'images/qrcode.png' %}" alt="QRCODE" class="qrcode-img">
             </div>
-            {% if form.errors %}
-            <div class="error-container">
-                {% for field in form %}
-                {% for error in field.errors %}
-                <p class="error-message">{{ error }}</p>
-                {% endfor %}
-                {% endfor %}
-            </div>
-            {% endif %}
         </div>
         {% endif %}
 
@@ -166,7 +182,6 @@
                     }
                 });
             });
-
 
             const codeInputs = document.querySelectorAll('.code-input');
             if (codeInputs.length > 0) {

@@ -1,0 +1,297 @@
+{% extends "Messenger/base.html" %}
+{% load static %}
+
+{% block title %}Friends{% endblock %}
+
+{% block links %}
+{{ block.super }}
+<link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+<link rel="stylesheet" href="{% static 'css/friends.css' %}">
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
+
+<div class="content-container">
+  <div class="left-frames">
+    <div class="left-frame-main"><a href="#" onclick="showFrame('all', event)" class="frame-link active">Головна</a></div>
+    <div class="left-frame-requests"><a href="#" onclick="showFrame('requests-frame', event)" class="frame-link">Запити</a></div>
+    <div class="left-frame-recommendations"><a href="#" onclick="showFrame('recommendations-frame', event)" class="frame-link">Рекомендації</a></div>
+    <div class="left-frame-all-friends"><a href="#" onclick="showFrame('all-friends-frame', event)" class="frame-link">Всі друзі</a></div>
+  </div>
+
+  <div class="main-frame-friends">
+    <div id="requests-frame" class="frame requ-frame">
+      <div class='frame-header'>
+        <p>Запити</p>
+        <p>Дивитись всі</p>
+      </div>
+      <div class='frame-content'>
+        <div class='users-grid-container' id="requests-container">
+          {% for data in requests_data %}
+          <a href="{% url 'profile' data.user.id %}" class='user-card' id="request-user-{{ data.user.id }}">
+            <div class='user-photo'>
+              {% if data.avatar_url %}
+                <img src="{{ data.avatar_url }}" alt="{{ data.user.username }}'s Avatar" class="user-avatar">
+              {% else %}
+                <img src="{% static 'images/Avatarka-user-11.svg' %}" alt="Default User Avatar" class="user-avatar">
+              {% endif %}
+            </div>
+            <div class='user-info'>
+              <p class='username'>{{ data.user.first_name }} {{ data.user.last_name }}</p>
+              <p class='user-tag'>@{{ data.user.username }}</p>
+              <div class='user-actions'>
+                <button class='btn-primary' onclick="event.preventDefault(); confirmFriendRequest(event, {{ data.user.id }})">Підтвердити</button>
+                <button class='btn-secondary' onclick="event.preventDefault(); deleteFriendRequest(event, {{ data.user.id }})">Видалити</button>
+              </div>
+            </div>
+          </a>
+          {% empty %}
+          <p id="no-requests-message">Немає запитів.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+    
+    <div id="recommendations-frame" class="frame reco-frame">
+      <div class='frame-header'>
+        <p>Рекомендації</p>
+        <p>Дивитись всі</p>
+      </div>
+      <div class='frame-content'>
+        <div class='users-grid-container'>
+          {% for data in recommendations_data %}
+            <a href="{% url 'profile' data.user.id %}" class='user-card'>
+              <div class='user-photo'>
+                {% if data.avatar_url %}
+                  <img src="{{ data.avatar_url }}" alt="{{ data.user.username }}'s Avatar" class="user-avatar">
+                {% else %}
+                  <img src="{% static 'images/Avatarka-user-11.svg' %}" alt="Default User Avatar" class="user-avatar">
+                {% endif %}
+              </div>
+              <div class='user-info'>
+                <p class='username'>{{ data.user.first_name }} {{ data.user.last_name }}</p>
+                <p class='user-tag'>@{{ data.user.username }}</p>
+                <div class='user-actions'>
+                  <button class='btn-primary' onclick="event.preventDefault();">Підтвердити</button>
+                  <button class='btn-secondary' onclick="event.preventDefault();">Сховати</button>
+                </div>
+              </div>
+            </a>
+          {% empty %}
+          <p>Немає рекомендацій.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <div id="all-friends-frame" class="frame friend-frame">
+      <div class='frame-header'>
+        <p>Всі друзі</p>
+        <p>Дивитись всі</p>
+      </div>
+      <div class='frame-content'>
+        <div class='users-grid-container' id="friends-container">
+          {% for data in friends_data %}
+          <a href="{% url 'profile' data.user.id %}" class='user-card' id="friend-user-{{ data.user.id }}">
+            <div class='user-photo'>
+              {% if data.avatar_url %}
+                <img src="{{ data.avatar_url }}" alt="{{ data.user.username }}'s Avatar" class="user-avatar">
+              {% else %}
+                <img src="{% static 'images/Avatarka-user-11.svg' %}" alt="Default User Avatar" class="user-avatar">
+              {% endif %}
+            </div>
+            <div class='user-info'>
+              <p class='username'>{{ data.user.first_name }} {{ data.user.last_name }}</p>
+              <p class='user-tag'>@{{ data.user.username }}</p>
+              <div class='user-actions'>
+                 <button class='btn-primary' onclick="event.preventDefault(); window.location.href='{% url 'to_personal_chat' data.user.id %}'">Написати</button>
+                 <button class='btn-secondary' onclick="event.preventDefault(); deleteFriend(event, {{ data.user.id }})">Видалити</button>
+              </div>
+            </div>
+          </a>
+          {% empty %}
+          <p id="no-friends-message">Немає друзів.</p>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function showFrame(frameIdToShow, event) {
+  if (event) {
+    event.preventDefault();
+  }
+
+  const allFrames = document.querySelectorAll('.main-frame-friends .frame');
+  const allLinks = document.querySelectorAll('.left-frames .frame-link');
+  const mainFrame = document.querySelector('.main-frame-friends');
+
+  allLinks.forEach(link => link.classList.remove('active'));
+
+  const activeLink = document.querySelector(`.left-frames a[onclick*="'${frameIdToShow}'"]`);
+  if (activeLink) {
+    activeLink.classList.add('active');
+  } else if (frameIdToShow === 'all') {
+     document.querySelector('.left-frame-main .frame-link').classList.add('active');
+  }
+
+
+  if (frameIdToShow === 'all') {
+    allFrames.forEach(frame => {
+      frame.style.display = 'block';
+    });
+    if (mainFrame) {
+      mainFrame.scrollTop = 0;
+    }
+  } else {
+    allFrames.forEach(frame => {
+      frame.style.display = 'none';
+    });
+    const frameToShow = document.getElementById(frameIdToShow);
+    if (frameToShow) {
+      frameToShow.style.display = 'block';
+      if (mainFrame) {
+        mainFrame.scrollTop = 0;
+      }
+    }
+  }
+}
+
+function getCsrfToken() {
+  return document.querySelector('input[name="csrfmiddlewaretoken"]').value;
+}
+
+function confirmFriendRequest(event, userId) {
+  event.preventDefault();
+  fetch(`/confirm_friend_request/${userId}/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCsrfToken()
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const requestUserElement = document.getElementById(`request-user-${userId}`);
+      if (requestUserElement) {
+        requestUserElement.remove();
+      }
+      const requestsContainer = document.getElementById('requests-container');
+      if (!requestsContainer.querySelector('.user-card')) {
+         document.getElementById('no-requests-message').style.display = 'block';
+      }
+
+      const friendsContainer = document.getElementById('friends-container');
+      if (friendsContainer) {
+        const noFriendsMessage = document.getElementById('no-friends-message');
+        if (noFriendsMessage) noFriendsMessage.style.display = 'none';
+
+        const chatUrl = `/to_personal_chat/${data.user_id}/`;
+        
+        const friendHTML = `
+          <a href="/profile/${data.user_id}/" class='user-card' id="friend-user-${data.user_id}">
+            <div class='user-photo'>
+              <img src="${data.profile_photo}" alt="${data.username}'s Avatar" class="user-avatar">
+            </div>
+            <div class='user-info'>
+              <p class='username'>${data.username}</p>
+              <p class='user-tag'>@${data.user_tag}</p>
+              <div class='user-actions'>
+                <button class='btn-primary' onclick="event.preventDefault(); window.location.href='${chatUrl}'">Написати</button>
+                <button class='btn-secondary' onclick="event.preventDefault(); deleteFriend(event, ${data.user_id})">Видалити</button>
+              </div>
+            </div>
+          </a>
+        `;
+        friendsContainer.insertAdjacentHTML('beforeend', friendHTML);
+      }
+    } else {
+      alert('Помилка підтвердження запиту на дружбу.');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+}
+
+function deleteFriendRequest(event, userId) {
+  event.preventDefault();
+  fetch(`/delete_friend_request/${userId}/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCsrfToken()
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const requestUserElement = document.getElementById(`request-user-${userId}`);
+      if (requestUserElement) {
+        requestUserElement.remove();
+      }
+      const requestsContainer = document.getElementById('requests-container');
+      if (!requestsContainer.querySelector('.user-card')) {
+         document.getElementById('no-requests-message').style.display = 'block';
+      }
+    } else {
+      alert('Помилка видалення запиту на дружбу.');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+}
+
+function deleteFriend(event, userId) {
+  event.preventDefault();
+  fetch(`/delete_friend/${userId}/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': getCsrfToken()
+    }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      const friendUserElement = document.getElementById(`friend-user-${userId}`);
+      if (friendUserElement) {
+        friendUserElement.remove();
+      }
+      const friendsContainer = document.getElementById('friends-container');
+      if (!friendsContainer.querySelector('.user-card')) {
+         document.getElementById('no-friends-message').style.display = 'block';
+      }
+    } else {
+      alert('Помилка видалення друга.');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  showFrame('all', null);
+  const mainFrame = document.querySelector('.main-frame-friends');
+  if (mainFrame) {
+    mainFrame.scrollTop = 0;
+  }
+  
+  if (document.querySelector('#requests-container .user-card')) {
+    const msg = document.getElementById('no-requests-message');
+    if (msg) msg.style.display = 'none';
+  }
+  if (document.querySelector('#friends-container .user-card')) {
+    const msg = document.getElementById('no-friends-message');
+    if (msg) msg.style.display = 'none';
+  }
+});
+</script>
+
+{% endblock %}

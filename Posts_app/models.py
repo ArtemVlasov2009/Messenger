@@ -1,36 +1,45 @@
 from django.db import models
-from django.contrib.auth.models import User
 
-class User_Post(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+class Tag(models.Model):
+    name = models.CharField(max_length=50, unique=True)
+    def __str__(self):
+        return self.name
+
+class Image(models.Model):
+    file = models.ImageField(upload_to='images/post_images/')
+    filename = models.CharField(max_length=255)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('Messenger_App.Profile', on_delete=models.CASCADE, related_name='owned_images')
+    
+    def __str__(self):
+        return self.filename
+
+class Album(models.Model):
+    name_of_album = models.CharField(max_length=255)
+    theme_of_album = models.CharField(max_length=255, blank=True, null=True)
+    year_of_album = models.PositiveIntegerField(blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    owner = models.ForeignKey('Messenger_App.Profile', on_delete=models.CASCADE, related_name='albums')
+    images = models.ManyToManyField(Image, blank=True, related_name='image_albums')
+    preview_image = models.ForeignKey(Image, on_delete=models.SET_NULL, null=True, blank=True, related_name='album_preview')
+    
+    def __str__(self):
+        return self.name_of_album
+
+class Post(models.Model):
     title = models.CharField(max_length=255)
-    theme = models.CharField(max_length=255)
-    TAG_CHOICES = [
-        ('vacation', 'Відпочинок'),
-        ('inspiration', 'Натхнення'),
-        ('life', 'Життя'),
-        ('nature', 'Природа'),
-        ('reading', 'Читання'),
-        ('calm', 'Спокій'),
-        ('harmony', 'Гармонія'),
-        ('music', 'Музика'),
-        ('movies', 'Фільми'),
-        ('travel', 'Подорожі'),
-    ]
-    tags = models.CharField(max_length=255, choices=TAG_CHOICES)
-    text = models.TextField()
-    article_link = models.URLField(blank=True, null=True)
-    image1 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    image2 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    image3 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    image4 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    image5 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    image6 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    image7 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    image8 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    image9 = models.ImageField(upload_to='media/post_images/', blank=True, null=True)
-    view_count = models.PositiveIntegerField(default=0)
-    like_count = models.PositiveIntegerField(default=0)
-
+    content = models.TextField()
+    author = models.ForeignKey('Messenger_App.Profile', on_delete=models.CASCADE, related_name='posts_authored')
+    created_at = models.DateTimeField(auto_now_add=True)
+    tags = models.ManyToManyField(Tag, blank=True)
+    images = models.ManyToManyField(Image, blank=True)
+    
     def __str__(self):
         return self.title
+
+class Link(models.Model):
+    url = models.URLField()
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='links')
+    
+    def __str__(self):
+        return self.url

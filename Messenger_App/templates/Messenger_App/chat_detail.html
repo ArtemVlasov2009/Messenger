@@ -1,0 +1,792 @@
+{% extends "Messenger/base.html" %}
+{% load static %}
+{% block title %}Чат{% if chat_group %}: {{ chat_group.name }}{% endif %}{% endblock %}
+
+{% block links %}
+{{ block.super }}
+
+<link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+<link rel="stylesheet" href="{% static 'css/chats.css' %}">
+
+<style>
+    .chat-window { display: flex; flex-direction: column; height: 100%; width: 100%; background-color: #fff; overflow: hidden; }
+    .chat-header { display: flex; align-items: center; padding: 10px 20px; border-bottom: 1px solid #e0e0e0; background-color: white; flex-shrink: 0; height: 72px; }
+    .chat-header .back-arrow { cursor: pointer; }
+    .chat-header .group-avatar { margin-left: 16px; width: 48px; height: 48px; border-radius: 50%; object-fit: cover;}
+    .chat-header .header-info { display: flex; flex-direction: column; justify-content: center; margin-left: 10px; height: 100%; }
+    .chat-header .header-title { font-size: 16px; font-weight: 600; color: #070A1C; line-height: 1.2; }
+    .chat-header .header-members { font-size: 12px; font-weight: 400; color: #81818D; line-height: 1.2; }
+    .chat-header .chat-options-icon { margin-left: auto; cursor: pointer; width: 24px; height: 24px; }
+    .messages-container { flex-grow: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; background-color: white; border: none; scrollbar-width: none; -ms-overflow-style: none; }
+    .messages-container::-webkit-scrollbar { display: none; }
+    .message-wrapper { display: flex; align-items: flex-end; gap: 10px; margin-bottom: 12px; max-width: 75%; }
+    .message-wrapper.sent { align-self: flex-end; flex-direction: row-reverse; }
+    .message-wrapper.received { align-self: flex-start; }
+    .message-avatar { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .message { display: flex; flex-direction: column; max-width: 100%; width: fit-content; height: auto; gap: 5px; border-radius: 6px; padding: 10px; border: 1px solid #E9E5EE; }
+    .message.sent { font-family: 'GT Walsheim Pro', sans-serif; font-weight: 400; font-size: 14px; line-height: 1.5; color: #070A1C; background-color: #e6eaf0; }
+    .message.received { font-family: 'GT Walsheim Pro', sans-serif; font-weight: 400; font-size: 14px; line-height: 1.5; color: #070A1C; background-color: white; }
+    .message-author { font-weight: bold; margin-bottom: 4px; color: #543C52; font-size: 13px; }
+    .message-body { display: flex; align-items: flex-end; gap: 8px; }
+    .message-content { font-size: 0.95em; line-height: 1.4; overflow-wrap: break-word; word-wrap: break-word; word-break: break-word; }
+    .message-content img { max-width: 300px; height: auto; border-radius: 8px; margin-top: 5px; }
+    .message-time { font-family: 'GT Walsheim Pro', sans-serif; font-weight: 400; font-size: 10px; line-height: 1; color: #81818D; white-space: nowrap; padding-bottom: 2px; }
+    .message-form-container { padding: 10px 15px; background-color: white; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+    
+    /* === ЗМІНЕНО ТУТ === */
+    #message-form { 
+        display: flex; 
+        align-items: center; 
+        gap: 16px; /* Трохи зменшено для кращої адаптивності */
+        width: 100%;   /* Робить форму гнучкою */
+        max-width: 532px; /* Обмежує максимальну ширину */
+        height: 42px; 
+    }
+    /* === КІНЕЦЬ ЗМІН === */
+
+    #message-input { flex: 1; min-width: 0; height: 100%; border-radius: 10px; border: 1px solid #CDCED2; padding: 10px 16px; font-family: 'GT Walsheim Pro', sans-serif; font-weight: 400; font-size: 16px; color: #070A1C; background-color: #FFFFFF; box-sizing: border-box; outline: none; }
+    #send-button { padding: 0; border: none; background-color: #543C52; color: white; border-radius: 50%; cursor: pointer; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transition: background-color 0.2s; flex-shrink: 0; }
+    #send-button img { width: 20px; height: 20px; }
+    #message-form > img { width: 40px; height: 40px; cursor: pointer; flex-shrink: 0; }
+    #image-preview-container { display: none; position: relative; margin-bottom: 10px; padding: 5px; background-color: #f0f2f5; border-radius: 12px; max-width: 532px; width: 100%; box-sizing: border-box; }
+    #image-preview-container img { max-height: 150px; max-width: 100%; border-radius: 8px; }
+    #remove-preview-btn { position: absolute; top: -5px; right: -5px; width: 20px; height: 20px; background-color: rgba(0, 0, 0, 0.7); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 20px; text-align: center; padding: 0; }
+    .modal { position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); display: none; align-items: center; justify-content: center; }
+    .modal.show { display: flex; }
+    .modal-content-custom { display: none; background: #FFFFFF; border-radius: 20px; padding: 24px 44px 44px 44px; flex-direction: column; gap: 24px; position: relative; max-height: 90vh; box-sizing: border-box; }
+    .modal-content-custom.active-step { display: flex; }
+    .modal-content-custom .close { position: absolute; top: 24px; right: 24px; color: #aaa; font-size: 28px; font-weight: bold; cursor: pointer; }
+    .modal-header-custom { font-family: 'GT Walsheim Pro', sans-serif; font-weight: 500; font-size: 34px; line-height: 100%; letter-spacing: -0.01em; text-align: center; color: #070A1C; margin: 0; }
+    .modal-input { width: 402px; height: 42px; border-radius: 10px; padding: 10px 16px; border: 1px solid #CDCED2; background: #FFFFFF; box-sizing: border-box; font-family: 'GT Walsheim Pro', sans-serif; font-size: 16px; color: #070A1C; margin: 0 auto; outline: none; }
+    .modal-input::placeholder { color: #81818D; }
+    #modal-step-1-content { width: 490px; }
+    .modal-counter { font-family: 'GT Walsheim Pro', sans-serif; font-weight: 500; font-size: 14px; line-height: 100%; letter-spacing: -0.01em; color: #81818D; text-align: left; margin-bottom: -16px; }
+    .modal-user-list { width: 402px; height: 432px; display: flex; flex-direction: column; gap: 0; overflow-y: auto; padding-right: 10px; margin: 0 auto; }
+    .modal-user-item-custom { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 12px 0; border-bottom: 1px solid #E2E0E8; }
+    .modal-user-item-custom:first-child { border-top: 1px solid #E2E0E8; }
+    .modal-user-item-custom p { flex-grow: 1; margin: 0; font-family: 'GT Walsheim Pro', sans-serif; font-size: 15px; color: #070A1C; }
+    .modal-user-item-custom input[type="checkbox"] { width: 20px; height: 20px; flex-shrink: 0; cursor: pointer; accent-color: #543C52;}
+    #modal-step-2-content { width: 490px; }
+    .modal-label { font-family: 'GT Walsheim Pro', sans-serif; font-weight: 400; font-size: 16px; line-height: 100%; letter-spacing: -0.007em; color: #070A1C; display: block; text-align: left; }
+    .modal-form-group { display: flex; flex-direction: column; gap: 8px; }
+    #group-avatar-preview { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; align-self: center; cursor: pointer; }
+    #photoActionsContainer { display: flex; flex-direction: row; align-items: center; justify-content: center; gap: 24px; margin: 0; cursor: pointer; }
+    .photo-action { display: flex; align-items: center; }
+    .photo-action img { width: 20px; height: 20px; margin-right: 8px; }
+    .photo-action p { margin: 0; font-family: 'GT Walsheim Pro', sans-serif; font-weight: 500; font-size: 16px; color: #543C52; }
+    #selected-members-list-step2 { width: 402px; max-height: 158px; display: flex; flex-direction: column; gap: 10px; overflow-y: auto; margin: 0 auto; padding-right: 10px; }
+    .selected-member-item { display: flex; align-items: center; gap: 12px; }
+    .selected-member-item p { margin: 0; font-family: 'GT Walsheim Pro', sans-serif; font-size: 15px; color: #070A1C; flex-grow: 1; }
+    .remove-member-icon { margin-left: auto; cursor: pointer; width: 24px; height: 24px; flex-shrink: 0;}
+    .add-member-label { display: flex; align-items: center; justify-content: flex-end; gap: 8px; cursor: pointer; }
+    .add-member-label p { font-size: 16px; font-weight: 500; color: #543C52; margin: 0;}
+    .add-member-label img { width: 20px; height: 20px; }
+    .form-actions { display: flex; justify-content: flex-end; gap: 16px; margin-top: auto; }
+    .form-actions .btn { display: inline-flex; align-items: center; justify-content: center; height: 40px; border-radius: 1234px; padding: 10px 16px; font-family: 'GT Walsheim Pro', sans-serif; font-weight: 500; font-size: 14px; cursor: pointer; box-sizing: border-box; }
+    .form-actions .btn-cancel { width: auto; min-width: 100px; border: 1px solid #543C52; background-color: #FFFFFF; color: #543C52; }
+    .form-actions .btn-next { width: auto; min-width: 134px; border: none; background-color: #543C52; color: #FFFFFF; white-space: nowrap; }
+    .form-actions .btn-next:disabled { background-color: #ccc; cursor: not-allowed; }
+    .contacts-list-users-1 .avatar,
+    .modal-user-item-custom .avatar,
+    .selected-member-item .avatar,
+    .user-messege-1 img { width: 47px; height: 47px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+    .user-messege-1 { display: flex; align-items: center; gap: 12px; padding: 10px; }
+    .user-info { display: flex; align-items: center; flex-grow: 1; }
+    .user-info .nick { margin: 0; font-family: 'GT Walsheim Pro', sans-serif; font-size: 15px; font-weight: 500; color: #070A1C; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .messages-list-frame { display: flex; flex-direction: column; gap: 0; }
+    .chat-options-modal { position: fixed; z-index: 1000; display: none; }
+    .chat-options-modal-content { width: 343px; background: #E9E5EE; border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); }
+    .chat-options-modal-content .options-icon { width: 24px; height: 24px; align-self: flex-end; }
+    .option-item { display: flex; align-items: center; gap: 12px; cursor: pointer; height: 32px; }
+    .option-item .option-icon { width: 20px; height: 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .option-item p { margin: 0; font-family: 'GT Walsheim Pro', sans-serif; font-size: 15px; font-weight: 400; color: #070A1C; line-height: 20px; flex-grow: 1; }
+    .divider { width: 100%; height: 1px; background: #CDCED2; margin: 8px 0; }
+    .chat-options-modal.show { display: block; }
+</style>
+{% endblock %}
+
+{% block content %}
+{{ request.user.id|json_script:"current-user-id" }}
+{{ request.user.username|json_script:"current-username" }}
+
+{% if chat_group %}
+{{ chat_group.get_members_ids|json_script:"chat-group-members-ids" }}
+{{ chat_group.name|json_script:"chat-group-name" }}
+{% if chat_group.avatar %}
+{{ chat_group.avatar.url|json_script:"chat-group-avatar-url" }}
+{% else %}
+{{ ''|json_script:"chat-group-avatar-url" }}
+{% endif %}
+{{ chat_group.is_personal_chat|json_script:"is-personal-chat" }}
+{% endif %}
+
+<div class="content-container">
+    <div class="left-frame">
+        <div class="contacts-frame">
+            <button id="create-group-chat-btn">
+                <img src="{% static 'images/pluuuuuus.svg' %}" alt="Plus img">
+                Створити груповий чат
+            </button>
+        </div>
+        <div class="requests-frame">
+            <div class="requests">
+                <div class="requ">
+                    <img src="{% static 'images/people.svg' %}" alt="People img">
+                    <p>Контакти</p>
+                </div>
+            </div>
+            <div class="search-frame">
+                <img src="{% static 'images/search.svg' %}" alt="Search img">
+                <input type="text" id="contact-search-input" placeholder="Пошук">
+            </div>
+            <div class="contacts-list-frame">
+                {% for user_data in all_users %}
+                <div class="contacts-list-users-1" data-user-id="{{ user_data.user.id }}" data-username="{{ user_data.user.first_name }} {{ user_data.user.last_name }}" style="cursor: pointer;">
+                    {% if user_data.avatar and user_data.avatar.image and user_data.avatar.image.file %}
+                        <img src="{{ user_data.avatar.image.file.url }}" alt="{{ user_data.user.username }}'s Avatar" class="avatar">
+                    {% else %}
+                        <img src="{% static 'images/avatar.png' %}" alt="Default Avatar" class="avatar">
+                    {% endif %}
+                    <p>{{ user_data.user.first_name }} {{ user_data.user.last_name }}</p>
+                </div>
+                {% empty %}
+                <p>Немає контактів.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+<div class="middle-frame">
+{% if chat_group %}
+    <div class="chat-window">
+        <div class="chat-header">
+            <a href="{% url 'chats' %}" class="back-arrow-link"><img src="{% static 'images/ctrelka.svg' %}" alt="Back" class="back-arrow"></a>
+            
+            {% if chat_group.is_personal_chat %}
+                {% for member in chat_group.members.all %}
+                    {% if member.user != request.user %}
+                        {% with active_avatar=member.get_active_avatar %}
+                            <img src="{% if active_avatar and active_avatar.image and active_avatar.image.file %}{{ active_avatar.image.file.url }}{% else %}{% static 'images/avatar.png' %}{% endif %}" alt="User Avatar" class="group-avatar">
+                        {% endwith %}
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                 <img src="{% if chat_group.avatar %}{{ chat_group.avatar.url }}{% else %}{% static 'images/gruppa.svg' %}{% endif %}" alt="Group Avatar" class="group-avatar">
+            {% endif %}
+
+            <div class="header-info">
+                 {% if chat_group.is_personal_chat %}
+                    {% for member in chat_group.members.all %}
+                        {% if member.user != request.user %}
+                            <div class="header-title">{{ member.user.first_name }} {{ member.user.last_name }}</div>
+                            <div class="header-members">
+                                {% if member.is_online %}
+                                    онлайн
+                                {% else %}
+                                    офлайн
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                {% else %}
+                    <div class="header-title">{{ chat_group.name }}</div>
+                    <div class="header-members">{{ chat_group.members.count }} учасники</div>
+                {% endif %}
+            </div>
+            {% if not chat_group.is_personal_chat %}
+                <img src="{% static 'images/Dots.svg' %}" alt="Options" id="chat-options-icon" class="chat-options-icon">
+            {% endif %}
+        </div>
+
+        <div id="messages" class="messages-container">
+            {% for message in message_history %}
+                <div class="message-wrapper {% if message.author.user == request.user %}sent{% else %}received{% endif %}">
+                    
+                    {% if message.author.user != request.user %}
+                        <img src="{% if message.author_active_avatar and message.author_active_avatar.image and message.author_active_avatar.image.file %}{{ message.author_active_avatar.image.file.url }}{% else %}{% static 'images/avatar.png' %}{% endif %}" alt="Avatar" class="message-avatar">
+                    {% endif %}
+
+                    <div class="message {% if message.author.user == request.user %}sent{% else %}received{% endif %}">
+                        {% if not chat_group.is_personal_chat and message.author.user != request.user %}
+                            <div class="message-author">{{ message.author.user.first_name }}</div>
+                        {% endif %}
+                        <div class="message-body">
+                            <div class="message-content">
+                                {% if message.content %}{{ message.content|linebreaksbr }}{% endif %}
+                                {% if message.attached_image %}
+                                    <a href="{{ message.attached_image.url }}" target="_blank">
+                                        <img src="{{ message.attached_image.url }}" alt="Attached image">
+                                    </a>
+                                {% endif %}
+                            </div>
+                            <span class="message-time" data-timestamp="{{ message.sent_at.isoformat }}">{{ message.sent_at|date:"H:i" }}</span>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="message-form-container">
+            <div id="image-preview-container"></div>
+            
+            <form id="message-form" autocomplete="off">
+                {% csrf_token %}
+                <input type="text" id="message-input" name="message" placeholder="Повідомлення" autofocus>
+                <input type="file" id="image-upload-input" accept="image/*" style="display: none;">
+                <img src="{% static 'images/add-emoji-send-btn.svg' %}" alt="Emoji">
+                <img src="{% static 'images/add-photo-send-btn.svg' %}" alt="Photo" id="add-photo-btn">
+                <button type="submit" id="send-button">
+                    <img src="{% static 'images/btn.svg' %}" alt="Send">
+                </button>
+            </form>
+        </div>
+    </div>
+    <input type="hidden" id="groupPk" value="{{ chat_group.pk }}">
+{% else %}
+    <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: #81818D; font-size: 18px;">
+        Оберіть чат для початку спілкування
+    </div>
+{% endif %}
+</div>
+
+<div class="right-frame">
+    <div class="right-frame-top">
+        <div class="requ">
+            <img src="{% static 'images/chat.svg' %}" alt="Chat img">
+            <p class="messege-title">Повідомлення</p>
+            <a href="#" class="see-title">Дивитись всі</a>
+        </div>
+        <div class="messages-list-frame">
+            {% for chat in personal_chats %}
+            <div class="user-messege-1" style="cursor: pointer;" onclick="window.location.href='{% url 'chat' chat.chat_pk %}'">
+                <img src="{% if chat.other_user_avatar_url %}{{ chat.other_user_avatar_url }}{% else %}{% static 'images/avatar.png' %}{% endif %}" alt="User Avatar">
+                <div class="user-info">
+                    <p class="nick">{{ chat.other_user_name }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>У вас немає персональних чатів.</p>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="right-frame-bottom">
+        <div class="requ">
+            <img src="{% static 'images/chat.svg' %}" alt="Chat img">
+            <p class="messege-title">Групові чати</p>
+            <a href="#" class="see-title">Дивитись всі</a>
+        </div>
+        <div class="messages-list-frame">
+            {% for group in group_chats %}
+            <div class="user-messege-1" style="cursor: pointer;" onclick="window.location.href='{% url 'chat' group.pk %}'">
+                <img src="{% if group.avatar %}{{ group.avatar.url }}{% else %}{% static 'images/avatar.png' %}{% endif %}" alt="Group Avatar">
+                <div class="user-info">
+                    <p class="nick">{{ group.name }}</p>
+                </div>
+            </div>
+            {% empty %}
+            <p>Ви не перебуваєте в групових чатах.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+</div>
+
+<div id="group-chat-modal" class="modal">
+    <form id="group-chat-form">
+        {% csrf_token %}
+        <div id="modal-step-1-content" class="modal-content-custom">
+            <span class="close">×</span>
+            <h2 class="modal-header-custom">Нова група</h2>
+            <input type="text" id="user-search-input" class="modal-input" placeholder="Пошук контактів">
+            <p id="members-counter" class="modal-counter">Вибрано: 0</p>
+            <div id="modal-user-list-container" class="modal-user-list">
+                {% for user_data in all_users %}
+                    <div class="modal-user-item-custom" data-user-id="{{ user_data.user.id }}" data-username="{{ user_data.user.first_name }} {{ user_data.user.last_name }}">
+                        {% if user_data.avatar and user_data.avatar.image and user_data.avatar.image.file %}
+                            <img src="{{ user_data.avatar.image.file.url }}" alt="Avatar" class="avatar">
+                        {% else %}
+                            <img src="{% static 'images/avatar.png' %}" alt="Avatar" class="avatar">
+                        {% endif %}
+                        <p>{{ user_data.user.first_name }} {{ user_data.user.last_name }}</p>
+                        <input type="checkbox" name="members" value="{{ user_data.user.id }}"
+                               data-username="{{ user_data.user.first_name }} {{ user_data.user.last_name }}"
+                               data-avatar="{% if user_data.avatar and user_data.avatar.image and user_data.avatar.image.file %}{{ user_data.avatar.image.file.url }}{% else %}{% static 'images/avatar.png' %}{% endif %}">
+                    </div>
+                {% empty %}
+                    <p>Користувачі не знайдені.</p>
+                {% endfor %}
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" id="modal-cancel-btn-1">Скасувати</button>
+                <button type="button" class="btn btn-next" id="modal-next-btn" disabled>Далі</button>
+            </div>
+        </div>
+        <div id="modal-step-2-content" class="modal-content-custom">
+            <span class="close">×</span>
+            <h2 class="modal-header-custom">Нова група</h2>
+            <input type="file" name="avatar" id="group-avatar-input" accept="image/*" style="display: none;">
+            <img src="{% static 'images/gruppa.svg' %}" alt="Group Avatar Preview" id="group-avatar-preview">
+            <div id="photoActionsContainer">
+                <div class="photo-action">
+                    <img src="{% static 'images/plucik.svg' %}" alt="Add Photo Icon">
+                    <p>Додайте фото</p>
+                </div>
+                <div class="photo-action">
+                    <img src="{% static 'images/miniphoto.svg' %}" alt="Choose Photo Icon">
+                    <p>Оберіть фото</p>
+                </div>
+            </div>
+            <div class="modal-form-group">
+                <label for="group-name" class="modal-label">Назва</label>
+                <input type="text" id="group-name" name="group_name" required placeholder="Введіть назву" class="modal-input">
+            </div>
+            <div class="modal-form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <label class="modal-label">Учасники</label>
+                    <div id="add-member-btn" class="add-member-label" style="display: none;">
+                         <img src="{% static 'images/plucik.svg' %}" alt="Add Photo Icon">
+                         <p>Додайте учасника</p>
+                    </div>
+                </div>
+                <div id="selected-members-list-step2"></div>
+            </div>
+            <div class="form-actions">
+                <button type="button" class="btn btn-cancel" id="modal-back-btn">Назад</button>
+                <button type="submit" class="btn btn-next">Створити групу</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="chat-options-modal" class="chat-options-modal">
+    <div class="chat-options-modal-content">
+        <img src="{% static 'images/Dots.svg' %}" alt="Options Icon" class="options-icon" id="close-options-modal">
+        <div class="option-item" id="media-btn">
+            <img src="{% static 'images/media.svg' %}" alt="Media Icon" class="option-icon">
+            <p>Медіа</p>
+        </div>
+        <div class="option-item" id="edit-group-btn">
+            <img src="{% static 'images/edit.svg' %}" alt="Edit Icon" class="option-icon">
+            <p>Редагувати групу</p>
+        </div>
+        <div class="divider"></div>
+        <div class="option-item" id="delete-chat-btn">
+            <img src="{% static 'images/trash.svg' %}" alt="Trash Icon" class="option-icon">
+            <p>Видалити чат</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const groupPk = document.getElementById('groupPk')?.value;
+    const currentUsername = JSON.parse(document.getElementById('current-username').textContent);
+
+    if (groupPk) {
+        // --- DOM Elements ---
+        const messagesContainer = document.getElementById('messages');
+        const messageForm = document.getElementById('message-form');
+        const messageInput = document.getElementById('message-input');
+        const addPhotoButton = document.getElementById('add-photo-btn');
+        const imageUploadInput = document.getElementById('image-upload-input');
+        const imagePreviewContainer = document.getElementById('image-preview-container');
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        let stagedFile = null;
+
+        const formatTime = (isoString) => {
+            if (!isoString) return '';
+            const date = new Date(isoString);
+            return date.toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit', hour12: false });
+        };
+        
+        const scrollToBottom = () => {
+            if (messagesContainer) {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }
+        };
+
+        function clearImagePreview() {
+            stagedFile = null;
+            imagePreviewContainer.innerHTML = '';
+            imagePreviewContainer.style.display = 'none';
+            imageUploadInput.value = '';
+        }
+
+        // --- WebSocket ---
+        const webSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${groupPk}/`);
+
+        webSocket.onmessage = function(event) {
+            const data = JSON.parse(event.data);
+            if (data.type !== 'chat_message') return;
+
+            const isSentByMe = data.username === currentUsername;
+            const wrapperClass = isSentByMe ? 'sent' : 'received';
+            const messageClass = isSentByMe ? 'sent' : 'received';
+            const messageWrapper = document.createElement('div');
+            messageWrapper.className = `message-wrapper ${wrapperClass}`;
+
+            let avatarHtml = '';
+            if (!isSentByMe) {
+                const avatarSrc = data.author_avatar_url || `{% static 'images/avatar.png' %}`;
+                avatarHtml = `<img src="${avatarSrc}" alt="Avatar" class="message-avatar">`;
+            }
+
+            let authorHtml = '';
+            if (!data.is_personal && !isSentByMe) {
+                authorHtml = `<div class="message-author">${data.author_first_name}</div>`;
+            }
+            
+            let contentHtml = '';
+            if (data.message) contentHtml += data.message.replace(/\n/g, '<br>');
+            if (data.image_url) {
+                contentHtml += `<a href="${data.image_url}" target="_blank"><img src="${data.image_url}" alt="Attached image" style="max-width: 300px; border-radius: 8px; margin-top: 5px;"></a>`;
+            }
+            
+            const messageBubbleHtml = `
+                <div class="message ${messageClass}">
+                    ${authorHtml}
+                    <div class="message-body">
+                        <div class="message-content">${contentHtml}</div>
+                        <span class="message-time">${formatTime(data.sent_at)}</span>
+                    </div>
+                </div>
+            `;
+            
+            messageWrapper.innerHTML = avatarHtml + messageBubbleHtml;
+            messagesContainer.appendChild(messageWrapper);
+            scrollToBottom();
+        };
+
+        webSocket.onerror = (error) => console.error('WebSocket Error:', error);
+
+        // --- Event Listeners ---
+        addPhotoButton?.addEventListener('click', () => imageUploadInput.click());
+
+        imageUploadInput?.addEventListener('change', () => {
+            const file = imageUploadInput.files[0];
+            if (file) {
+                stagedFile = file;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreviewContainer.innerHTML = `
+                        <img src="${e.target.result}" alt="Image preview">
+                        <button type="button" id="remove-preview-btn">×</button>
+                    `;
+                    imagePreviewContainer.style.display = 'block';
+                    document.getElementById('remove-preview-btn').addEventListener('click', clearImagePreview);
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        messageForm?.addEventListener('submit', function(event) {
+            event.preventDefault();
+            const messageText = messageInput.value.trim();
+
+            if (stagedFile) {
+                const formData = new FormData();
+                formData.append('group_pk', groupPk);
+                formData.append('image', stagedFile);
+                if (messageText) {
+                    formData.append('message', messageText);
+                }
+                
+                fetch("{% url 'upload_chat_image' %}", {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': csrfToken },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        clearImagePreview();
+                        messageInput.value = '';
+                    } else {
+                        alert('Помилка відправки фото: ' + data.error);
+                    }
+                })
+                .catch(error => console.error('Error uploading image with text:', error));
+                
+            } else if (messageText) {
+                webSocket.send(JSON.stringify({ 'message': messageText }));
+                messageInput.value = '';
+                messageInput.focus();
+            }
+        });
+
+        scrollToBottom();
+    }
+
+    // --- Logic for modals (group creation, edit, etc.) ---
+    const modal = document.getElementById('group-chat-modal');
+    const groupChatForm = document.getElementById('group-chat-form');
+    if (modal && groupChatForm) {
+        const step1Content = document.getElementById('modal-step-1-content');
+        const step2Content = document.getElementById('modal-step-2-content');
+        const allModalHeaders = document.querySelectorAll('.modal-header-custom');
+        const createGroupBtn = document.getElementById('create-group-chat-btn');
+        const editGroupBtn = document.getElementById('edit-group-btn');
+        const addMemberBtn = document.getElementById('add-member-btn');
+        const nextBtn = document.getElementById('modal-next-btn');
+        const backBtn = document.getElementById('modal-back-btn');
+        const submitBtnStep2 = step2Content.querySelector('.btn-next');
+        const userSearchInput = document.getElementById('user-search-input');
+        const membersCounter = document.getElementById('members-counter');
+        const userListContainer = document.getElementById('modal-user-list-container');
+        const userItems = userListContainer.querySelectorAll('.modal-user-item-custom');
+        const avatarPreview = document.getElementById('group-avatar-preview');
+        const avatarInput = document.getElementById('group-avatar-input');
+        const photoActions = document.getElementById('photoActionsContainer');
+        const groupNameInput = document.getElementById('group-name');
+        const selectedMembersContainer = document.getElementById('selected-members-list-step2');
+        
+        const closeModal = () => modal.classList.remove('show');
+        
+        const updateCounter = () => {
+            const checkedCount = userListContainer.querySelectorAll('input[type="checkbox"]:checked').length;
+            membersCounter.textContent = `Вибрано: ${checkedCount}`;
+            nextBtn.disabled = checkedCount === 0;
+        };
+        
+        const filterUsers = (excludeUserIds = []) => {
+            const searchTerm = userSearchInput.value.toLowerCase();
+            userItems.forEach(item => {
+                const userId = item.dataset.userId;
+                const username = item.dataset.username.toLowerCase();
+                const isExcluded = excludeUserIds.includes(parseInt(userId));
+                item.style.display = (username.includes(searchTerm) && !isExcluded) ? 'flex' : 'none';
+            });
+        };
+        
+        createGroupBtn?.addEventListener('click', () => {
+            groupChatForm.dataset.mode = 'create';
+            groupChatForm.reset();
+            allModalHeaders.forEach(h => h.textContent = 'Нова група');
+            submitBtnStep2.textContent = 'Створити групу';
+            backBtn.style.display = 'inline-flex';
+            addMemberBtn.style.display = 'none';
+            userSearchInput.value = '';
+            filterUsers();
+            updateCounter();
+            selectedMembersContainer.innerHTML = '';
+            avatarPreview.src = `{% static 'images/gruppa.svg' %}`;
+            step2Content.classList.remove('active-step');
+            step1Content.classList.add('active-step');
+            modal.classList.add('show');
+        });
+        
+        editGroupBtn?.addEventListener('click', async () => {
+            document.getElementById('chat-options-modal').classList.remove('show');
+            groupChatForm.dataset.mode = 'edit';
+            allModalHeaders.forEach(h => h.textContent = 'Редагування групи');
+            submitBtnStep2.textContent = 'Зберегти зміни';
+            addMemberBtn.style.display = 'flex';
+            backBtn.style.display = 'none';
+            
+            const groupName = JSON.parse(document.getElementById('chat-group-name').textContent);
+            const avatarUrl = JSON.parse(document.getElementById('chat-group-avatar-url').textContent);
+            groupNameInput.value = groupName;
+            avatarPreview.src = avatarUrl || `{% static 'images/gruppa.svg' %}`;
+            
+            selectedMembersContainer.innerHTML = 'Завантаження...';
+            try {
+                const response = await fetch(`/chat/get_members/${groupPk}/`);
+                const data = await response.json();
+                if (data.success) {
+                    selectedMembersContainer.innerHTML = '';
+                    const currentUserId = JSON.parse(document.getElementById('current-user-id').textContent);
+                    data.members.forEach(member => {
+                        const memberItem = document.createElement('div');
+                        memberItem.className = 'selected-member-item';
+                        memberItem.dataset.userId = member.id;
+                        memberItem.innerHTML = `
+                            <img src="${member.avatar || '{% static "images/avatar.png" %}'}" alt="Avatar" class="avatar">
+                            <p>${member.name}</p>
+                            <img src="{% static 'images/musorka.svg' %}" class="remove-member-icon" alt="Remove">
+                        `;
+                        selectedMembersContainer.appendChild(memberItem);
+                    });
+                } else {
+                    selectedMembersContainer.innerHTML = `<p style="color:red;">${data.error}</p>`;
+                }
+            } catch (e) {
+                selectedMembersContainer.innerHTML = `<p style="color:red;">Помилка завантаження.</p>`;
+            }
+            
+            step1Content.classList.remove('active-step');
+            step2Content.classList.add('active-step');
+            modal.classList.add('show');
+        });
+        
+        addMemberBtn?.addEventListener('click', () => {
+            groupChatForm.dataset.mode = 'add_member';
+            allModalHeaders.forEach(h => h.textContent = 'Додати учасника');
+            nextBtn.textContent = 'Додати';
+            const existingMemberIds = JSON.parse(document.getElementById('chat-group-members-ids').textContent);
+            filterUsers(existingMemberIds);
+            updateCounter();
+            step2Content.classList.remove('active-step');
+            step1Content.classList.add('active-step');
+        });
+
+        nextBtn?.addEventListener('click', () => {
+            if (groupChatForm.dataset.mode === 'create') {
+                selectedMembersContainer.innerHTML = '';
+                userListContainer.querySelectorAll('input[name="members"]:checked').forEach(checkbox => {
+                    const memberItem = document.createElement('div');
+                    memberItem.className = 'selected-member-item';
+                    memberItem.dataset.userId = checkbox.value;
+                    memberItem.innerHTML = `
+                        <img src="${checkbox.dataset.avatar}" alt="Avatar" class="avatar">
+                        <p>${checkbox.dataset.username}</p>
+                        <img src="{% static 'images/musorka.svg' %}" class="remove-member-icon" alt="Remove">
+                    `;
+                    selectedMembersContainer.appendChild(memberItem);
+                });
+                step1Content.classList.remove('active-step');
+                step2Content.classList.add('active-step');
+            } else if (groupChatForm.dataset.mode === 'add_member') {
+                handleFormSubmit(new Event('submit', { bubbles: true, cancelable: true }));
+            }
+        });
+        
+        backBtn?.addEventListener('click', () => {
+            step2Content.classList.remove('active-step');
+            step1Content.classList.add('active-step');
+        });
+        
+        selectedMembersContainer.addEventListener('click', async (e) => {
+            if (e.target.classList.contains('remove-member-icon')) {
+                const memberItem = e.target.closest('.selected-member-item');
+                const userIdToRemove = memberItem.dataset.userId;
+                
+                if (groupChatForm.dataset.mode === 'create') {
+                    const checkbox = userListContainer.querySelector(`input[value="${userIdToRemove}"]`);
+                    if (checkbox) checkbox.checked = false;
+                    memberItem.remove();
+                    updateCounter();
+                    return;
+                }
+                
+                try {
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                    const response = await fetch(`/chat/remove_member/${groupPk}/${userIdToRemove}/`, {
+                        method: 'POST',
+                        headers: { 'X-CSRFToken': csrfToken, 'Content-Type': 'application/json' },
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        memberItem.remove();
+                    } else { alert(`Помилка: ${data.error}`); }
+                } catch (error) { alert('Мережева помилка.'); }
+            }
+        });
+        
+        groupChatForm.addEventListener('submit', handleFormSubmit);
+        document.querySelectorAll('.modal .close, #modal-cancel-btn-1').forEach(btn => btn.addEventListener('click', closeModal));
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+        userListContainer.addEventListener('change', updateCounter);
+        userSearchInput.addEventListener('input', () => {
+            const existingIds = groupPk ? JSON.parse(document.getElementById('chat-group-members-ids')?.textContent || '[]') : [];
+            filterUsers(groupChatForm.dataset.mode === 'add_member' ? existingIds : []);
+        });
+        [avatarPreview, photoActions].forEach(el => el?.addEventListener('click', () => avatarInput.click()));
+        avatarInput?.addEventListener('change', (e) => { if (e.target.files[0]) avatarPreview.src = URL.createObjectURL(e.target.files[0]); });
+        
+        async function handleFormSubmit(event) {
+            event.preventDefault();
+            const formData = new FormData(groupChatForm);
+            const currentMode = groupChatForm.dataset.mode;
+            let url = '';
+            
+            if (currentMode === 'create') url = "{% url 'create_group_chat' %}";
+            else if (currentMode === 'edit') url = `/chat/edit/${groupPk}/`;
+            else if (currentMode === 'add_member') url = `/chat/add_members/${groupPk}/`;
+            
+            try {
+                const response = await fetch(url, { method: 'POST', body: formData });
+                const data = await response.json();
+                if (data.success) {
+                    if(data.chat_url) window.location.href = data.chat_url;
+                    else window.location.reload();
+                } else {
+                    alert('Помилка: ' + (data.error || 'Невідома помилка'));
+                }
+            } catch (error) {
+                alert('Сталася мережева помилка.');
+            }
+        }
+    }
+
+    const chatOptionsIcon = document.getElementById('chat-options-icon');
+    const chatOptionsModal = document.getElementById('chat-options-modal');
+    if (chatOptionsIcon && chatOptionsModal) {
+        chatOptionsIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            chatOptionsModal.classList.add('show');
+            const rect = chatOptionsIcon.getBoundingClientRect();
+            chatOptionsModal.style.top = `${rect.bottom + window.scrollY + 5}px`;
+            chatOptionsModal.style.left = `${rect.left + window.scrollX - chatOptionsModal.offsetWidth + rect.width}px`;
+        });
+        document.getElementById('close-options-modal')?.addEventListener('click', () => chatOptionsModal.classList.remove('show'));
+        document.addEventListener('click', (e) => {
+            if (!chatOptionsModal.contains(e.target) && e.target !== chatOptionsIcon) {
+                chatOptionsModal.classList.remove('show');
+            }
+        });
+
+        const deleteChatBtn = document.getElementById('delete-chat-btn');
+        if (deleteChatBtn) {
+            deleteChatBtn.addEventListener('click', function() {
+                {
+                    const groupPk = document.getElementById('groupPk').value;
+                    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                    fetch(`/chat/delete/${groupPk}/`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRFToken': csrfToken,
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = data.redirect_url;
+                        } else {
+                            alert('Помилка: ' + (data.error || 'Не вдалося видалити чат.'));
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Сталася мережева помилка.');
+                    });
+                }
+            });
+        }
+    }
+
+    const contactSearchInput = document.getElementById('contact-search-input');
+    const contactList = document.querySelectorAll('.contacts-list-users-1');
+    contactSearchInput?.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        contactList.forEach(contact => {
+            const username = contact.dataset.username.toLowerCase();
+            contact.style.display = username.includes(searchTerm) ? 'flex' : 'none';
+        });
+    });
+
+    document.querySelectorAll('.contacts-list-users-1').forEach(contact => {
+        contact.addEventListener('click', function() {
+            const userId = this.getAttribute('data-user-id');
+            if (userId) window.location.href = `/to_personal_chat/${userId}/`;
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -23,6 +23,14 @@ class RegistrationForm(forms.Form):
         })
     )
 
+    def clean(self):
+        cleaned_data = super().clean()
+        password = cleaned_data.get('password')
+        confirm_password = cleaned_data.get('confirm_password')
+        if password and confirm_password and password != confirm_password:
+            raise forms.ValidationError("Паролі не співпадають.")
+        return cleaned_data
+
 class CodeConfirmationForm(forms.Form):
     code_1 = forms.CharField(
         max_length=1,
@@ -72,7 +80,6 @@ class CodeConfirmationForm(forms.Form):
             'autocomplete': 'off',
         })
     )
-
 
 class AuthorizationForm(forms.Form):
     email = forms.EmailField(

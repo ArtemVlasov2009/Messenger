@@ -1,0 +1,228 @@
+/* static/css/personal_chat.css */
+/* Styles for the chat interface in the middle frame */
+
+.middle-frame {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* Pushes input to bottom */
+    height: 100%; /* Ensure it takes full height of its container */
+    background-color: #f8f9fa; /* Light background for chat area */
+    border-left: 1px solid #e0e0e0;
+    border-right: 1px solid #e0e0e0;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    background-color: #f0f2f5;
+    border-bottom: 1px solid #ddd;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.chat-header .avatar {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover;
+}
+
+.chat-header h2 {
+    margin: 0;
+    font-size: 1.2em;
+    color: #333;
+}
+
+.messages-display {
+    flex-grow: 1; /* Allows messages to take up available space */
+    overflow-y: auto; /* Enables scrolling for messages */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Space between messages */
+    scroll-behavior: smooth; /* Smooth scrolling for new messages */
+}
+
+.message-item {
+    display: flex; /* Use flexbox for alignment */
+    flex-direction: column;
+    padding: 10px 15px;
+    border-radius: 18px;
+    max-width: 75%;
+    word-wrap: break-word; /* Ensures long words break */
+    font-size: 0.95em;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.my-message {
+    align-self: flex-end; /* Align to the right */
+    background-color: #007bff; /* Primary blue for sent messages */
+    color: white;
+    border-bottom-right-radius: 4px; /* Slightly adjust corner for tail effect */
+}
+
+.other-message {
+    align-self: flex-start; /* Align to the left */
+    background-color: #ffffff; /* White for received messages */
+    border: 1px solid #e0e0e0;
+    color: #333;
+    border-bottom-left-radius: 4px; /* Slightly adjust corner for tail effect */
+}
+
+.message-sender {
+    font-weight: bold;
+    margin-bottom: 5px;
+    font-size: 0.9em;
+    color: #555; /* Darker grey for sender name */
+}
+
+.message-text {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.message-time {
+    font-size: 0.7em;
+    color: rgba(255, 255, 255, 0.7); /* Lighter for time in my message */
+    text-align: right;
+    display: block;
+    margin-top: 5px;
+}
+
+.other-message .message-time {
+    color: #888; /* Darker for time in other messages */
+}
+
+.no-messages {
+    text-align: center;
+    color: #888;
+    padding: 20px;
+    font-style: italic;
+}
+
+.message-input-area {
+    padding: 15px;
+    border-top: 1px solid #ddd;
+    background-color: #f0f2f5;
+    display: flex;
+    align-items: flex-end; /* Align items to the bottom, especially textarea */
+    gap: 10px; /* Space between textarea and button */
+}
+
+.message-input-area form {
+    display: flex;
+    width: 100%;
+    align-items: flex-end;
+}
+
+.message-input-area .message-textarea { /* Targeting the textarea by its class */
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    resize: none; /* Disable manual resize by user */
+    font-size: 1em;
+    min-height: 40px; /* Minimum height for textarea */
+    max-height: 120px; /* Max height before scrollbar appears */
+    overflow-y: auto; /* Enable scrolling when content exceeds max-height */
+}
+
+.message-input-area button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%; /* Make it a circle */
+    width: 45px; /* Adjust size */
+    height: 45px; /* Adjust size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0; /* Prevent button from shrinking */
+}
+
+.message-input-area button:hover {
+    background-color: #0056b3;
+}
+
+.message-input-area button img {
+    width: 24px; /* Size of the send icon */
+    height: 24px;
+    filter: invert(100%); /* Make SVG white */
+}
+
+/* Ensure the main container gives appropriate space */
+.content-container {
+    display: flex;
+    height: calc(100vh - var(--header-height, 60px)); /* Adjust based on your header height */
+    overflow: hidden; /* Prevent body scroll */
+}
+
+/* Adjustments for left and right frames within this specific page */
+.left-frame, .right-frame {
+    flex-shrink: 0;
+    width: 280px; /* Or whatever width your side panels have */
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    overflow-y: auto; /* Allow scrolling for side panels */
+    display: flex;
+    flex-direction: column;
+}
+
+.right-frame {
+    border-left: 1px solid #e0e0e0;
+    border-right: none;
+}
+
+/* Existing chats.css might conflict, ensure these specific styles take precedence */
+.contacts-list-users-1, .user-messege-1 {
+    display: flex;
+    align-items: center;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.contacts-list-users-1:hover, .user-messege-1:hover {
+    background-color: #f0f0f0;
+}
+
+.user-messege-1 .user-info {
+    flex-grow: 1;
+    margin-left: 10px;
+}
+
+.user-messege-1 .nick-and-time {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+}
+
+.user-messege-1 .nick {
+    font-weight: bold;
+    margin: 0;
+}
+
+.user-messege-1 .time {
+    font-size: 0.8em;
+    color: #888;
+}
+
+.user-messege-1 .message-text {
+    font-size: 0.9em;
+    color: #666;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.no-contacts, .no-messages {
+    padding: 15px;
+    text-align: center;
+    color: #777;
+    font-size: 0.9em;
+}

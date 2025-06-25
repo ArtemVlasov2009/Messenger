@@ -12,6 +12,10 @@ body {
     min-height: 100vh;
     margin-top: 16px;
     overflow: hidden;
+    /* Added for centering and max-width */
+    max-width: 1432px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .Scroll-frame {
@@ -199,7 +203,9 @@ body {
     flex-direction: column;
     gap: 16px;
 }
-
+.user img{
+    border-radius: 50%;
+}
 .photos-1 {
     width: 100%;
     height: auto;
@@ -395,7 +401,7 @@ body {
     flex-direction: column;
     gap: 16px;
     box-sizing: border-box;
-    margin: 0; 
+    margin: 0;
 }
 
 .user {
@@ -716,4 +722,192 @@ body {
 
 .post:last-child {
     border-right: none;
+}
+
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.modal[style*="display: flex"] {
+    opacity: 1;
+}
+
+.modal-content {
+    max-width: 490px;
+    max-height: 445px;
+    width: fit-content;
+    height: fit-content;
+    overflow: auto;
+
+    border-radius: 20px;
+    background: var(--100, #FFFFFF);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+
+.modal-content h2 {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 34px;
+    line-height: 100%;
+    letter-spacing: -0.01em;
+    text-align: center;
+    color: #070A1C;
+    margin: 0 0 20px 0;
+}
+
+.modal-content form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 402px; /* Set to match the desired width */
+    gap: 10px; /* Set gap between form fields */
+}
+
+.form-field-group {
+    text-align: left;
+    width: 100%; /* Use full width of the form (402px) */
+    margin-bottom: 0; /* Remove margin-bottom since gap is handled by the form */
+}
+
+.form-field-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: -0.007em;
+    color: #070A1C;
+}
+
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="password"] {
+    width: 402px; /* Exact width as requested */
+    height: 42px; /* Exact height as requested */
+    border-radius: 10px;
+    padding: 10px 16px;
+    border: 1px solid #CDCED2;
+    background: #FFFFFF;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-size: 16px;
+    color: #333;
+    box-sizing: border-box;
+    outline: none;
+    transition: border-color 0.2s ease-in-out;
+}
+
+.modal-content input[type="text"]:focus,
+.modal-content input[type="email"]:focus,
+.modal-content input[type="password"]:focus {
+    border-color: #CDCED2;
+    box-shadow: none;
+}
+
+.modal-content input::placeholder {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.007em;
+    color: #999;
+    opacity: 1;
+}
+
+.modal-content input::-webkit-input-placeholder {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.007em;
+    color: #999;
+}
+
+.modal-content input::-moz-placeholder {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.007em;
+    color: #999;
+    opacity: 1;
+}
+
+.modal-content input:-ms-input-placeholder {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.007em;
+    color: #999;
+}
+
+.suggestion-text {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: -0.007em;
+    color: #070A1C;
+    margin-top: 6px;
+    text-align: left;
+    width: 402px;
+    margin-bottom: 24px;
+}
+
+.suggestion-link {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: -0.007em;
+    color: #22C55E;
+    text-decoration: none;
+}
+
+.suggestion-link:hover {
+    text-decoration: underline;
+}
+
+.modal-submit-button {
+    width: auto;
+    height: 40px;
+    border-radius: 1234px;
+    padding: 10px 16px;
+    gap: 8px;
+    background: #543C52;
+    color: #FFFFFF;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin-left: auto;
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }

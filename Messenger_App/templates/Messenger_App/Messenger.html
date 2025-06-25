@@ -1,287 +1,929 @@
 {% extends "Messenger/base.html" %}
-
 {% load static %}
 
 {% block title %}Messenger{% endblock %}
 
 {% block links %}
-    {{ block.super }} <link rel="stylesheet" href="{% static 'css/Messenger.css' %}">
+{{ block.super }}
+<link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+<link rel="stylesheet" href="{% static 'css/Messenger.css' %}">
+<link rel="stylesheet" href="{% static 'css/modal.css' %}">
+<link rel="stylesheet" href="{% static 'css/pub.css' %}">
 {% endblock %}
 
 {% block content %}
-    <div class="content-container">
-        <div class="left-user-frame">
-            <div class="user-frame">
-                <div class="user">
-                    <img src="{% static 'images/user-avatar.png' %}" alt="User-Avatar">
-                    <div class='users-nickname'>
-                        <p class = 'nick-1'>Lina Li</p>
-                        <p class = 'user-1'>@thelili</p>
-                    </div>
-                </div>
-                <div class="info-frame">
-                    <div class="popular">
-                        <div class="post">
-                            <h3>566</h3>
-                            <h4>Дописи</h4>
-                        </div>
-                        <div class="post">
-                            <h3>12.1К</h3>
-                            <h4>Читачі</h4>
-                        </div>
-                        <div class="post">
-                            <h3>222</h3>
-                            <h4>Друзі</h4>
-                        </div>
-                    </div>
+<div class="content-container">
+    <div class="left-user-frame">
+        <div class="user-frame">
+            <div class="user">
+                {% with active_avatar=user.profile.get_active_avatar %}
+                    {% if active_avatar %}
+                        <img src="{{ active_avatar.image.file.url }}" alt="User Avatar">
+                    {% else %}
+                        <img src="{% static 'images/no-avatar.svg' %}" alt="User Avatar">
+                    {% endif %}
+                {% endwith %}
+                <div class="users-nickname">
+                    <p class="nick-1">{{ user.first_name }} {{ user.last_name }}</p>
+                    <p class="user-1">{{ user.username }}</p>
                 </div>
             </div>
-
-            <div class="requests-frame">
-                <div class="requests">
-                    <div class="requ">
-                        <img src="{% static 'images/people.svg' %}" alt="People img">
-                        <p>Запити</p>
+            <div class="info-frame">
+                <div class="popular">
+                    <div class="post">
+                        <h3>{{ user.profile.posts_authored.count }}</h3>
+                        <h4>Дописи</h4>
                     </div>
-                    <p>Дивитісь всі</p>
-                </div>
-                <div class="users-requests">
-                    <div class="user1">
-                        <img src="{% static 'images/Avatarka-user-1.svg' %}" alt="User 1">
-                        <div class="user-info">
-                            <p class="nick">Yehor Aung</p>
-                            <p class="subs">1.3к підписників</p>
-                        </div>
+                    <div class="post">
+                        <h3>0</h3>
+                        <h4>Читачі</h4>
                     </div>
-
-                    <div class="user2">
-                        <img src="{% static 'images/Avatarka-user-2.svg' %}" alt="User 2">
-                        <div class="user-info">
-                            <p class="nick">Ann Ann</p>
-                            <p class="subs">1.6к підписників</p>
-                        </div>
-                    </div>
-
-                    <div class="user3">
-                        <img src="{% static 'images/Avatarka-user-3.svg' %}" alt="User 3">
-                        <div class="user-info">
-                            <p class="nick">Yeugen Jenua</p>
-                            <p class="subs">10.3к підписників</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="messege-frame">
-                <div class="messeges">
-                    <div class="requ">
-                        <img src="{% static 'images/chat.svg' %}" alt="Chat img">
-                        <p class="messege-title">Повідомлення</p>
-                    </div>
-                    <p class="see-title">Дивитись всі</p>
-                </div>
-                <div class="users-messeges">
-                    <div class="user-messege-1">
-                        <img src="{% static 'images/Avatarka-user-4.svg' %}" alt="User 4">
-                        <div class="user-info">
-                            <div class="nick-and-time">
-                                <p class="nick">Mona Lisa</p>
-                                <p class="time">09:41</p>
-                            </div>
-                            <p class="message-text">Привіт! Як справи?</p>
-                        </div>
-                    </div>
-
-                    <div class="user-messege-1">
-                        <img src="{% static 'images/Avatarka-user-5.svg' %}" alt="User 5">
-                        <div class="user-info">
-                            <div class="nick-and-time">
-                                <p class="nick">Ann Ti</p>
-                                <p class="time">25.04.2025</p>
-                            </div>
-                            <p class="message-text">Привіт!</p>
-                        </div>
-                    </div>
-
-                    <div class="user-messege-1">
-                        <img src="{% static 'images/Avatarka-user-6.svg' %}" alt="User 6">
-                        <div class="user-info">
-                            <div class="nick-and-time">
-                                <p class="nick">Nase Tu</p>
-                                <p class="time">26.04.2025</p>
-                            </div>
-                            <p class="message-text">Привіт!</p>
-                        </div>
+                    <div class="post">
+                        <h3>{{ user.profile.get_friends_count|default:0 }}</h3>
+                        <h4>Друзі</h4>
                     </div>
                 </div>
             </div>
         </div>
-
-        <div class="Scroll-frame">
-            <div class="Chat-input-frame">
-                <div class='internal-chat-input-frame'>
-                    <div class="question-frame">
-                        <input type="text" placeholder="Про що ти зараз думаєш?" class="question-input">
+        <div class="requests-frame">
+            <div class="requests">
+                <div class="requ">
+                    <img src="{% static 'images/people.svg' %}" alt="People img">
+                    <p>Запити</p>
+                </div>
+                <p>Дивитись всі</p>
+            </div>
+            <div class="users-requests">
+                <div class="user1">
+                    {% with active_avatar=request_user1.profile.get_active_avatar %}
+                        {% if active_avatar %}
+                            <img src="{{ active_avatar.image.file.url }}" alt="User 1">
+                        {% else %}
+                            <img src="{% static 'images/Avatarka-user-1.svg' %}" alt="User 1">
+                        {% endif %}
+                    {% endwith %}
+                    <div class="user-info">
+                        <p class="nick">Yehor Aung</p>
+                        <p class="subs">1.3к підписників</p>
                     </div>
-                    <div class="icons-frame">
-                        <div class="icon-group">
-                            <img src="{% static 'images/image.svg' %}" alt="Image">
-                            <img src="{% static 'images/smile.svg' %}" alt="Smile">
-                        </div>
-                        <button class="publish-button">
-                            Публікація
-                            <img src="{% static 'images/btn.svg' %}" alt="Icon" class="btn-icon">
-                        </button>
+                </div>
+                <div class="user2">
+                    {% with active_avatar=request_user2.profile.get_active_avatar %}
+                        {% if active_avatar %}
+                            <img src="{{ active_avatar.image.file.url }}" alt="User 2">
+                        {% else %}
+                            <img src="{% static 'images/Avatarka-user-2.svg' %}" alt="User 2">
+                        {% endif %}
+                    {% endwith %}
+                    <div class="user-info">
+                        <p class="nick">Ann Ann</p>
+                        <p class="subs">1.6к підписників</p>
+                    </div>
+                </div>
+                <div class="user3">
+                    {% with active_avatar=request_user3.profile.get_active_avatar %}
+                        {% if active_avatar %}
+                            <img src="{{ active_avatar.image.file.url }}" alt="User 3">
+                        {% else %}
+                            <img src="{% static 'images/Avatarka-user-3.svg' %}" alt="User 3">
+                        {% endif %}
+                    {% endwith %}
+                    <div class="user-info">
+                        <p class="nick">Yeugen Jenua</p>
+                        <p class="subs">10.3к підписників</p>
                     </div>
                 </div>
             </div>
-
-            <!-- Пост -->
-            <div class="post-frame">
-                <div class="header-post-frame">
-                    <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
-                    <div class="internal-header-post-frame">
-                        <img src="{% static 'images/avatar.png' %}" alt="avatar" class="avatar">
-                        <p>X_AE_A-13</p>
-                        <img src="{% static 'images/painting.png' %}" alt="painting" class="painting">
-                    </div>
+        </div>
+        <div class="messege-frame">
+            <div class="messeges">
+                <div class="requ">
+                    <img src="{% static 'images/chat.svg' %}" alt="Chat img">
+                    <p class="messege-title">Повідомлення</p>
                 </div>
-                <div class="post-content">
-                    <p>
-                        Інколи найкращі ідеї народжуються в тиші 🌿<br>
-                        Природа, книга і спокій — усе, що потрібно, аби перезавантажитись.<br>
-                        #відпочинок #натхнення #життя #природа #читання #спокій #гармонія
-                    </p>
-                    <div class="users-photos-content">
-                        <div class="photos-1">
-                            <img src="{% static 'images/Frame.png' %}" alt="users-photo" class="Frame1">
-                            <img src="{% static 'images/Frame2.png' %}" alt="users-photo" class="Frame2">
-                        </div>
-                        <div class="photos-2">
-                            <img src="{% static 'images/Frame3.png' %}" alt="users-photo" class="Frame3">
-                            <img src="{% static 'images/Frame4.png' %}" alt="users-photo" class="Frame4">
-                            <img src="{% static 'images/Frame5.png' %}" alt="users-photo" class="Frame5">
-                        </div>
-                    </div>
-                    <div class="likes-views">
-                        <div class="like-item">
-                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
-                            <span>120 Вподобань</span>
-                        </div>
-                        <div class="view-item">
-                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
-                            <span>890 Переглядів</span>
-                        </div>
-                    </div>
-                </div>
+                <p class="see-title">Дивитись всі</p>
             </div>
-
-            <!-- Коментар 1 -->
-            <div class='comment-frame1'>
-                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
-                <div class='header-comment-frame1'>
-                    <div class="avatar-text-container">
-                        <img src="{% static 'images/avatar2.png' %}" alt="avatar2" class="avatar2">
-                        <p>Alex_03</p>
+            <div class="users-messeges">
+                <div class="user-messege-1">
+                    {% with active_avatar=message_user1.profile.get_active_avatar %}
+                        {% if active_avatar %}
+                            <img src="{{ active_avatar.image.file.url }}" alt="User 4">
+                        {% else %}
+                            <img src="{% static 'images/Avatarka-user-4.svg' %}" alt="User 4">
+                        {% endif %}
+                    {% endwith %}
+                    <div class="user-info">
+                        <div class="nick-and-time">
+                            <p class="nick">Mona Lisa</p>
+                            <p class="time">09:41</p>
+                        </div>
+                        <p class="message-text">Привіт! Як справи?</p>
                     </div>
                 </div>
-                <div class='content-comment-frame1'>
-                    <p>
-                        буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
-                    </p>
-                    <div class="likes-views">
-                        <div class="like-item">
-                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
-                            <span>120 Вподобань</span>
+                <div class="user-messege-1">
+                    {% with active_avatar=message_user2.profile.get_active_avatar %}
+                        {% if active_avatar %}
+                            <img src="{{ active_avatar.image.file.url }}" alt="User 5">
+                        {% else %}
+                            <img src="{% static 'images/Avatarka-user-5.svg' %}" alt="User 5">
+                        {% endif %}
+                    {% endwith %}
+                    <div class="user-info">
+                        <div class="nick-and-time">
+                            <p class="nick">Ann Ti</p>
+                            <p class="time">25.04.2025</p>
                         </div>
-                        <div class="view-item">
-                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
-                            <span>890 Переглядів</span>
-                        </div>
+                        <p class="message-text">Привіт!</p>
                     </div>
                 </div>
-            </div>
-
-            <!-- Коментар 2 -->
-            <div class='comment-frame1'>
-                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
-                <div class='header-comment-frame1'>
-                    <div class="avatar-text-container">
-                        <img src="{% static 'images/avatar3.png' %}" alt="avatar3" class="avatar3">
-                        <p>Alex_03</p>
-                    </div>
-                </div>
-                <div class='content-comment-frame1'>
-                    <p>
-                        буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
-                    </p>
-                    <div class="likes-views">
-                        <div class="like-item">
-                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
-                            <span>120 Вподобань</span>
+                <div class="user-messege-1">
+                    {% with active_avatar=message_user3.profile.get_active_avatar %}
+                        {% if active_avatar %}
+                            <img src="{{ active_avatar.image.file.url }}" alt="User 6">
+                        {% else %}
+                            <img src="{% static 'images/Avatarka-user-6.svg' %}" alt="User 6">
+                        {% endif %}
+                    {% endwith %}
+                    <div class="user-info">
+                        <div class="nick-and-time">
+                            <p class="nick">Nase Tu</p>
+                            <p class="time">26.04.2025</p>
                         </div>
-                        <div class="view-item">
-                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
-                            <span>890 Переглядів</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Коментар 3 -->
-            <div class='comment-frame1'>
-                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
-                <div class='header-comment-frame1'>
-                    <div class="avatar-text-container">
-                        <img src="{% static 'images/avatar4.png' %}" alt="avatar4" class="avatar4">
-                        <p>Alex_03</p>
-                    </div>
-                </div>
-                <div class='content-comment-frame1'>
-                    <p>
-                        буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
-                    </p>
-                    <div class="likes-views">
-                        <div class="like-item">
-                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
-                            <span>120 Вподобань</span>
-                        </div>
-                        <div class="view-item">
-                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
-                            <span>890 Переглядів</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Коментар 4 -->
-            <div class='comment-frame1'>
-                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon">
-                <div class='header-comment-frame1'>
-                    <div class="avatar-text-container">
-                        <img src="{% static 'images/avatar5.png' %}" alt="avatar5" class="avatar5">
-                        <p>Alex_03</p>
-                    </div>
-                </div>
-                <div class='content-comment-frame1'>
-                    <p>
-                        буває такий настрій: просто лежиш і існуєш 😅чай в одній руці, телефон в іншій, думки десь у космосі 🌌 і знаєте шо? норм #вайб
-                    </p>
-                    <div class="likes-views">
-                        <div class="like-item">
-                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
-                            <span>120 Вподобань</span>
-                        </div>
-                        <div class="view-item">
-                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
-                            <span>890 Переглядів</span>
-                        </div>
+                        <p class="message-text">Привіт!</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <div class="Scroll-frame">
+        <div class="Chat-input-frame">
+            <div class="internal-chat-input-frame">
+                <div class="question-frame">
+                    <input type="text" placeholder="Про що ти зараз думаєш?" class="question-input">
+                </div>
+                <div class="icons-frame">
+                    <div class="icon-group">
+                        <img src="{% static 'images/smile.svg' %}" alt="Smile">
+                    </div>
+                    <button type="button" class="publish-button">
+                        Публікація
+                        <img src="{% static 'images/btn.svg' %}" alt="Icon" class="btn-icon">
+                    </button>
+                </div>
+            </div>
+        </div>
+        {% for post in user_posts %}
+            <div class="post-frame">
+                <div class="header-post-frame">
+                    <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon" data-post-id="{{ post.id }}">
+                    <div class="internal-header-post-frame">
+                        {% with author_avatar=post.author.get_active_avatar %}
+                            {% if author_avatar %}
+                                <img src="{{ author_avatar.image.file.url }}" alt="avatar" class="avatar">
+                            {% else %}
+                                <img src="{% static 'images/avatar.png' %}" alt="avatar" class="avatar">
+                            {% endif %}
+                        {% endwith %}
+                        <p>{{ post.author.user.username }}</p>
+                    </div>
+                </div>
+                <div class="post-content">
+                    {% if post.title %}<h3>{{ post.title }}</h3>{% endif %}
+                    <p>{{ post.content|linebreaksbr }}</p>
+                    <div class="users-photos-content">
+                        {% if post.images.exists %}
+                            <div class="photos-1">
+                                {% for image in post.images.all|slice:":3" %}
+                                    <img src="{{ image.file.url }}" alt="Post photo" class="post-image">
+                                {% endfor %}
+                            </div>
+                            {% if post.images.count > 3 %}
+                                <div class="photos-2">
+                                    {% for image in post.images.all|slice:"3:6" %}
+                                        <img src="{{ image.file.url }}" alt="Post photo" class="post-image">
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            {% if post.images.count > 6 %}
+                                <div class="photos-2">
+                                    {% for image in post.images.all|slice:"6:9" %}
+                                        <img src="{{ image.file.url }}" alt="Post photo" class="post-image">
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        {% endif %}
+                    </div>
+                    {% for link in post.link_set.all %}
+                        <p><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></p>
+                    {% endfor %}
+                    <div class="likes-views">
+                        <div class="like-item">
+                            <img src="{% static 'images/Like.svg' %}" alt="Like" class="Like">
+                            <span>{{ post.like_count|default:0 }} Вподобань</span>
+                        </div>
+                        <div class="view-item">
+                            <img src="{% static 'images/eye.svg' %}" alt="Eye" class="Eye">
+                            <span>{{ post.view_count|default:0 }} Переглядів</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% empty %}
+            <p>Постів поки що немає.</p>
+        {% endfor %}
+    </div>
+</div>
+<div id="firstVisitModal" class="modal">
+    <div class="modal-content">
+        <h2>Додай деталі про себе</h2>
+        <form method="post" id="modalActionForm">
+            {% csrf_token %}
+            <div class="form-field-group">
+                {{ modal_form.name.label_tag }}
+                {{ modal_form.name }}
+            </div>
+            <div class="form-field-group">
+                {{ modal_form.surname.label_tag }}
+                {{ modal_form.surname }}
+            </div>
+            <div class="form-field-group">
+                {{ modal_form.login.label_tag }}
+                {{ modal_form.login }}
+            </div>
+            <p class="suggestion-text">Або оберіть: <a href="#" class="suggestion-link">Запропоновані варіанти відповідно до Ім’я та Прізвища</a></p>
+            <button type="submit" class="modal-submit-button">Продовжити</button>
+        </form>
+    </div>
+</div>
+<div id="modal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close-button">
+            <img src="{% static 'images/krestik.svg' %}" alt="Icon" class="btn-icon">
+        </span>
+        <h2 class="title" id="modal-title">Створення публікації</h2>
+        <form method="post" enctype="multipart/form-data" class="custom-post-form" id="post-form">
+            {% csrf_token %}
+            <input type="hidden" name="post_id" id="post-id-input">
+            {% if form.non_field_errors %}
+                <div class="errorlist">{{ form.non_field_errors }}</div>
+            {% endif %}
+            <div class="form-group">
+                <label for="{{ form.title.id_for_label }}">Назва публікації</label>
+                {{ form.title }}
+                {% if form.title.errors %}
+                    <div class="errorlist">{{ form.title.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.tags.id_for_label }}">Тема публікації (Тег)</label>
+                <div class="tag-buttons">
+                    <div class="tag-checkbox-list" id="{{ form.tags.auto_id }}">
+                        {% for choice in form.tags %}
+                            <div style="display: inline-block; margin-right: 5px;">
+                                {{ choice }}
+                            </div>
+                        {% endfor %}
+                        <img src="{% static 'images/AddTag.svg' %}" alt="Add Tag" class="add-tag-icon" style="vertical-align: middle; margin-left: 8px; cursor: pointer;">
+                    </div>
+                </div>
+                {% if form.tags.errors %}
+                    <div class="errorlist">{{ form.tags.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label for="{{ form.content.id_for_label }}">Текст</label>
+                {{ form.content }}
+                {% if form.content.errors %}
+                    <div class="errorlist">{{ form.content.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="form-group">
+                <label>Посилання</label>
+                <div id="links-container">
+                    <div class="link-input-group" style="display: flex; align-items: center; margin-bottom: 8px;">
+                        {{ form.article_link }}
+                        <img id="focus-link-icon" src="{% static 'images/AddTag.svg' %}" alt="Add Link" style="vertical-align: middle; margin-left: 8px; cursor: pointer;">
+                    </div>
+                </div>
+                <div id="additional-links"></div>
+                {% if form.article_link.errors %}
+                    <div class="errorlist">{{ form.article_link.errors }}</div>
+                {% endif %}
+            </div>
+            <div class="image-preview-container" id="image-preview-container" style="display: flex; gap: 10px; margin-bottom: 20px;"></div>
+            <div class="button-wrapper-bottom">
+                <div class="button-container">
+                    {{ form.images_upload.errors }}
+                    <label for="{{ form.images_upload.id_for_label }}" class="buttons-load-img-lable">
+                        <img src="{% static 'images/image.svg' %}" alt="Upload Image" class="upload-icon">
+                        <img src="{% static 'images/smile.svg' %}" alt="Upload Icon" class="upload-icon">
+                    </label>
+                    <div style="display: none;">
+                        {{ form.images_upload }}
+                    </div>
+                    <button type="submit" class="publish-button" id="submit-post-button">
+                        Публікація
+                        <img src="{% static 'images/btn.svg' %}" alt="Icon" class="btn-icon">
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="delete-modal" class="delete-modal" style="display: none;">
+    <div class="delete-modal-content">
+        <span class="close-dots-icon">
+            <img src="{% static 'images/Dots.svg' %}" alt="Icon">
+        </span>
+        <div class="buttons-container">
+            <button class="edit-post-button">
+                <img src="{% static 'images/edit.svg' %}" alt="Edit">
+                Редагувати допис
+            </button>
+            <img src="{% static 'images/Line2.svg' %}" alt="Separator">
+            <button class="delete-confirm-button">
+                <img src="{% static 'images/trash.svg' %}" alt="Delete">
+                Видалити публікацію
+            </button>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block scripts %}
+<script src="{% static 'js/pub.js' %}"></script>
+<script src="{% static 'js/Messenger.js' %}"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('modal');
+    const deleteModal = document.getElementById('delete-modal');
+    const closeButton = document.querySelector('.close-button');
+    const publishButton = document.querySelector('.publish-button');
+    const deleteConfirmButton = document.querySelector('.delete-confirm-button');
+    const editPostButton = document.querySelector('.edit-post-button');
+    const postForm = document.getElementById('post-form');
+    const modalTitle = document.getElementById('modal-title');
+    const postIdInput = document.getElementById('post-id-input');
+    const submitPostButton = document.getElementById('submit-post-button');
+    const questionInput = document.querySelector('.question-input');
+    const modalTextInput = document.getElementById('id_content');
+    const imageInput = document.getElementById('id_images_upload_input');
+    const imagePreviewContainer = document.getElementById('image-preview-container');
+    const trashIconUrl = "{% static 'images/trash_img.svg' %}";
+    const addTagIcon = document.querySelector('.add-tag-icon');
+    const tagContainer = document.querySelector('.tag-checkbox-list');
+    const focusLinkIcon = document.getElementById('focus-link-icon');
+    const additionalLinksContainer = document.getElementById('additional-links');
+    let currentPostId = null;
+    let linkCounter = 0;
+
+    if (questionInput && modalTextInput) {
+        questionInput.addEventListener('input', function() {
+            modalTextInput.value = questionInput.value;
+        });
+    }
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
+    function clearFormErrors() {
+        document.querySelectorAll('.errorlist').forEach(el => el.remove());
+    }
+
+    function clearImagePreviews() {
+        while (imagePreviewContainer.firstChild) {
+            imagePreviewContainer.removeChild(imagePreviewContainer.firstChild);
+        }
+    }
+
+    function addImagePreview(file) {
+        const previewWrapper = document.createElement('div');
+        previewWrapper.style.position = 'relative';
+        previewWrapper.style.width = '217.67px';
+        previewWrapper.style.height = '265px';
+        previewWrapper.style.borderRadius = '16px';
+
+        const img = document.createElement('img');
+        img.style.width = '217.67px';
+        img.style.height = '265px';
+        img.style.borderRadius = '16px';
+        img.style.objectFit = 'cover';
+        img.file = file;
+
+        previewWrapper.appendChild(img);
+
+        const trashIcon = document.createElement('img');
+        trashIcon.src = trashIconUrl;
+        trashIcon.alt = 'Видалити зображення';
+        trashIcon.style.position = 'absolute';
+        trashIcon.style.top = '8px';
+        trashIcon.style.right = '8px';
+        trashIcon.style.width = '24px';
+        trashIcon.style.height = '24px';
+        trashIcon.style.cursor = 'pointer';
+
+        trashIcon.addEventListener('click', () => {
+            imageInput.value = '';
+            previewWrapper.remove();
+        });
+
+        previewWrapper.appendChild(trashIcon);
+        imagePreviewContainer.appendChild(previewWrapper);
+
+        const reader = new FileReader();
+        reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
+        reader.readAsDataURL(file);
+    }
+
+    if (imageInput) {
+        imageInput.addEventListener('change', (event) => {
+            clearImagePreviews();
+            if (imageInput.files) {
+                Array.from(imageInput.files).forEach(file => {
+                    addImagePreview(file);
+                });
+            }
+        });
+    }
+
+    function addNewLinkField(url = '', isSaved = false) {
+        linkCounter++;
+        const linkWrapper = document.createElement('div');
+        linkWrapper.className = 'link-input-group';
+        linkWrapper.style.display = 'flex';
+        linkWrapper.style.alignItems = 'center';
+        linkWrapper.style.marginBottom = '8px';
+
+        const input = document.createElement('input');
+        input.type = 'url';
+        input.name = `extra_link_${linkCounter}`;
+        input.placeholder = 'https://example.com';
+        input.className = 'form-control';
+        input.maxLength = 200;
+        input.style.marginRight = '8px';
+        if (url) input.value = url;
+        if (isSaved) input.dataset.saved = 'true';
+        if (currentPostId) input.dataset.postId = currentPostId;
+
+        const saveButton = document.createElement('button');
+        saveButton.type = 'button';
+        saveButton.textContent = 'Зберегти';
+        saveButton.className = 'save-link-button';
+        Object.assign(saveButton.style, {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: 'auto',
+            height: '40px',
+            borderRadius: '1234px',
+            padding: '10px 16px',
+            background: '#543C52',
+            color: '#FFFFFF',
+            fontFamily: "'GT Walsheim Pro', sans-serif",
+            fontWeight: '500',
+            fontSize: '14px',
+            lineHeight: '20px',
+            letterSpacing: '-0.006em',
+            border: 'none',
+            cursor: 'pointer'
+        });
+
+        const trashIcon = document.createElement('img');
+        trashIcon.src = trashIconUrl;
+        trashIcon.alt = 'Видалити посилання';
+        trashIcon.style.marginLeft = '8px';
+        trashIcon.style.width = '24px';
+        trashIcon.style.height = '24px';
+        trashIcon.style.cursor = 'pointer';
+
+        trashIcon.addEventListener('click', () => {
+            if (input.dataset.saved === 'true' && input.dataset.postId) {
+                fetch(`/posts/delete_link/${input.dataset.postId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken'),
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: `link_url=${encodeURIComponent(input.value)}`
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        linkWrapper.remove();
+                    } else {
+                        alert('Помилка видалення посилання: ' + (data.message || 'Невідома помилка'));
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting link:', error);
+                    alert('Виникла помилка при видаленні посилання.');
+                });
+            } else {
+                linkWrapper.remove();
+            }
+        });
+
+        linkWrapper.appendChild(input);
+        linkWrapper.appendChild(saveButton);
+        linkWrapper.appendChild(trashIcon);
+        additionalLinksContainer.appendChild(linkWrapper);
+
+        saveButton.addEventListener('click', () => {
+            const linkValue = input.value.trim();
+            if (linkValue && isValidUrl(linkValue)) {
+                input.disabled = false;
+                saveButton.style.display = 'none';
+                input.dataset.saved = 'true';
+            } else {
+                alert('Будь ласка, введіть дійсне URL-посилання.');
+            }
+        });
+
+        input.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                saveButton.click();
+            }
+        });
+    }
+
+    function isValidUrl(string) {
+        try {
+            new URL(string);
+            return true;
+        } catch (_) {
+            return false;
+        }
+    }
+
+    if (focusLinkIcon) {
+        focusLinkIcon.addEventListener('click', () => {
+            addNewLinkField();
+        });
+    }
+
+    function openModal(isEditing = false, postData = {}) {
+        clearFormErrors();
+        modal.style.display = 'flex';
+        additionalLinksContainer.innerHTML = '';
+
+        if (isEditing) {
+            modalTitle.textContent = 'Редагування публікації';
+            submitPostButton.textContent = 'Зберегти зміни';
+            postForm.action = `/posts/edit/${currentPostId}/`;
+            postIdInput.value = currentPostId;
+
+            document.getElementById('id_title').value = postData.title || '';
+            modalTextInput.value = postData.content || '';
+            document.getElementById('id_article_link').value = postData.article_link || '';
+
+            const tagCheckboxes = document.querySelectorAll('.tag-buttons input[type="checkbox"]');
+            tagCheckboxes.forEach(checkbox => {
+                checkbox.checked = postData.tags && postData.tags.includes(checkbox.value);
+            });
+
+            imageInput.value = '';
+            clearImagePreviews();
+
+            if (postData.images && Array.isArray(postData.images)) {
+                postData.images.forEach(url => {
+                    const img = document.createElement('img');
+                    img.src = url;
+                    img.style.width = '217.67px';
+                    img.style.height = '265px';
+                    img.style.borderRadius = '16px';
+                    img.style.objectFit = 'cover';
+                    imagePreviewContainer.appendChild(img);
+                });
+            }
+
+            if (postData.links && Array.isArray(postData.links)) {
+                postData.links.forEach(link => {
+                    addNewLinkField(link, true);
+                });
+            }
+
+        } else {
+            modalTitle.textContent = 'Створення публікації';
+            submitPostButton.textContent = 'Публікація';
+            postForm.action = '/posts/';
+            postIdInput.value = '';
+            postForm.reset();
+            clearImagePreviews();
+
+            if (questionInput.value.trim() !== '') {
+                modalTextInput.value = questionInput.value.trim();
+                questionInput.value = '';
+            }
+        }
+    }
+
+    function closeModal() {
+        modal.style.display = 'none';
+        deleteModal.style.display = 'none';
+        postForm.reset();
+        postIdInput.value = '';
+        questionInput.value = '';
+        clearFormErrors();
+        clearImagePreviews();
+        additionalLinksContainer.innerHTML = '';
+        const customTagContainer = document.querySelector('.custom-tag-container');
+        if (customTagContainer) {
+            customTagContainer.remove();
+        }
+    }
+
+    publishButton.addEventListener('click', function() {
+        openModal(false);
+    });
+
+    closeButton.addEventListener('click', closeModal);
+
+    window.addEventListener('click', function(event) {
+        if (event.target === modal) {
+            closeModal();
+        }
+    });
+
+    document.querySelectorAll('.dots-icon').forEach(icon => {
+        icon.addEventListener('click', function(event) {
+            event.stopPropagation();
+            currentPostId = this.dataset.postId;
+            const rect = this.getBoundingClientRect();
+            deleteModal.style.display = 'flex';
+            deleteModal.style.top = `${rect.bottom + window.scrollY + 5}px`;
+            deleteModal.style.left = `${rect.left + window.scrollX - deleteModal.offsetWidth + 20}px`;
+            deleteModal.style.position = 'absolute';
+        });
+    });
+
+    window.addEventListener('click', function(event) {
+        if (event.target === deleteModal || (!deleteModal.contains(event.target) && !event.target.classList.contains('dots-icon'))) {
+            deleteModal.style.display = 'none';
+            currentPostId = null;
+        }
+    });
+
+    deleteConfirmButton.addEventListener('click', function() {
+        if (currentPostId) {
+            fetch(`/posts/delete/${currentPostId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken'),
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.status === 'success') {
+                    location.reload();
+                } else {
+                    alert('Помилка видалення публікації: ' + (data.message || 'Невідома помилка.'));
+                }
+                closeModal();
+            })
+            .catch(error => {
+                alert('Виникла помилка при спробі видалити публікацію. Перевірте консоль розробника.');
+                closeModal();
+            });
+        }
+    });
+
+    editPostButton.addEventListener('click', function() {
+        if (currentPostId) {
+            fetch(`/posts/edit/${currentPostId}/`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        openModal(true, data);
+                        deleteModal.style.display = 'none';
+                    } else {
+                        alert('Помилка отримання даних для редагування: ' + (data.message || 'Невідома помилка.'));
+                        closeModal();
+                    }
+                })
+                .catch(error => {
+                    alert('Виникла помилка при спробі отримати дані для редагування публікації.');
+                    closeModal();
+                });
+        }
+    });
+
+    postForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        clearFormErrors();
+        const formData = new FormData(postForm);
+
+        for (let [key, value] of formData.entries()) {
+            console.log(`FormData: ${key} = ${value}`);
+        }
+
+        fetch(postForm.action, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': getCookie('csrftoken'),
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                location.reload();
+            } else {
+                alert('Помилка збереження публікації: ' + (data.message || 'Невідома помилка.'));
+                if (data.errors) {
+                    displayFormErrors(data.errors);
+                }
+            }
+        })
+        .catch(error => {
+            alert('Виникла помилка при збереженні публікації.');
+            if (error.response && error.response.data && error.response.data.errors) {
+                displayFormErrors(error.response.data.errors);
+            }
+        });
+    });
+
+    function displayFormErrors(errors) {
+        clearFormErrors();
+        for (const fieldName in errors) {
+            const errorList = errors[fieldName];
+            const fieldElement = document.getElementById(`id_${fieldName}`);
+            if (fieldElement) {
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'errorlist';
+                errorDiv.style.color = 'red';
+                errorDiv.style.fontSize = '0.9em';
+                errorDiv.style.marginTop = '5px';
+                errorDiv.innerHTML = errorList.map(err => `${err}`).join('<br>');
+                fieldElement.parentNode.insertBefore(errorDiv, fieldElement.nextSibling);
+            } else if (fieldName === 'non_field_errors') {
+                const form = document.getElementById('post-form');
+                if (form) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'errorlist';
+                    errorDiv.style.color = 'red';
+                    errorDiv.style.fontSize = '0.9em';
+                    errorDiv.style.marginBottom = '10px';
+                    errorDiv.innerHTML = errorList.map(err => `${err}`).join('<br>');
+                    form.prepend(errorDiv);
+                }
+            }
+        }
+    }
+
+    function updateTextWithTags() {
+        const selectedTags = [];
+        const allCheckboxes = document.querySelectorAll('.tag-checkbox-list input[type="checkbox"]');
+        
+        allCheckboxes.forEach(cb => {
+            if (cb.checked) {
+                const labelElement = cb.closest('label');
+                if (labelElement) {
+                    const tagLabel = labelElement.textContent.trim();
+                    if (tagLabel) {
+                        selectedTags.push(`#${tagLabel}`);
+                    }
+                }
+            }
+        });
+
+        let mainText = '';
+        const lines = modalTextInput.value.split('\n');
+        const firstTagLineIndex = lines.findIndex(line => line.trim().startsWith('#'));
+
+        if (firstTagLineIndex === -1) {
+            mainText = modalTextInput.value.trim();
+        } else {
+            mainText = lines.slice(0, firstTagLineIndex).join('\n').trim();
+        }
+        
+        if (selectedTags.length > 0) {
+            const separator = mainText ? '\n\n' : '';
+            modalTextInput.value = mainText + separator + selectedTags.join(' ');
+        } else {
+            modalTextInput.value = mainText;
+        }
+    }
+
+    document.querySelectorAll('.tag-checkbox-list input[type="checkbox"]').forEach(checkbox => {
+        checkbox.addEventListener('change', updateTextWithTags);
+    });
+
+    if (addTagIcon) {
+        addTagIcon.addEventListener('click', function() {
+            if (document.querySelector('.custom-tag-container')) {
+                document.getElementById('id_custom_tag').focus();
+                return;
+            }
+
+            const customTagContainer = document.createElement('div');
+            customTagContainer.style.display = 'inline-flex';
+            customTagContainer.style.alignItems = 'center';
+            customTagContainer.style.marginRight = '5px';
+            customTagContainer.className = 'custom-tag-container';
+
+            const customTagInput = document.createElement('input');
+            customTagInput.type = 'text';
+            customTagInput.id = 'id_custom_tag';
+            customTagInput.name = 'custom_tag';
+            customTagInput.placeholder = 'Введіть тег';
+            customTagInput.className = 'form-control';
+            customTagInput.style.marginRight = '8px';
+            customTagInput.style.width = '150px';
+
+            const saveTagButton = document.createElement('button');
+            saveTagButton.type = 'button';
+            saveTagButton.textContent = 'Зберегти';
+            Object.assign(saveTagButton.style, {
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: 'auto',
+                height: '40px',
+                borderRadius: '1234px',
+                padding: '10px 16px',
+                background: '#543C52',
+                color: '#FFFFFF',
+                fontFamily: "'GT Walsheim Pro', sans-serif",
+                fontWeight: '500',
+                fontSize: '14px',
+                lineHeight: '20px',
+                letterSpacing: '-0.006em',
+                border: 'none',
+                cursor: 'pointer'
+            });
+
+            const handleSave = () => {
+                const newTagValue = customTagInput.value.trim();
+                if (newTagValue) {
+                    const existingTags = Array.from(document.querySelectorAll('.tag-checkbox-list input[type="checkbox"]'));
+                    if (existingTags.some(cb => cb.parentElement.textContent.trim().toLowerCase() === newTagValue.toLowerCase())) {
+                        alert('Тег з такою назвою вже існує.');
+                        return;
+                    }
+
+                    const newIndex = existingTags.length;
+                    const newTagDiv = document.createElement('div');
+                    newTagDiv.style.display = 'inline-block';
+                    newTagDiv.style.marginRight = '5px';
+
+                    const newTagLabel = document.createElement('label');
+                    newTagLabel.setAttribute('for', `id_tags_${newIndex}`);
+
+                    const newTagCheckbox = document.createElement('input');
+                    newTagCheckbox.type = 'checkbox';
+                    newTagCheckbox.name = 'tags';
+                    newTagCheckbox.value = newTagValue;
+                    newTagCheckbox.id = `id_tags_${newIndex}`;
+                    newTagCheckbox.className = 'tag-checkbox-list';
+                    newTagCheckbox.checked = true;
+
+                    newTagCheckbox.addEventListener('change', updateTextWithTags);
+
+                    newTagLabel.appendChild(newTagCheckbox);
+                    newTagLabel.appendChild(document.createTextNode(` ${newTagValue}`));
+                    newTagDiv.appendChild(newTagLabel);
+
+                    tagContainer.insertBefore(newTagDiv, addTagIcon);
+                    updateTextWithTags();
+                    customTagContainer.remove();
+                }
+            };
+
+            saveTagButton.addEventListener('click', handleSave);
+            customTagInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    handleSave();
+                }
+            });
+
+            customTagContainer.appendChild(customTagInput);
+            customTagContainer.appendChild(saveTagButton);
+            tagContainer.appendChild(customTagContainer);
+            customTagInput.focus();
+        });
+    }
+});
+</script>
 {% endblock %}

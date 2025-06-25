@@ -1,0 +1,152 @@
+{% extends "Messenger/base.html" %}
+{% load static %}
+
+{% block title %}Profile{% endblock %}
+
+{% block links %}
+<link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+{{ block.super }}
+<link rel="stylesheet" href="{% static 'css/profile.css' %}">
+<link rel="stylesheet" href="{% static 'css/pub.css' %}">
+<style>
+    .album-photos-container { 
+        display: flex; 
+        flex-wrap: wrap; 
+        gap: 8px; 
+        margin-top: 12px; 
+    }
+    .album-photos-container img { 
+        width: 318px; 
+        height: 162px; 
+        border-radius: 10px; 
+        object-fit: cover; 
+    }
+    .users-photos-content { 
+        margin-top: 15px; 
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+    .users-photos-content img { 
+        width: calc(50% - 8px);
+        height: auto;
+        border-radius: 16px;
+        object-fit: cover;
+    }
+    .post-tags {
+        margin-top: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .post-links {
+        margin-top: 10px;
+        word-break: break-all;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="left-user-frame">
+        <div class="user-frame">
+            <div class="user">
+                {% with active_avatar=profile_user.profile.get_active_avatar %}
+                    {% if active_avatar %}
+                        <img class="user-avatarka" src="{{ active_avatar.image.file.url }}" alt="User-Avatar">
+                    {% else %}
+                        <img class="user-avatarka" src="{% static 'images/no-avatar.svg' %}" alt="User-Avatar">
+                    {% endif %}
+                {% endwith %}
+                <div class='users-nickname'>
+                    <p class='nick-1'>{{ profile_user.first_name }} {{ profile_user.last_name }}</p>
+                    <p class='user-1'>@{{ profile_user.username }}</p>
+                </div>
+            </div>
+            <div class="info-frame">
+                <div class="popular">
+                    <div class="post"><h3>{{ posts.count }}</h3><h4>Дописи</h4></div>
+                    <div class="post"><h3>0</h3><h4>Читачі</h4></div>
+                    <div class="post"><h3>{{ profile_user.customuser.friends_with.count|default:0 }}</h3><h4>Друзі</h4></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="requests-frame">
+            <div class="requests">
+                <div class="requ">
+                    <img src="{% static 'images/mini-photo.svg' %}" alt="Albums img">
+                    <p>Альбоми</p>
+                </div>
+                <p>Дивитісь всі</p>
+            </div>
+            <div class="separator-frame"></div>
+
+            {% for album in albums %}
+            <div class="name-of-album">
+                <p>{{ album.name_of_album }}</p>
+                <div class="album-category-frame">
+                    <p>{{ album.theme_of_album }}</p>
+                    <p class="year-text">{{ album.created_at|date:"Y" }} рік</p>
+                </div>
+                <div class="album-photos-container">
+                    {% for image in album.images.all %}
+                        <img src="{{ image.file.url }}" alt="Фото з альбому {{ album.name_of_album }}">
+                    {% empty %}
+                        <p style="font-size: 12px; color: #888;">В цьому альбомі ще немає фото.</p>
+                    {% endfor %}
+                </div>
+            </div>
+            {% empty %}
+            <div class="name-of-album"><p>У користувача ще немає альбомів.</p></div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="Scroll-frame">
+        {% for post in posts %}
+        <div class="post-frame">
+            <div class="header-post-frame">
+                <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon" data-post-id="{{ post.id }}">
+                <div class="internal-header-post-frame">
+                    {% with author_avatar=post.author.get_active_avatar %}
+                        {% if author_avatar %}
+                            <img src="{{ author_avatar.image.file.url }}" alt="avatar" class="avatar">
+                        {% else %}
+                            <img src="{% static 'images/Avatarka-user-1.svg' %}" alt="avatar" class="avatar">
+                        {% endif %}
+                    {% endwith %}
+                    <p>{{ post.author.user.first_name }} {{ post.author.user.last_name }}</p>
+                </div>
+            </div>
+            <div class="post-content">
+                {% if post.title %}<h3>{{ post.title }}</h3>{% endif %}
+                <p>{{ post.content|linebreaksbr }}</p>
+
+                
+                
+                <div class="users-photos-content">
+                    {% for image in post.images.all %}
+                        <img src="{{ image.file.url }}" alt="Post image" class="post-image">
+                    {% endfor %}
+                </div>
+
+                <div class="post-links">
+                    {% for link in post.links.all %}
+                        <p><a href="{{ link.url }}" target="_blank">{{ link.url }}</a></p>
+                    {% endfor %}
+                </div>
+
+                <div class="likes-views">
+                    <div class="like-item"><img src="{% static 'images/Like.svg' %}" alt="Like"><span>{{ post.like_count|default:0 }} Вподобань</span></div>
+                    <div class="view-item"><img src="{% static 'images/eye.svg' %}" alt="Eye"><span>{{ post.view_count|default:0 }} Переглядів</span></div>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="post-frame"><div class="post-content"><p>У цього користувача ще немає дописів.</p></div></div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

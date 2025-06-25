@@ -1,0 +1,156 @@
+{% extends "Messenger_App/base.html" %}
+{% load static %}
+
+{% block title %}Чат з {{ recipient.username }}{% endblock %}
+
+{% block links %}
+    {{ block.super }}
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
+    <link rel="stylesheet" href="{% static 'css/chats.css' %}">
+    <link rel="stylesheet" href="{% static 'css/personal_chat.css' %}"> {# This will contain styles specific to the chat interface #}
+{% endblock %}
+
+{% block content %}
+<div class="content-container">
+    <div class="left-frame">
+        <div class="contacts-frame">
+            <button>
+                <img src="{% static 'images/pluuuuuus.svg' %}" alt="Plus img">
+                Створити груповий чат
+            </button>
+        </div>
+        <div class="requests-frame">
+            <div class="requests">
+                <div class="requ">
+                    <img src="{% static 'images/people.svg' %}" alt="People img">
+                    <p>Контакти</p>
+                </div>
+            </div>
+            <div class="search-frame">
+                <img src="{% static 'images/search.svg' %}" alt="Search img">
+                <input type="text" placeholder="Пошук">
+            </div>
+            <div class="contacts-list-frame">
+                {# Dynamically list all users (excluding current user) for starting new personal chats #}
+                {% for person in persons %}
+                    <a href="{% url 'redirect_to_personal_chat' user2_pk=person.pk %}" class="contacts-list-users-1">
+                        {% if person.customuser.profile_photo %}
+                            <img src="{{ person.customuser.profile_photo.url }}" alt="avatar" class="avatar">
+                        {% else %}
+                            <img src="{% static 'images/avatar.png' %}" alt="avatar" class="avatar">
+                        {% endif %}
+                        <p>{{ person.username }}</p>
+                    </a>
+                {% empty %}
+                    <p class="no-contacts">Немає контактів.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="middle-frame">
+        <div class="chat-header">
+            {# Display the recipient's avatar and username #}
+            {% if recipient.customuser.profile_photo %}
+                <img src="{{ recipient.customuser.profile_photo.url }}" alt="{{ recipient.username }} avatar" class="avatar">
+            {% else %}
+                <img src="{% static 'images/avatar.png' %}" alt="default avatar" class="avatar">
+            {% endif %}
+            <h2>{{ recipient.username }}</h2>
+        </div>
+        <div class="messages-display" id="messages-display">
+            {# This is where individual messages will be displayed #}
+            {% for message in messages %}
+                <div class="message-item {% if message.author == request.user %}my-message{% else %}other-message{% endif %}">
+                    {# <p class="message-sender">{{ message.author.username }}</p> If you want sender name inside bubble #}
+                    <p class="message-text">{{ message.content }}</p>
+                    <span class="message-time">{{ message.date_time|date:"H:i" }}</span>
+                </div>
+            {% empty %}
+                <p class="no-messages">Поки що немає повідомлень. Почніть спілкування!</p>
+            {% endfor %}
+        </div>
+        <div class="message-input-area">
+            <form id="chat-form" method="POST">
+                {% csrf_token %}
+                {{ form.content }} {# Render the textarea from MessageForm #}
+                <button type="submit">
+                    <img src="{% static 'images/send.svg' %}" alt="Send">
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="right-frame">
+        <div class="right-frame-top">
+            <div class="requ">
+                <img src="{% static 'images/chat.svg' %}" alt="Chat img">
+                <p class="messege-title">Повідомлення</p>
+                <p class="see-title">Дивитись всі</p>   
+            </div>
+            <div class="messages-list-frame">
+                {# List recent personal chats #}
+                {% for chat_group in personal_chats %}
+                    <a href="{% url 'personal_chat_detail' chat_group_pk=chat_group.pk %}" class="user-messege-1">
+                        {% with other_member=chat_group.members.exclude(id=request.user.id).first %}
+                            {% if other_member %}
+                                {% if other_member.customuser.profile_photo %}
+                                    <img src="{{ other_member.customuser.profile_photo.url }}" alt="{{ other_member.username }} avatar">
+                                {% else %}
+                                    <img src="{% static 'images/avatar.png' %}" alt="default avatar">
+                                {% endif %}
+                            {% else %}
+                                <img src="{% static 'images/avatar.png' %}" alt="default avatar">
+                            {% endif %}
+                        {% endwith %}
+                        <div class="user-info">
+                            <div class="nick-and-time">
+                                <p class="nick">{{ chat_group.name }}</p>
+                                {% with last_message=chat_group.chatmessage_set.last %}
+                                    {% if last_message %}<p class="time">{{ last_message.date_time|date:"H:i" }}</p>{% endif %}
+                                {% endwith %}
+                            </div>
+                            {% with last_message=chat_group.chatmessage_set.last %}
+                                {% if last_message %}<p class="message-text">{{ last_message.content|truncatechars:30 }}</p>{% endif %}
+                            {% endwith %}
+                        </div>
+                    </a>
+                {% empty %}
+                    <p class="no-messages">Немає персональних чатів.</p>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="right-frame-bottom">
+            <div class="requ">
+                <img src="{% static 'images/chat.svg' %}" alt="Chat img">
+                <p class="messege-title">Групові чати</p>
+                <p class="see-title">Дивитись всі</p>
+            </div>
+            <div class="messages-list-frame">
+                {# List recent group chats #}
+                {% for chat_group in group_chats %}
+                    <a href="{% url 'chat' group_pk=chat_group.pk %}" class="user-messege-1">
+                        <img src="{% static 'images/avatar.png' %}" alt="Group chat avatar"> {# Generic avatar for group chats #}
+                        <div class="user-info">
+                            <div class="nick-and-time">
+                                <p class="nick">{{ chat_group.name }}</p>
+                                {% with last_message=chat_group.chatmessage_set.last %}
+                                    {% if last_message %}<p class="time">{{ last_message.date_time|date:"H:i" }}</p>{% endif %}
+                                {% endwith %}
+                            </div>
+                            {% with last_message=chat_group.chatmessage_set.last %}
+                                {% if last_message %}<p class="message-text">{{ last_message.content|truncatechars:30 }}</p>{% endif %}
+                            {% endwith %}
+                        </div>
+                    </a>
+                {% empty %}
+                    <p class="no-messages">Немає групових чатів.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/chats.js' %}"></script>
+<script src="{% static 'js/personal_chat.js' %}"></script> {# Specific JS for this chat page #}
+{% endblock %}

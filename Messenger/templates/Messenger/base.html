@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="uk">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,7 +12,8 @@
 </head>
 <body>
     {% block header %}
-        <div class="header-frame">
+    <div class="header-frame">
+        <div class="header-inner">
             <div class="logo-image">
                 <a href="{% url 'messenger_page' %}">
                     <img src="{% static 'images/logo.svg' %}" alt="Logo image">
@@ -32,18 +33,24 @@
                             <p>Мої публікації</p>
                         </div>
                     </a>
-                    <div class="friends-frame">
-                        <img src="{% static 'images/friends.svg' %}" alt="Friends logo">
-                        <p>Друзі</p>
-                    </div>
-                    <div class="chats-frame">
-                        <img src="{% static 'images/chat.svg' %}" alt="Chats logo">
-                        <p>Чати</p>
-                    </div>
-                    <div class="settings-frame">
-                        <img src="{% static 'images/Setting.svg' %}" alt="Settings logo">
-                        <p>Налаштування</p>
-                    </div>
+                    <a href="{% url 'friends' %}">
+                        <div class="friends-frame {% if current_page == 'friends' %}active{% endif %}">
+                            <img src="{% static 'images/friends.svg' %}" alt="Friends logo">
+                            <p>Друзі</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'chats' %}">
+                        <div class="chats-frame {% if current_page == 'chats' %}active{% endif %}">
+                            <img src="{% static 'images/chat.svg' %}" alt="Chats logo">
+                            <p>Чати</p>
+                        </div>
+                    </a>
+                    <a href="{% url 'settings' %}">
+                        <div class="settings-frame {% if current_page == 'settings' %}active{% endif %}">
+                            <img src="{% static 'images/Setting.svg' %}" alt="Settings logo">
+                            <p>Налаштування</p>
+                        </div>
+                    </a>
                 </div>
                 <form action="{% url 'logout' %}" method="post">
                     {% csrf_token %}
@@ -54,6 +61,7 @@
                 </form>
             </div>
         </div>
+    </div>
     {% endblock %}
 
     <div class="main-content">

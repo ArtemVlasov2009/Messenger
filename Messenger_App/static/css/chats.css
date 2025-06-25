@@ -1,0 +1,472 @@
+:root {
+    --50: #E9E5EE;
+    --20: #CDCED2;
+    --100: #FFFFFF;
+}
+
+body {
+    background-color: #FAF8FF;
+    margin: 0;
+    overflow: hidden;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;     
+    min-height: 100vh;       
+}
+
+
+.content-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    max-width: 1432px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    margin-block: auto;
+    gap: 0;
+}
+
+
+
+.left-frame {
+    width: 350.870361328125px;
+    height: 833px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.middle-frame {
+    display: flex;
+    flex-direction: column;
+    justify-content: center; 
+    align-items: center;     
+    height: 833px;
+    width: 564px;
+    height: 833px;
+    border-radius: 10px;
+    border: 1px solid #CDCED2;
+    padding: 16px;
+    background: #FFFFFF;
+    margin-left: 9px;
+    margin-right: 4.75px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+.middle-frame::-webkit-scrollbar {
+    display: none;
+}
+
+.right-frame {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 350px;
+    height: 833px;
+}
+
+.right-frame-top {
+    width: 350px;
+    height: 389px;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #CDCED2;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #543C52 #E9E5EE;
+}
+
+.right-frame-top::-webkit-scrollbar {
+    width: 8px;
+}
+
+.right-frame-top::-webkit-scrollbar-track {
+    background: #E9E5EE;
+    border-radius: 6px;
+}
+
+.right-frame-top::-webkit-scrollbar-thumb {
+    background: #543C52;
+    border-radius: 10px;
+    height: 56.9px;
+}
+
+.right-frame-bottom {
+    width: 350px;
+    height: 451px;
+    border-radius: 10px;
+    padding: 16px;
+    border: 1px solid #CDCED2;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: #543C52 #E9E5EE;
+}
+
+.right-frame-bottom::-webkit-scrollbar {
+    width: 8px;
+}
+
+.right-frame-bottom::-webkit-scrollbar-track {
+    background: #E9E5EE;
+    border-radius: 6px;
+}
+
+.right-frame-bottom::-webkit-scrollbar-thumb {
+    background: #543C52;
+    border-radius: 10px;
+    height: 56.9px;
+}
+
+.contacts-frame {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.contacts-frame button {
+    width: 100%;
+    height: 40px;
+    border-radius: 1234px;
+    padding: 10px 16px;
+    gap: 2px;
+    background-color: #543C52;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 20px;
+    letter-spacing: -0.006em;
+    color: #FFFFFF;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    margin-bottom: 8px;
+    font-family: 'GT Walsheim Pro', sans-serif;
+}
+
+.contacts-frame img {
+    width: 20px;
+    height: 20px;
+}
+
+.requests-frame {
+    width: 350.87px;
+    height: 833px;
+    border-radius: 10px;
+    border: 1px solid #CDCED2;
+    padding: 16px;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.requests {
+    width: 318.87px;
+    height: 23px;
+    justify-content: space-between;
+}
+
+.requ {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.requ img {
+    width: 20px;
+    height: 20px;
+}
+
+.requ p {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #81818D;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.requ .see-title {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #543C52;
+    white-space: nowrap;
+    margin: 0;
+    margin-left: auto;
+    text-decoration: none;
+}
+
+.search-frame {
+    display: inline-flex;
+    min-width: 318.87px;
+    min-height: 42px;
+    border-radius: 10px;
+    padding: 10px 16px;
+    gap: 10px;
+    border: 1px solid #CDCED2;
+    background: #FFFFFF;
+    box-sizing: border-box;
+    white-space: nowrap;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    margin: 24px auto;
+}
+
+.search-frame input {
+    width: 256.87px;
+    height: 22px;
+    gap: 8px;
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 22px;
+    letter-spacing: -0.007;
+    color: #81818D;
+    border: none;
+    outline: none;
+    background: transparent;
+}
+
+.contacts-list-frame {
+    width: 318.87px;
+    flex-grow: 1;
+    background-color: transparent;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    scrollbar-color: #543C52 #E9E5EE;
+}
+
+.contacts-list-frame::-webkit-scrollbar {
+    width: 8px;
+}
+
+.contacts-list-frame::-webkit-scrollbar-track {
+    background: #E9E5EE;
+    border-radius: 6px;
+}
+
+.contacts-list-frame::-webkit-scrollbar-thumb {
+    background: #543C52;
+    border-radius: 10px;
+    height: 56.9px;
+}
+
+.contacts-list-users-1 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 12px;
+    width: 100%;
+    min-height: 46px;
+}
+
+.contacts-list-frame img {
+    width: 46px;
+    height: 46px;
+    border-radius: 76.88px;
+}
+
+.contacts-list-frame p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: #070A1C;
+    margin: 0;
+    white-space: nowrap;
+}
+
+.preview-text {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    text-align: center;
+    margin: 0;    
+    padding: 0;
+    height: auto;
+}
+
+
+.preview-text h1 {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 24px;
+    line-height: 100%;
+    letter-spacing: -0.01;
+    color: #070A1C;
+    margin: 0;
+}
+
+.preview-text p {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: -0.01;
+    color: #070A1C;
+    margin: 0;
+    text-align: center;
+}
+
+.requ1 p {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #81818D;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    margin-right: 66px;
+}
+
+.requ1 h1 {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #543C52;
+}
+
+.messege-title {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    text-align: center;
+    color: #81818D;
+    padding-right: 33px;
+}
+
+.user-messege-1 {
+    width: 100%;
+    height: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    cursor: pointer;
+    position: relative;
+}
+
+.user-messege-1 img {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.user-messege-1 .user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+}
+
+.user-messege-1 .nick-and-time {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.user-messege-1 .nick {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 1.2;
+    color: #070A1C;
+    margin: 0;
+}
+
+.user-messege-1 .time {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 12px;
+    line-height: 1.2;
+    color: #81818D;
+    margin: 0;
+}
+
+.user-messege-1 .message-text {
+    font-family: 'GT Walsheim Pro', sans-serif;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.2;
+    color: #070A1C;
+    margin: 4px 0 0 0;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.messages-list-frame {
+    width: 100%;
+    flex-grow: 1;
+    background-color: transparent;
+    overflow-y: auto;
+    scrollbar-width: none;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+}
+
+.messages-list-frame::-webkit-scrollbar {
+    display: none;
+    width: 0px;
+}
+
+.messages-list-frame::-webkit-scrollbar-track {
+    background: #E9E5EE;
+    border-radius: 6px;
+}
+
+.messages-list-frame::-webkit-scrollbar-thumb {
+    background: #543C52;
+    border-radius: 10px;
+    height: 56.9px;
+}

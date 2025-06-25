@@ -12,15 +12,15 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 import os
+from django.urls import reverse_lazy
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-o^nt8(7c(n3kuf=ro8k&y7t@zztbuogobb*gx26^x(1%7-*(!4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -32,16 +32,26 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'channels',
     'Messenger_App',
     'Registration_app',
     'Posts_app',
 ]
+
+ASGI_APPLICATION = 'Messenger.asgi.application'
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -124,11 +134,19 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Список путей к static, которые реально существуют
 STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-    BASE_DIR / 'Messenger_App' / 'static',
-    BASE_DIR / 'Messenger' / 'static',
-    BASE_DIR / 'Posts_app' / 'static',
+    path for path in [
+        BASE_DIR / 'static',
+        BASE_DIR / 'Messenger_App' / 'static',
+        BASE_DIR / 'Messenger' / 'static',
+        BASE_DIR / 'Posts_app' / 'static',
+        BASE_DIR / 'my_publications' / 'static',
+    ] if path.exists()
 ]
 
 MEDIA_URL = '/media/'
@@ -141,10 +159,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# Email configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'av3411261@gmail.com'
 EMAIL_HOST_PASSWORD = 'fvdn nxca gdth qynw'  
+
+LOGIN_URL = '/authorization/' 
+
+
+LOGIN_REDIRECT_URL = '/posts/' 
+
+
+# AUTH_USER_MODEL = 'Messenger_App.CustomUser'
