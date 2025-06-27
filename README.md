@@ -1,698 +1,453 @@
 # 🌐 Соціальна мережа "World IT" <a id="top"></a>
 
-**World IT** - це амбітний проект, спрямований на створення повноцінної та функціональної соціальної мережі. Наша мета реалізувати ключовий функціонал сучасних платформ, забезпечуючи комфортне спілкування, обмін контентом та можливість знаходити нових друзів. Проект розроблено з використанням сучасних технологій та модульної архітектури, що забезпечує гнучкість і масштабованість.
+![Обкладинка проєкту](../images/Cover.png)
 
-## 📑 Зміст
+## 📑 Зміст <a id="contents"></a>
 
-- [Ключові можливості](#key-features)
-- [Стек технологій](#tech-stack)
-  - [Backend](#backend)
-  - [Frontend](#frontend)
-  - [Інструменти розробки](#dev-tools)
-- [Запуск проекту локально](#local-setup)
-- [Архітектура проекту](#architecture)
-  - [Основні моделі даних](#data-models)
-- [Дизайн та проектування](#design)
-- [Команда розробників](#team)
-- [Приклади коду](#code-examples)
-  - [Реєстрація користувача](#registration)
-  - [Модель для збереження коду підтвердження](#reg-code-model)
-  - [Створення постів](#posts)
-  - [Моделі для постів](#post-models)
-  - [Чати в реальному часі](#chats)
-  - [Frontend-логіка чатів](#chat-frontend)
-  - [Моделі для чатів](#chat-models)
-  - [Моделі профілю та друзів](#profile-models)
-  - [Форми додатку (Django Forms)](#app-forms)
-  - [Покращення інтерфейсу чату (JavaScript)](#chat-ui-js)
-  - [Маршрутизація WebSocket](#ws-routing)
+- [Мета проєкту](#purpose)
+- [Діаграма структури проєкту](#architecture-diagram)
+- [Розгортання проєкту на локальному ПК](#local-setup)
+- [Налаштування віртуального оточення](#virtual-env)
+- [Запуск проєкту](#run-project)
+- [Особливості розробки](#features)
+  - [Робота з зображеннями](#images)
+  - [Робота з WebSocket](#websocket)
+  - [Принцип роботи постів](#posts)
+  - [Принцип роботи альбомів](#albums)
+  - [Принцип роботи налаштувань](#settings)
+  - [Принцип роботи чатів](#chats)
+  - [Робота з AJAX](#ajax)
+  - [Принцип роботи реєстрації та авторизації](#auth)
+  - [Принцип роботи системи друзів](#friends)
 - [Висновок](#conclusion)
 
-## ✨ Ключові можливості <a id="key-features"></a>
+## 🎯 Мета проєкту <a id="purpose"></a>
 
-- ✅ **Реєстрація та автентифікація:** Безпечна система створення акаунтів із підтвердженням через email та входу.
-- 👤 **Профілі користувачів:** Персоналізовані сторінки з можливістю налаштування аватарів, інформації про себе та управління контентом.
-- 📝 **Стрічка новин та пости:** Створення, редагування, перегляд, лайки, коментарі та підтримка мультимедійного контенту (зображення, посилання).
-- 💬 **Месенджер у реальному часі:** Приватні та групові чати з підтримкою WebSocket, включаючи відправку тексту та зображень.
-- 👥 **Система друзів:** Додавання та видалення друзів, перегляд їх списків і управління соціальними зв’язками.
+**World IT** — це амбітна соціальна мережа, створена для об’єднання людей, які цікавляться технологіями, програмуванням та інноваціями. Наша мета — створити платформу, де користувачі можуть спілкуватися, ділитися ідеями через пости, створювати та підтримувати соціальні зв’язки через систему друзів, а також обмінюватися повідомленнями в реальному часі. Проєкт розроблено як модульний та масштабований, щоб забезпечити гнучкість для подальшого розвитку.
 
-## 🛠️ Стек технологій <a id="tech-stack"></a>
+**Кому буде корисним:**
+- **Розробникам та ентузіастам IT**: для обміну знаннями, портфоліо та ідеями через пости та чати.
+- **Студентам**: для пошуку однодумців, навчання та створення спільних проєктів.
+- **Ком’юніті-менеджерам**: для організації групових чатів та заходів.
+- **Широкій аудиторії**: для соціалізації через персоналізовані профілі, пости та систему друзів.
 
-Проект побудовано на основі сучасного технологічного стеку, що забезпечує продуктивність і зручність розробки.
+Проєкт використовує сучасні технології, такі як Django, WebSocket (Django Channels), AJAX, та адаптивний дизайн, що робить його зручним для всіх типів пристроїв.
 
-### Backend <a id="backend"></a>
-- **🐍 Python**: Основна мова програмування для серверної логіки.
-- **🚀 Django**: Веб-фреймворк для швидкої розробки та управління проєктом.
-- **🕸️ Django Channels (WebSocket)**: Реалізація чатів і сповіщень у реальному часі.
-- **🗃️ SQLite**: Легковагова база даних для розробки та тестування (з можливістю переходу на PostgreSQL у продакшені).
-- **📧 Django Email**: Відправка листів для підтвердження реєстрації та інших повідомлень.
+[Повернутися до змісту](#contents)
 
-### Frontend <a id="frontend"></a>
-- **🌐 HTML**: Структура веб-сторінок.
-- **🎨 CSS**: Стилізація інтерфейсу з адаптивним дизайном.
-- **💻 JavaScript**: Інтерактивність і динамічний контент.
-- **⚡️ AJAX**: Асинхронні запити для оновлення контенту без перезавантаження сторінок.
-- **📚 jQuery**: Спрощення роботи з DOM та обробки подій.
+## 🏗️ Діаграма структури проєкту <a id="architecture-diagram"></a>
 
-### Інструменти розробки <a id="dev-tools"></a>
-- **Git**: Контроль версій коду.
-- **Figma/FigJam**: Проектування дизайну та архітектури.
+Нижче наведено діаграму структури проєкту, яка відображає основні модулі та їх взаємозв’язки:
 
-## 🚀 Запуск проекту локально <a id="local-setup"></a>
+```mermaid
+graph TD
+    subgraph Messenger-Project
+        direction LR
+        A("Messenger")
+        B("Posts_app")
+        C("Messenger_app")
+        D("Registration_app")
+    end
 
-Щоб запустити проєкт на своєму комп’ютері, виконайте наступні кроки:
+    subgraph Messenger
+        direction TD
+        A_static("static")
+        A_templates("templates")
+        A_init("__init__.py")
+        A_asgi("asgi.py")
+        A_settings("settings.py")
+        A_urls("urls.py")
+        A_wsgi("wsgi.py")
 
-1. **Клонуйте репозиторій:**
-   ```bash
-   git clone https://github.com/ArtemVlasov2009/Messenger
-   ```
+        A_static --> A_css("css")
+        A_css --> A_base_css("base.css")
+        A_static --> A_fonts("fonts")
+        A_fonts --> A_demo_html("demo.html")
 
-2. **Перейдіть у директорію проєкту:**
-   ```bash
-   cd Messenger
-   ```
+        A_templates --> A_templates_messenger("Messenger")
+        A_templates_messenger --> A_base_html("base.html")
+    end
 
-3. **Створіть та активуйте віртуальне середовище:**
-   - Для Windows:
+    subgraph Posts_app
+        direction TD
+        B_static("static")
+        B_templates("templates")
+        B_init("__init__.py")
+        B_admin("admin.py")
+        B_apps("apps.py")
+        B_forms("forms.py")
+        B_models("models.py")
+        B_tests("tests.py")
+        B_views("views.py")
+
+        B_static --> B_css("css")
+        B_css --> B_pub_css("pub.css")
+        B_static --> B_js("js")
+        B_js --> B_pub_js("pub.js")
+
+        B_templates --> B_posts_html("Posts.html")
+    end
+
+    subgraph Messenger_app
+        direction TD
+        C_static("static")
+        C_templates("templates")
+        C_init("__init__.py")
+        C_admin("admin.py")
+        C_apps("apps.py")
+        C_forms("forms.py")
+        C_models("models.py")
+        C_routing("routing.py")
+        C_tests("tests.py")
+        C_views("views.py")
+
+        C_static --> C_css("css")
+        C_css --> C_auth_css("authorization.css")
+        C_css --> C_chats_css("chats.css")
+        C_css --> C_friends_css("friends.css")
+        C_css --> C_messenger_css("Messenger.css")
+        C_css --> C_personal_chat_css("personal_chat.css")
+        C_css --> C_profile_css("profile.css")
+        C_css --> C_settings_css("settings.css")
+
+        C_static --> C_js("js")
+        C_js --> C_chats_js("chats.js")
+        C_js --> C_friends_js("friends.js")
+        C_js --> C_messenger_js("Messenger.js")
+        C_js --> C_personal_chat_js("personal_chat.js")
+        C_js --> C_pub_js("pub.js")
+
+        C_templates --> C_auth_html("authorization.html")
+        C_templates --> C_chat_details_html("chat_details.html")
+        C_templates --> C_chats_html("chats.html")
+        C_templates --> C_friends_html("friends.html")
+        C_templates --> C_messenger_html("Messenger.htmlEs")
+        C_templates --> C_personal_chat_html("personal_chat.html")
+        C_templates --> C_profile_html("profile.html")
+        C_templates --> C_settings_html("settings.html")
+    end
+
+    subgraph Registration_app
+        direction TD
+        D_static("static")
+        D_templates("templates")
+        D_init("__init__.py")
+        D_admin("admin.py")
+        D_apps("apps.py")
+        D_forms("forms.py")
+        D_models("models.py")
+        D_tests("tests.py")
+        D_views("views.py")
+
+        D_static --> D_static_app("Registration_app")
+        D_static_app --> D_css("css")
+        D_css --> D_auth_css("auth.css")
+
+        D_templates --> D_templates_app("Registration_app")
+        D_templates_app --> D_reg_auth_html("registration_authorization.html")
+    end
+
+    %% Connections from root to subgraphs
+    A --> A_static & A_templates & A_init & A_asgi & A_settings & A_urls & A_wsgi
+    B --> B_static & B_templates & B_init & B_admin & B_apps & B_forms & B_models & B_tests & B_views
+    C --> C_static & C_templates & C_init & C_admin & C_apps & C_forms & C_models & C_routing & C_tests & C_views
+    D --> D_static & D_templates & D_init & D_admin & D_apps & D_forms & D_models & D_tests & D_views
+```
+
+[Повернутися до змісту](#contents)
+
+## 🚀 Розгортання проєкту на локальному ПК <a id="local-setup"></a>
+
+Щоб розгорнути проєкт на вашому комп’ютері, виконайте наступні кроки:
+
+1. **Переконайтеся, що встановлено Git**:
+   - Для Windows: Завантажте та встановіть Git з [офіційного сайту](https://git-scm.com/download/win). Після встановлення переконайтеся, що команда `git --version` працює в командному рядку.
+   - Для macOS: Git зазвичай встановлено за замовчуванням. Якщо ні, встановіть його через Homebrew: `brew install git`.
+
+2. **Клонуйте репозиторій**:
+   - Відкрийте термінал (Windows: cmd, PowerShell або Git Bash; macOS: Terminal).
+   - Виконайте:
+     ```bash
+     git clone https://github.com/ArtemVlasov2009/Messenger.git
+     ```
+
+3. **Перейдіть до директорії проєкту**:
+   - Для Windows/macOS:
+     ```bash
+     cd Messenger
+     ```
+
+4. **Перевірте наявність файлів**:
+   - Переконайтеся, що у директорії є файли, такі як `manage.py` та `requirements.txt`.
+
+[Повернутися до змісту](#contents)
+
+## 🛠️ Налаштування віртуального оточення <a id="virtual-env"></a>
+
+Віртуальне оточення ізолює залежності проєкту, щоб уникнути конфліктів із системними пакетами.
+
+### Для Windows:
+1. **Переконайтеся, що встановлено Python**:
+   - Завантажте Python 3.8+ з [python.org](https://www.python.org/downloads/). Під час встановлення виберіть опцію "Add Python to PATH".
+   - Перевірте: `python --version`.
+
+2. **Створіть віртуальне оточення**:
+   - У директорії проєкту виконайте:
      ```bash
      python -m venv venv
+     ```
+
+3. **Активуйте віртуальне оточення**:
+   - У cmd або PowerShell:
+     ```bash
      venv\Scripts\activate
      ```
-   - Для macOS/Linux:
+   - Після активації ви побачите `(venv)` у командному рядку.
+
+4. **Встановіть залежності**:
+   - Виконайте:
+     ```bash
+     pip install -r requirements.txt
+     ```
+   - Це встановить усі необхідні бібліотеки, вказані у файлі `requirements.txt`.
+
+### Для macOS:
+1. **Переконайтеся, що встановлено Python**:
+   - Використовуйте Python 3.8+. Перевірте: `python3 --version`. Якщо Python не встановлено, використовуйте Homebrew: `brew install python`.
+
+2. **Створіть віртуальне оточення**:
+   - У директорії проєкту виконайте:
      ```bash
      python3 -m venv venv
+     ```
+
+3. **Активуйте віртуальне оточення**:
+   - У Terminal:
+     ```bash
+     source venv/bin/activate
+     ```
+   - Після активації ви побачите `(venv)` у терміналі.
+
+4. **Встановіть залежності**:
+   - Виконайте:
+     ```bash
+     pip install -r requirements.txt
+     ```
+
+[Повернутися до змісту](#contents)
+
+## ▶️ Запуск проєкту <a id="run-project"></a>
+
+### Для Windows:
+1. **Переконайтеся, що віртуальне оточення активовано**:
+   - Якщо не активовано, виконайте:
+     ```bash
+     venv\Scripts\activate
+     ```
+
+2. **Застосуйте міграції бази даних**:
+   - У директорії проєкту виконайте:
+     ```bash
+     python manage.py migrate
+     ```
+   - Це створить базу даних SQLite і застосує всі необхідні схеми.
+
+3. **Запустіть сервер**:
+   - Виконайте:
+     ```bash
+     python manage.py runserver
+     ```
+
+4. **Відкрийте проєкт**:
+   - Відкрийте браузер і перейдіть за адресою: [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+
+### Для macOS:
+1. **Переконайтеся, що віртуальне оточення активовано**:
+   - Якщо не активовано, виконайте:
+     ```bash
      source venv/bin/activate
      ```
 
-4. **Встановіть залежності:**
-   ```bash
-   pip install -r requirements.txt
-   ```
-5. **Застосуйте міграції бази даних:**
-   ```bash
-   python manage.py migrate
-   ```
-
-6. **Запустіть сервер для розробки:**
-   ```bash
-   python manage.py runserver
-   ```
-
-7. **Готово! 🎉** Відкрийте браузер і перейдіть за адресою: [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
-
-## 🏗️ Архітектура проєкту <a id="architecture"></a>
-
-Проєкт має модульну структуру, що складається з кількох Django-застосунків для чіткого поділу функціоналу:
-
-- **`Messenger`**: Основний застосунок, що відповідає за маршрутизацію та інтеграцію компонентів.
-- **`Messenger_App`**: Логіка месенджера, включаючи чати в реальному часі через WebSocket.
-- **`Posts_app`**: Управління постами, включаючи створення, редагування, лайки та коментарі.
-- **`Registration_app`**: Реєстрація, автентифікація, підтвердження email та відновлення пароля.
-
-### Основні моделі даних <a id="data-models"></a>
-- **User/Profile**: Управління користувачами та їх профілями.
-- **Post/Link/Tag**: Створення та зберігання постів із тегами та посиланнями.
-- **ChatGroup/ChatMessage**: Організація групових і особистих чатів із повідомленнями.
-- **Send_Reg_Code**: Зберігання кодів підтвердження для реєстрації.
-
-## 🎨 Дизайн та проектування <a id="design"></a>
-
-- **[Архітектура (FigJam)](https://www.figma.com/board/bycCpq8bEEEHIMJLJyHarF/Untitled?node-id=0-1&t=tGh7GTL6TOhXgk7b-1)**: Схема взаємодії компонентів та логіки проєкту.
-- **[Дизайн (Figma)](https://www.figma.com/design/20TZphWNufeAQYOe7E1sze/%D0%A1%D0%BE%D1%86%D1%96%D0%B0%D0%BB%D1%8C%D0%BD%D0%B0-%D0%BC%D0%B5%D1%80%D0%B5%D0%B6%D0%B0-World-IT?node-id=6-26&t=6FcZEGOAfhm7mSQr-1)**: Макети інтерфейсу з адаптивним дизайном для всіх пристроїв.
-
-## 👨‍💻 Команда розробників <a id="team"></a>
-
-- **Власов Артем** — Тімлід([GitHub](https://github.com/ArtemVlasov2009/Messenger)).
-- **Ткач Богдан** — ([GitHub](https://github.com/Bogdantkach12/Messenger_project)).
-- **Іван Єжов** — ([GitHub](https://github.com/EzhovIvan)).
-
-## 📖 Приклади коду <a id="code-examples"></a>
-
-### Реєстрація користувача <a id="registration"></a>
-
-Реєстрація включає відправку 6-значного коду підтвердження на email.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-from django.contrib.auth.views import LogoutView
-from django.core.mail import send_mail
-from django.conf import settings
-from django.contrib import messages
-from django.shortcuts import redirect, render
-from django.views.generic.edit import FormView
-from django.contrib.auth import login, authenticate
-from django.urls import reverse_lazy
-from django.contrib.auth import get_user_model
-from .forms import RegistrationForm, CodeConfirmationForm, AuthorizationForm
-from .models import Send_Reg_Code
-import secrets
-import string
-from django.utils import timezone
-import logging
-
-logger = logging.getLogger(__name__)
-User = get_user_model()
-
-class RegistrationView(FormView):
-    template_name = 'Registration_app/registration_authorization.html'
-    form_class = RegistrationForm
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['form_name'] = self.form_class.__name__
-        context['title'] = 'Реєстрація'
-        context['subtitle'] = 'Приєднуйся до World IT'
-        context['view_type'] = 'registration'
-        return context
-
-    def form_valid(self, form):
-        email = form.cleaned_data['email']
-        password = form.cleaned_data['password']
-        code = ''.join(secrets.choice(string.digits) for _ in range(6))
-
-        self.request.session['registration_email'] = email
-        self.request.session['registration_password'] = password
-        self.request.session['verification_code'] = code
-
-        Send_Reg_Code.objects.update_or_create(
-            email=email,
-            defaults={
-                'code': code,
-                'expires_at': timezone.now() + timezone.timedelta(minutes=15)
-            }
-        )
-
-        try:
-            subject = '✅ Підтвердіть свою електронну адресу для World IT Messenger!'
-            message_body = f"""
-Вітаємо у World IT Messenger! 👋
-
-Будь ласка, використайте наступний код для підтвердження вашої електронної адреси:
-
-{code}
-
-Введіть цей код на сторінці підтвердження, щоб завершити реєстрацію. Код дійсний 15 хвилин.
-
-Дякуємо за приєднання!
-Команда World IT Messenger 🚀
-"""
-            send_mail(
-                subject=subject,
-                message=message_body,
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[email],
-                fail_silently=False
-            )
-            messages.success(self.request, 'Код підтвердження відправлено на вашу пошту.')
-            logger.info(f"Verification code sent to {email}")
-            return redirect('confirm_code')
-        except Exception as e:
-            logger.error(f"Error sending email to {email}: {e}")
-            messages.error(self.request, 'Виникла помилка при відправленні коду. Спробуйте ще раз або зверніться до підтримки.')
-            self._cleanup_session()
-            return self.form_invalid(form)
-
-    def form_invalid(self, form):
-        logger.warning(f"Invalid registration form: {form.errors}")
-        self._cleanup_session()
-        context = self.get_context_data(form=form)
-        return self.render_to_response(context)
-
-    def _cleanup_session(self):
-        session_keys = ['registration_email', 'registration_password', 'verification_code']
-        for key in session_keys:
-            self.request.session.pop(key, None)
-```
-
-**Пояснення:**
-- **Клас `RegistrationView`**: Використовує Django `FormView` для обробки форми реєстрації.
-- **Генерація коду**: Створюється 6-значний код за допомогою `secrets` для безпеки.
-- **Сесія**: Email, пароль і код зберігаються в сесії для подальшого використання.
-- **Відправка email**: Використовується `send_mail` для надсилання коду підтвердження.
-- **Логування**: Використовується `logging` для відстеження подій і помилок.
-- **Очищення сесії**: Метод `_cleanup_session` видаляє тимчасові дані в разі помилки.
-
-</details>
-
-### Модель для збереження коду підтвердження <a id="reg-code-model"></a>
-
-Зберігає код підтвердження для реєстрації.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-from django.db import models
-from django.utils import timezone
-from datetime import timedelta
-
-class Send_Reg_Code(models.Model):
-    email = models.EmailField(unique=True)
-    code = models.CharField(max_length=6)
-    expires_at = models.DateTimeField(default=timezone.now() + timedelta(minutes=15))
-```
-
-**Пояснення:**
-- **Поле `email`**: Унікальне поле для зберігання адреси користувача.
-- **Поле `code`**: Зберігає 6-значний код підтвердження.
-- **Поле `expires_at`**: Вказує термін дії коду (15 хвилин).
-- **Модель**: Використовується для тимчасового зберігання коду в базі даних.
-
-</details>
-
-### Створення постів <a id="posts"></a>
-
-Підтримка тексту, зображень, посилань і тегів.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-from django.shortcuts import render, redirect, get_object_or_404
-from django.views.generic import ListView
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
-from .models import Post, Link, Image
-from .forms import PostForm
-from Messenger_App.models import Profile
-import logging
-
-logger = logging.getLogger(__name__)
-
-class PostsPageView(LoginRequiredMixin, ListView):
-    model = Post
-    template_name = 'Posts_app/Posts.html'
-    context_object_name = 'user_posts'
-    ordering = ['-id']
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context['current_page'] = 'posts'
-        context['form'] = context.get('form', PostForm())
-        return context
-
-    def post(self, request, *args, **kwargs):
-        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
-        form = PostForm(request.POST, request.FILES)
-        
-        if form.is_valid():
-            post = form.save(commit=False)
-            post.author = get_object_or_404(Profile, user=request.user)
-            post.save()
-            form.save_m2m()
-            uploaded_images = request.FILES.getlist('images_upload')
-            for f in uploaded_images:
-                image_instance = Image.objects.create(file=f, owner=post.author, filename=f.name)
-                post.images.add(image_instance)
-            
-            article_link = form.cleaned_data.get('article_link')
-            if article_link:
-                Link.objects.create(url=article_link, post=post)
-
-            for key, value in request.POST.items():
-                if key.startswith('extra_link_') and value.strip():
-                    Link.objects.create(url=value.strip(), post=post)
-
-            if is_ajax:
-                return JsonResponse({'status': 'success', 'message': 'Пост успішно створено.'})
-            return redirect('posts_page')
-```
-
-**Пояснення:**
-- **Клас `PostsPageView`**: Комбінує `ListView` для відображення постів і обробку POST-запитів для їх створення.
-- **Обробка файлів**: Підтримує завантаження кількох зображень через `request.FILES`.
-- **Посилання**: Додає основне посилання (`article_link`) та додаткові посилання (`extra_link_`).
-- **AJAX**: Використовується для асинхронного створення постів із JSON-відповідями.
-- **Авторизація**: `LoginRequiredMixin` забезпечує доступ лише для авторизованих користувачів.
-
-</details>
-
-### Моделі для постів <a id="post-models"></a>
-
-Зберігання постів, тегів і посилань.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-class Post(models.Model):
-    title = models.CharField(max_length=255)
-    content = models.TextField()
-    author = models.ForeignKey('Messenger_App.Profile', on_delete=models.CASCADE, related_name='posts_authored')
-    created_at = models.DateTimeField(auto_now_add=True)
-    tags = models.ManyToManyField(Tag, blank=True)
-    images = models.ManyToManyField(Image, blank=True)
-    
-    def __str__(self):
-        return self.title
-
-class Link(models.Model):
-    url = models.URLField()
-    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='links')
-    
-    def __str__(self):
-        return self.url
-
-class Tag(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    def __str__(self):
-        return self.name
-```
-
-**Пояснення:**
-- **Модель `Post`**: Зберігає заголовок, вміст, автора, теги, зображення та дату створення.
-- **Модель `Link`**: Зберігає URL-посилання, пов’язані з постом.
-- **Модель `Tag`**: Унікальні теги для категоризації постів.
-- **Зв’язки**: Використовуються `ForeignKey` і `ManyToManyField` для зв’язків між моделями.
-
-</details>
-
-### Чати в реальному часі <a id="chats"></a>
-
-Реалізація через WebSocket.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-import json
-from channels.generic.websocket import AsyncWebsocketConsumer
-from channels.db import database_sync_to_async
-from .models import ChatGroup, ChatMessage, Profile
-
-class ChatConsumer(AsyncWebsocketConsumer):
-    async def connect(self):
-        self.room_name = self.scope['url_route']['kwargs']['group_pk']
-        self.room_group_name = f'chat_{self.room_name}'
-        self.user = self.scope['user']
-
-        if not self.user.is_authenticated:
-            await self.close()
-            return
-
-        self.chat_group = await self.get_group_if_member(self.user, self.room_name)
-        if not self.chat_group:
-            await self.close()
-            return
-
-        await self.channel_layer.group_add(
-            self.room_group_name,
-            self.channel_name
-        )
-        await self.accept()
-
-    async def receive(self, text_data):
-        text_data_json = json.loads(text_data)
-        message_content = text_data_json.get('message', '')
-
-        if not message_content.strip():
-            return
-
-        author_profile = await self.get_user_profile(self.user)
-        if not author_profile:
-            return
-
-        avatar_url = await self.get_avatar_url(author_profile)
-        message = await self.save_message_to_db(author_profile, self.chat_group, message_content)
-
-        await self.channel_layer.group_send(
-            self.room_group_name,
-            {
-                'type': 'chat_message',
-                'message': message.content,
-                'username': self.user.username,
-                'author_first_name': self.user.first_name,
-                'author_avatar_url': avatar_url,
-                'sent_at': message.sent_at.isoformat(),
-                'image_url': None,
-                'is_personal': self.chat_group.is_personal_chat
-            }
-        )
-```
-
-**Пояснення:**
-- **Клас `ChatConsumer`**: Використовує `AsyncWebsocketConsumer` для обробки WebSocket-з’єднань.
-- **Автентифікація**: Перевіряє, чи користувач авторизований і є членом чату.
-- **Повідомлення**: Зберігає повідомлення в базі та надсилає їх усім учасникам чату через `group_send`.
-- **Асинхронність**: Використовує `database_sync_to_async` для безпечного доступу до бази даних.
-
-</details>
-
-### Frontend-логіка чатів <a id="chat-frontend"></a>
-
-Обробка повідомлень на клієнтській стороні.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```javascript
-const webSocket = new WebSocket(`ws://${window.location.host}/ws/chat/${groupPk}/`);
-webSocket.onmessage = function(event) {
-    const data = JSON.parse(event.data);
-    if (data.type !== 'chat') return;
-    const isSentByMe = data.username === currentUsername;
-    const messageClass = isSentByMe ? 'sent' : 'received';
-    let messageContentHtml = '';
-    if (data.message) { messageContentHtml += `${data.message.replace(/\n/g, '<br>')}`; }
-    if (data.image_url) { messageContentHtml += `<a href="${data.image_url}" target="_blank"><img src="${data.image_url}" alt="Attached image"></a>`; }
-    let authorHtml = '';
-    if (!isSentByMe && document.querySelector('.message-author')) { authorHtml = `<div class="message-author">${data.username}</div>`; }
-    const messageDiv = document.createElement('div');
-    messageDiv.classList.add('message', messageClass);
-    messageDiv.innerHTML = `<div class="message-body"><div class="message-content">${messageContentHtml}</div><span class="message-time">${formatTime(data.sent_at)}</span></div>`;
-    messagesContainer.appendChild(messageDiv);
-    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-};
-```
-
-**Пояснення:**
-- **WebSocket**: Встановлює з’єднання з сервером для отримання повідомлень у реальному часі.
-- **Обробка повідомлень**: Додає отримані повідомлення до DOM із відповідними стилями (`sent` або `received`).
-- **Підтримка зображень**: Відображає вкладені зображення як посилання з попереднім переглядом.
-- **Автоскрол**: Прокручує контейнер повідомлень донизу після додавання нового повідомлення.
-
-</details>
-
-### Моделі для чатів <a id="chat-models"></a>
-
-Зберігання групових і особистих чатів.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-class ChatGroup(models.Model):
-    name = models.CharField(max_length=255)
-    members = models.ManyToManyField(Profile, blank=True)
-    is_personal_chat = models.BooleanField(default=False)
-    admin = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='administered_group', null=True)
-    avatar = models.ImageField(upload_to='images/group_avatars', blank=True, null=True)
-    
-    def __str__(self):
-        return f'Група "{self.name}"'
-
-class ChatMessage(models.Model):
-    content = models.TextField(max_length=4096, blank=True)
-    author = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    chat_group = models.ForeignKey(ChatGroup, on_delete=models.CASCADE)
-    sent_at = models.DateTimeField(auto_now_add=True)
-    attached_image = models.ImageField(upload_to='images/messages', blank=True, null=True)
-    
-    def __str__(self):
-        return f'Повідомлення від {self.author}. Відправлено {self.sent_at}'
-```
-
-**Пояснення:**
-- **Модель `ChatGroup`**: Зберігає інформацію про групу, її учасників, адміністратора та аватар.
-- **Модель `ChatMessage`**: Зберігає текст повідомлення, автора, групу, дату відправлення та вкладене зображення.
-- **Поля**: Використовуються `ManyToManyField` для учасників і `ImageField` для зображень.
-- **Логіка**: Підтримує як особисті, так і групові чати через поле `is_personal_chat`.
-
-</details>
-
-### Моделі профілю та друзів <a id="profile-models"></a>
-Ці моделі розширюють стандартну модель `User` і реалізують систему дружби.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-from django.db import models
-from django.contrib.auth import get_user_model
-from django.db.models.signals import post_save
-from django.dispatch import receiver
-from django.templatetags.static import static 
-
-User = get_user_model()
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    date_of_birth = models.DateField(null=True, blank=True)
-    signature = models.ImageField(upload_to='images/signatures', blank=True, null=True)
-    
-    def get_avatar_url(self):
-        active_avatar_instance = self.avatar_set.filter(active=True).first()
-        if active_avatar_instance and active_avatar_instance.image and active_avatar_instance.image.file:
-            return active_avatar_instance.image.file.url
-        return static('images/avatar.png')
-
-    def __str__(self):
-        return self.user.username
-
-class Avatar(models.Model):
-    image = models.OneToOneField('Posts_app.Image', on_delete=models.CASCADE, related_name='avatar')
-    profile = models.ForeignKey(Profile, on_delete=models.CASCADE)
-    active = models.BooleanField(default=True)
-
-class Friendship(models.Model):
-    profile1 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='friendship_sent_request')
-    profile2 = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='friendship_accepted_request')
-    accepted = models.BooleanField(default=False)
-
-@receiver(post_save, sender=User)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        Profile.objects.create(user=instance)
-
-@receiver(post_save, sender=User)
-def save_user_profile(sender, instance, **kwargs):
-    if hasattr(instance, 'profile'):
-        instance.profile.save()
-```
-
-**Пояснення:**
-- **Модель `Profile`**: Розширює стандартну модель `User` за допомогою `OneToOneField`. Зберігає додаткові дані, як-от дата народження та підпис. Метод `get_avatar_url` повертає URL активного аватара або стандартне зображення.
-- **Модель `Avatar`**: Пов'язує профіль (`Profile`) із завантаженим зображенням (`Image`) та позначає його як активний.
-- **Модель `Friendship`**: Реалізує систему запитів у друзі. Зберігає зв'язок між двома профілями та статус (`accepted`), що вказує, чи прийнято запит.
-- **Сигнали `post_save`**: Автоматично створюють `Profile` для кожного нового `User` (`create_user_profile`) та зберігають його при оновленні `User` (`save_user_profile`), забезпечуючи цілісність даних.
-
-</details>
-
-### Форми додатку (Django Forms) <a id="app-forms"></a>
-Форми є ключовим елементом взаємодії з користувачем, від авторизації до налаштувань профілю.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-from django import forms
-from django.contrib.auth.models import User
-from .models import Profile, ChatMessage
-
-class SettingsForm(forms.ModelForm):
-    """Форма для страницы настроек пользователя."""
-    first_name = forms.CharField(label="Ім’я", max_length=30, required=True)
-    last_name = forms.CharField(label="Прізвище", max_length=30, required=True)
-    email = forms.EmailField(label="Електронна пошта", required=True)
-    date_of_birth = forms.DateField(label="Дата народження", widget=forms.DateInput(attrs={'type': 'date'}), required=False)
-    password = forms.CharField(label="Новий пароль", widget=forms.PasswordInput, required=False)
-    password_confirm = forms.CharField(label="Підтвердіть новий пароль", widget=forms.PasswordInput, required=False)
-
-    class Meta:
-        model = User
-        fields = ['first_name', 'last_name', 'email']
-
-    def clean(self):
-        cleaned_data = super().clean()
-        password = cleaned_data.get('password')
-        password_confirm = cleaned_data.get('password_confirm')
-
-        if password and password_confirm:
-            if password != password_confirm:
-                self.add_error('password_confirm', 'Паролі не співпадають.')
-            if len(password) < 8:
-                self.add_error('password', 'Пароль повинен містити щонайменше 8 символів.')
-        elif password or password_confirm:
-            self.add_error(None, 'Заповніть обидва поля пароля.')
-        return cleaned_data
-
-class MessageForm(forms.ModelForm):
-    """Форма для отправки сообщения в чате."""
-    class Meta:
-        model = ChatMessage
-        fields = ['content', 'attached_image']
-        labels = {
-            'content': 'Ваше повідомлення',
-            'attached_image': 'Прикріпити зображення'
-        }
-        widgets = {
-            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Напишіть повідомлення...'}),
-        }
-```
-**Пояснення:**
-- **Клас `SettingsForm`**: Це `ModelForm`, що дозволяє редагувати дані моделі `User`. Він включає поля для зміни імені, прізвища та email. Також додано поля для зміни пароля з валідацією в методі `clean()`, яка перевіряє, чи паролі співпадають і чи відповідають вимогам безпеки.
-- **Клас `MessageForm`**: `ModelForm` для створення повідомлень у чаті (`ChatMessage`). Використовує віджет `Textarea` для зручного введення тексту та дозволяє прикріпити зображення.
-
-</details>
-
-### Покращення інтерфейсу чату (JavaScript) <a id="chat-ui-js"></a>
-JavaScript використовується для покращення користувацького досвіду, наприклад, для автоматичного скролінгу та зміни розміру поля вводу.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```javascript
-document.addEventListener('DOMContentLoaded', function() {
-    const messagesDisplay = document.getElementById('messages-display');
-    if (messagesDisplay) {
-        messagesDisplay.scrollTop = messagesDisplay.scrollHeight;
-    }
-
-    const textarea = document.querySelector('.message-input-area .message-textarea');
-    if (textarea) {
-        textarea.addEventListener('input', function() {
-            this.style.height = 'auto'; 
-            this.style.height = (this.scrollHeight) + 'px'; 
-        });
-        textarea.style.height = (textarea.scrollHeight) + 'px';
-    }
-
-    if (textarea) {
-        textarea.focus();
-    }
-});
-```
-**Пояснення:**
-- **`DOMContentLoaded`**: Скрипт виконується після повного завантаження структури сторінки.
-- **Автоматичне прокручування**: Знаходить контейнер з повідомленнями (`messages-display`) і прокручує його до самого низу, щоб користувач одразу бачив останні повідомлення.
-- **Динамічний розмір поля вводу**: Для елемента `textarea` додається слухач події `input`. При введенні тексту висота поля автоматично змінюється відповідно до вмісту, що робить введення довгих повідомлень зручнішим.
-- **Фокус на полі вводу**: Автоматично встановлює фокус на полі для введення повідомлення, дозволяючи користувачеві одразу почати друкувати.
-
-</details>
-
-### Маршрутизація WebSocket <a id="ws-routing"></a>
-Для роботи чатів у реальному часі необхідно налаштувати маршрути для WebSocket-з'єднань.
-
-<details>
-<summary>Переглянути код та пояснення</summary>
-
-```python
-from django.urls import path 
-from .consumers import ChatConsumer
-
-ws_urlpatterns = [
-    path('ws/chat/<int:group_pk>/', ChatConsumer.as_asgi()),
-]
-```
-**Пояснення:**
-- **`ws_urlpatterns`**: Цей список містить маршрути для WebSocket. Його підключають до основного файлу маршрутизації ASGI-додатку.
-- **`path('ws/chat/<int:group_pk>/', ...)`**: Визначає URL-шаблон для WebSocket-з'єднання.
-  - `ws/`: Стандартний префікс для WebSocket.
-  - `chat/`: Вказує, що це маршрут для чату.
-  - `<int:group_pk>/`: Динамічний сегмент, що приймає ID групи чату. Це дозволяє одному консьюмеру обслуговувати безліч чатів.
-- **`ChatConsumer.as_asgi()`**: Вказує, що всі з'єднання за цим маршрутом буде обробляти клас `ChatConsumer`.
-
-</details>
+2. **Застосуйте міграції бази даних**:
+   - Виконайте:
+     ```bash
+     python3 manage.py migrate
+     ```
+
+3. **Запустіть сервер**:
+   - Виконайте:
+     ```bash
+     python3 manage.py runserver
+     ```
+
+4. **Відкрийте проєкт**:
+   - Відкрийте браузер і перейдіть за адресою: [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+
+[Повернутися до змісту](#contents)
+
+## ✨ Особливості розробки <a id="features"></a>
+
+### Робота з зображеннями <a id="images"></a>
+
+**Опис**: Проєкт підтримує завантаження, зберігання та відображення зображень у постах, чатах і профілях користувачів. Зображення зберігаються в базі даних через модель `Image` та асоціюються з профілями чи постами через `ManyToManyField`. Користувачі можуть завантажувати аватари, зображення до постів і вкладення до повідомлень у чатах. Для оптимізації використовується адаптивне відображення зображень.
+
+**Як працює**:
+1. Користувач завантажує зображення через форму (наприклад, у постах чи профілі).
+2. Django обробляє файл через `request.FILES` і зберігає його у директорії, визначеній у `ImageField` (наприклад, `images/avatars`).
+3. Модель `Image` зберігає мета-інформацію (власник, ім’я файлу).
+4. На фронтенді зображення відображаються через `<img>` теги з URL, отриманим із моделі.
+
+**Демонстрація**: ![](../images/Edit_avatar.png)
+
+**Код**: Дивіться приклад у [PostsPageView](https://github.com/ArtemVlasov2009/Messenger/blob/main/Posts_app/views.py).
+
+[Повернутися до змісту](#contents)
+
+### Робота з WebSocket <a id="websocket"></a>
+
+**Опис**: Для реалізації чатів у реальному часі використовується Django Channels із WebSocket. Це дозволяє миттєво надсилати та отримувати повідомлення в особистих і групових чатах.
+
+**Як працює**:
+1. Користувач підключається до WebSocket через URL (наприклад, `ws://host/ws/chat/<group_pk>/`).
+2. `ChatConsumer` перевіряє автентифікацію та членство в чаті.
+3. Повідомлення надсилаються через `group_send` усім учасникам чату.
+4. На фронтенді JavaScript обробляє WebSocket-події та додає повідомлення до DOM.
+
+**Демонстрація**: ![](../images/Chats.png)
+
+**Код**: Дивіться приклад у [ChatConsumer](https://github.com/ArtemVlasov2009/Messenger/blob/main/Messenger_app/consumers.py).
+
+[Повернутися до змісту](#contents)
+
+### Принцип роботи постів <a id="posts"></a>
+
+**Опис**: Користувачі можуть створювати пости з текстом, зображеннями, посиланнями та тегами. Пости відображаються у стрічці новин.
+
+**Як працює**:
+1. Користувач заповнює форму `PostForm`, додаючи текст, зображення та посилання.
+2. Сервер обробляє форму, зберігає пост у моделі `Post` та асоціює зображення й посилання через `ManyToManyField` та `ForeignKey`.
+3. Список постів відображається через `ListView` у порядку створення (`ordering = ['-id']`).
+**Демонстрація**: ![](../images/Posts.png)
+
+**Код**: Дивіться приклад у [PostsPageView](https://github.com/ArtemVlasov2009/Messenger/blob/main/Posts_app/views.py).
+
+[Повернутися до змісту](#contents)
+
+### Принцип роботи альбомів <a id="albums"></a>
+
+**Опис**: Альбоми дозволяють користувачам групувати зображення в колекції, пов’язані з їх профілем. Це розширення функціоналу постів для організації мультимедійного контенту.
+
+**Як працює**:
+1. Користувач створює альбом через інтерфейс профілю, додаючи зображення.
+2. Зображення зберігаються в моделі `Image` і асоціюються з профілем через `ForeignKey`.
+3. Альбоми відображаються як колекція зображень із можливістю перегляду та редагування.
+
+**Демонстрація**: ![](../images/Albums.png)
+
+**Код**: Дивіться приклад у [Profile](https://github.com/ArtemVlasov2009/Messenger/blob/master/Messenger_App/models.py).
+
+[Повернутися до змісту](#contents)
+
+### Принцип роботи налаштувань <a id="settings"></a>
+
+**Опис**: Користувачі можуть редагувати профіль, змінюючи ім’я, email, пароль, дату народження та аватар.
+
+**Як працює**:
+1. Користувач заповнює форму `SettingsForm`, яка валідує дані (наприклад, збіг паролів).
+2. Дані оновлюються в моделі `User` та `Profile` через `ModelForm`.
+3. Зміни відображаються в профілі після збереження.
+
+**Демонстрація**: ![](../images/Settings.png)
+
+
+**Код**: Дивіться приклад у [SettingsForm](https://github.com/ArtemVlasov2009/Messenger/blob/main/Messenger_app/forms.py).
+
+[Повернутися до змісту](#contents)
+
+### Принцип роботи чатів <a id="chats"></a>
+
+**Опис**: Проєкт підтримує особисті та групові чати з можливістю надсилання тексту та зображень у реальному часі.
+
+**Як працює**:
+1. Чати створюються через модель `ChatGroup` (з полем `is_personal_chat` для особистих чатів).
+2. Повідомлення зберігаються в моделі `ChatMessage` і надсилаються через WebSocket.
+3. Фронтенд оновлює інтерфейс чату через JavaScript, додаючи повідомлення до DOM.
+
+**Демонстрація**: ![](../images/Group_Chats.png)
+
+**Код**: Дивіться приклад у [ChatConsumer](https://github.com/ArtemVlasov2009/Messenger/blob/master/Messenger_App/forms.py).
+
+[Повернутися до змісту](#contents)
+
+### Робота з AJAX <a id="ajax"></a>
+
+**Опис**: AJAX використовується для асинхронного оновлення контенту, наприклад, при створенні постів або надсиланні повідомлень.
+
+**Як працює**:
+1. Фронтенд надсилає POST-запит із заголовком `X-Requested-With: XMLHttpRequest`.
+2. Сервер обробляє запит і повертає JSON-відповідь (наприклад, `{'status': 'success'}`).
+3. JavaScript оновлює DOM без перезавантаження сторінки.
+
+### Демонстрація
+![GIF асинхронного створення посту](../images/Chats.gif)
+
+**Код**: Дивіться приклад у [PostsPageView](https://github.com/ArtemVlasov2009/Messenger/blob/main/Posts_app/views.py).
+
+[Повернутися до змісту](#contents)
+
+### Принцип роботи реєстрації та авторизації <a id="auth"></a>
+
+**Опис**: Система забезпечує безпечну реєстрацію та авторизацію з підтвердженням через email.
+
+**Як працює**:
+1. **Реєстрація**:
+   - Користувач вводить email і пароль у форму `RegistrationForm`.
+   - Сервер генерує 6-значний код і відправляє його на email через `send_mail`.
+   - Код зберігається в моделі `Send_Reg_Code` із терміном дії 15 хвилин.
+   - Після введення правильного коду створюється користувач (`User`) і профіль (`Profile`).
+2. **Авторизація**:
+   - Користувач вводить email і пароль у форму `AuthorizationForm`.
+   - Django `authenticate` перевіряє дані, і користувач входить через `login`.
+
+**Демонстрація**: ![](../images/Reg.jpg)
+
+**Код**: Дивіться приклад у [RegistrationView](https://github.com/ArtemVlasov2009/Messenger/blob/main/Registration_app/views.py).
+
+[Повернутися до змісту](#contents)
+
+### Принцип роботи системи друзів <a id="friends"></a>
+
+**Опис**: Користувачі можуть надсилати запити в друзі, приймати їх і керувати списком друзів.
+
+**Як працює**:
+1. Користувач надсилає запит через форму, створюючи запис у моделі `Friendship` (`accepted=False`).
+2. Одержувач бачить запит і може його прийняти, змінюючи `accepted=True`.
+3. Список друзів формується через запити до `Friendship` з фільтром `accepted=True`.
+
+**Демонстрація**: ![](../images/Friends.png)
+
+**Код**: Дивіться приклад у [Friendship](https://github.com/ArtemVlasov2009/Messenger/blob/master/Messenger_App/models.py).
+
+[Повернутися до змісту](#contents)
 
 ## 📝 Висновок <a id="conclusion"></a>
 
-Розробка цього проекту стала важливим етапом у нашому професійному зростанні. Ми здобули цінний досвід у створенні складних веб-додатків з нуля, опанували сучасні технології та навчилися ефективно працювати в команді. Проєкт допоміг нам:
+Розробка соціальної мережі **World IT** стала для нас не лише амбітним проєктом, а й важливим етапом у професійному зростанні. Цей проєкт дозволив нам глибоко зануритися в сучасні технології веб-розробки, розвинути навички командної роботи та отримати практичний досвід у створенні складних систем із нуля. Ми навчилися інтегрувати різноманітні технології, такі як Django, Django Channels, WebSocket, AJAX, HTML, CSS і JavaScript, щоб створити функціональну та зручну платформу.
 
-- Поглибити знання **Django**, включаючи Django Channels для WebSocket.
-- Поліпшити навички роботи з **JavaScript**, **AJAX**, **HTML** і **CSS**.
-- Розвинути вміння проектувати модульну архітектуру та створювати адаптивний дизайн.
-- Зрозуміти, як масштабувати проєкти та інтегрувати різні технології.
+**Чому проєкт був корисним?**
 
-Ці навички стануть основою для наших майбутніх проєктів, адже використані технології є затребуваними на ринку IT.
+По-перше, ми значно поглибили знання **Django** як основного фреймворку. Робота з модульною архітектурою дозволила нам зрозуміти, як ефективно структурувати проєкти, розділяючи логіку на окремі додатки (`Messenger`, `Posts_app`, `Messenger_app`, `Registration_app`). Це навчило нас принципам масштабованості та повторного використання коду. Ми також освоїли **Django Channels**, що відкрило нові можливості для роботи з асинхронними технологіями, зокрема WebSocket, які є критично важливими для сучасних веб-додатків із реальним часом.
+
+По-друге, проєкт допоміг нам удосконалити навички **фронтенд-розробки**. Робота з JavaScript і AJAX дозволила створювати інтерактивні інтерфейси, які оновлюються без перезавантаження сторінки, що значно покращило користувацький досвід. Ми також навчилися створювати адаптивний дизайн за допомогою CSS, що забезпечує коректне відображення платформи на різних пристроях - від смартфонів до настільних комп’ютерів.
+
+По-третє, ми здобули цінний досвід у **проектуванні баз даних**. Моделі, такі як `User`, `Profile`, `Post`, `ChatGroup`, і `ChatMessage`, допомогли нам зрозуміти, як правильно будувати зв’язки між таблицями (`OneToOneField`, `ManyToManyField`, `ForeignKey`) та оптимізувати запити до бази даних. Робота з SQLite під час розробки дала нам розуміння, як легко переходити до більш потужних баз даних, таких як MySQL та PostgreSQL.
+
+Крім технічних навичок, проєкт розвинув наші soft skills. Ми навчилися ефективно розподіляти задачі в команді, вирішувати конфлікти в коді через Git, і працювати в умовах обмеженого часу. Регулярні обговорення дизайну в Figma та планування в FigJam допомогли нам зрозуміти важливість чіткого бачення продукту перед початком кодування.
+
+**Чому цей досвід цінний для майбутнього?**  
+Цей проєкт став для нас практичною школою веб-розробки. Ми отримали досвід, який можна застосувати в реальних комерційних проєктах. Знання Django, WebSocket і AJAX є затребуваними на ринку праці, а вміння працювати з адаптивним дизайном і модульною архітектурою робить нас більш конкурентоспроможними як розробників. Крім того, ми навчилися вирішувати складні задачі, такі як безпечна автентифікація, обробка мультимедійного контенту та підтримка чатів у реальному часі, що є ключовими компонентами сучасних соціальних платформ.
+
+**Висновок**: Розробка **World IT Messenger** не лише розширила наші технічні горизонти, але й навчила нас працювати як єдина команда, долати труднощі та створювати продукт, який може бути корисним для реальних користувачів. Цей проєкт став міцним фундаментом для наших майбутніх звершень у сфері IT, і ми впевнені, що отримані знання та навички допоможуть нам створювати ще більш амбітні та інноваційні проєкти.
+
+[Повернутися до змісту](#contents)
+

@@ -1,5 +1,3 @@
-# /home/artem/Desktop/Messenger-Project/Messenger/Messenger_App/views.py
-
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib.auth.views import LogoutView
@@ -25,7 +23,7 @@ import string
 from django.utils import timezone
 from datetime import timedelta
 from django.db import models
-from django.db.models import Prefetch
+from django.db.models import Prefetch, OuterRef, Subquery
 from asgiref.sync import async_to_sync
 from channels.layers import get_channel_layer
 import json
@@ -46,11 +44,70 @@ class MessengerPageView(LoginRequiredMixin, ListView):
             'surname': self.request.user.last_name,
             'login': self.request.user.username
         })
-        
+
+        friendship_requests = Friendship.objects.filter(
+            profile2=current_user_profile, accepted=False
+        ).select_related(
+            'profile1__user'
+        ).prefetch_related(
+            Prefetch(
+                'profile1__avatar_set',
+                queryset=Avatar.objects.filter(active=True).select_related('image'),
+                to_attr='active_avatars'
+            )
+        )[:3]
+
+        friend_requests_data = []
+        for fr in friendship_requests:
+            requesting_profile = fr.profile1
+            avatar = requesting_profile.active_avatars[0] if hasattr(requesting_profile, 'active_avatars') and requesting_profile.active_avatars else None
+            friend_requests_data.append({
+                'user': requesting_profile.user,
+                'avatar': avatar,
+            })
+        context['friend_requests_data'] = friend_requests_data
+
+        personal_chat_ids = list(ChatGroup.objects.filter(
+            members=current_user_profile,
+            is_personal_chat=True
+        ).values_list('id', flat=True))
+
+        if personal_chat_ids:
+            latest_message_subquery = ChatMessage.objects.filter(
+                chat_group=OuterRef('chat_group_id')
+            ).order_by('-sent_at').values('id')[:1]
+
+            latest_messages = ChatMessage.objects.filter(
+                chat_group_id__in=personal_chat_ids,
+                id=Subquery(latest_message_subquery)
+            ).select_related(
+                'chat_group',
+                'author__user'
+            ).prefetch_related(
+                'chat_group__members__user',
+                Prefetch(
+                    'chat_group__members__avatar_set',
+                    queryset=Avatar.objects.filter(active=True).select_related('image'),
+                    to_attr='active_avatars'
+                )
+            ).order_by('-sent_at')[:3]
+
+            recent_personal_chats = []
+            for message in latest_messages:
+                chat = message.chat_group
+                other_member = next((m for m in chat.members.all() if m != current_user_profile), None)
+                if other_member:
+                    other_member_avatar = other_member.active_avatars[0] if hasattr(other_member, 'active_avatars') and other_member.active_avatars else None
+                    recent_personal_chats.append({
+                        'other_member': other_member,
+                        'last_message': message,
+                        'other_member_avatar': other_member_avatar,
+                    })
+            context['recent_personal_chats'] = recent_personal_chats
+        else:
+            context['recent_personal_chats'] = []
+
         context['persons'] = User.objects.exclude(pk=self.request.user.pk)
-        context['recent_messages'] = ChatMessage.objects.filter(
-            chat_group__members=current_user_profile
-        ).select_related('author__user').order_by('-sent_at')[:10]
         context['group_chats'] = ChatGroup.objects.filter(members=current_user_profile)
         
         users = User.objects.all().select_related('profile').exclude(pk=self.request.user.pk)
@@ -113,6 +170,7 @@ class MessengerPageView(LoginRequiredMixin, ListView):
         context = self.get_context_data(object_list=self.object_list)
         context['modal_form'] = modal_form
         return self.render_to_response(context)
+
 
 class ChatView(LoginRequiredMixin, View):
     template_name = 'Messenger_App/chat_detail.html'
@@ -246,7 +304,7 @@ def upload_chat_image(request):
     if request.method == 'POST':
         image_file = request.FILES.get('image')
         group_pk = request.POST.get('group_pk')
-        message_content = request.POST.get('message', '') 
+        message_content = request.POST.get('message', '')
 
         if not image_file or not group_pk:
             return JsonResponse({'success': False, 'error': 'Файл або ID групи відсутні.'}, status=400)
@@ -284,7 +342,7 @@ def upload_chat_image(request):
             }
         )
         return JsonResponse({'success': True})
-    
+
     return JsonResponse({'success': False, 'error': 'Неправильний метод запиту.'}, status=400)
 
 @login_required
@@ -710,7 +768,7 @@ def remove_group_member(request, group_pk, user_pk):
             return JsonResponse({'success': False, 'error': 'Ви не є адміністратором цієї групи.'}, status=403)
         if group.admin.user.pk == int(user_pk):
             return JsonResponse({'success': False, 'error': 'Адміністратор не може видалити себе з групи.'}, status=400)
-        
+
         member_to_remove = get_object_or_404(Profile, user__pk=user_pk)
         if member_to_remove in group.members.all():
             group.members.remove(member_to_remove)
@@ -725,7 +783,7 @@ def edit_group_chat(request, group_pk):
         group = get_object_or_404(ChatGroup, pk=group_pk)
         if group.admin.user != request.user:
             return JsonResponse({'success': False, 'error': 'Ви не є адміністратором цієї групи.'}, status=403)
-        
+
         group_name = request.POST.get('group_name')
         avatar_file = request.FILES.get('avatar')
         if group_name:
@@ -742,7 +800,7 @@ def add_members_to_chat(request, group_pk):
         group = get_object_or_404(ChatGroup, pk=group_pk)
         if group.admin.user != request.user:
             return JsonResponse({'success': False, 'error': 'Ви не є адміністратором цієї групи.'}, status=403)
-        
+
         member_ids = request.POST.getlist('members')
         if not member_ids:
             return JsonResponse({'success': False, 'error': 'Не вибрано жодного учасника.'}, status=400)
@@ -760,7 +818,7 @@ def add_members_to_chat(request, group_pk):
 def delete_group_chat(request, group_pk):
     if request.method == 'POST':
         group = get_object_or_404(ChatGroup, pk=group_pk)
-        
+
         if group.admin.user != request.user:
             return JsonResponse({'success': False, 'error': 'Ви не є адміністратором цієї групи.'}, status=403)
         
@@ -768,5 +826,5 @@ def delete_group_chat(request, group_pk):
         
         redirect_url = reverse('chats')
         return JsonResponse({'success': True, 'redirect_url': redirect_url})
-    
+
     return JsonResponse({'success': False, 'error': 'Неправильний метод запиту.'}, status=400)

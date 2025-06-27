@@ -5,19 +5,22 @@
 
 {% block links %}
 {{ block.super }}
+
 <link rel="icon" type="image/svg+xml" href="{% static 'images/favicon.svg' %}">
 <link rel="stylesheet" href="{% static 'css/Messenger.css' %}">
 <link rel="stylesheet" href="{% static 'css/modal.css' %}">
 <link rel="stylesheet" href="{% static 'css/pub.css' %}">
 {% endblock %}
 
+
 {% block content %}
+
 <div class="content-container">
     <div class="left-user-frame">
         <div class="user-frame">
             <div class="user">
                 {% with active_avatar=user.profile.get_active_avatar %}
-                    {% if active_avatar %}
+                    {% if active_avatar and active_avatar.image.file.url %}
                         <img src="{{ active_avatar.image.file.url }}" alt="User Avatar">
                     {% else %}
                         <img src="{% static 'images/no-avatar.svg' %}" alt="User Avatar">
@@ -54,45 +57,18 @@
                 <p>Дивитись всі</p>
             </div>
             <div class="users-requests">
+                {% for req in friend_requests_data %}
                 <div class="user1">
-                    {% with active_avatar=request_user1.profile.get_active_avatar %}
-                        {% if active_avatar %}
-                            <img src="{{ active_avatar.image.file.url }}" alt="User 1">
-                        {% else %}
-                            <img src="{% static 'images/Avatarka-user-1.svg' %}" alt="User 1">
-                        {% endif %}
-                    {% endwith %}
+                    {# ИЗМЕНЕНИЕ 1: Замена блока if/else на прямой вызов метода модели #}
+                    <img src="{{ req.user.profile.get_avatar_url }}" alt="{{ req.user.username }}'s Avatar">
                     <div class="user-info">
-                        <p class="nick">Yehor Aung</p>
-                        <p class="subs">1.3к підписників</p>
+                        <p class="nick">{{ req.user.first_name }} {{ req.user.last_name }}</p>
+                        <p class="subs">{{ req.user.username }}</p>
                     </div>
                 </div>
-                <div class="user2">
-                    {% with active_avatar=request_user2.profile.get_active_avatar %}
-                        {% if active_avatar %}
-                            <img src="{{ active_avatar.image.file.url }}" alt="User 2">
-                        {% else %}
-                            <img src="{% static 'images/Avatarka-user-2.svg' %}" alt="User 2">
-                        {% endif %}
-                    {% endwith %}
-                    <div class="user-info">
-                        <p class="nick">Ann Ann</p>
-                        <p class="subs">1.6к підписників</p>
-                    </div>
-                </div>
-                <div class="user3">
-                    {% with active_avatar=request_user3.profile.get_active_avatar %}
-                        {% if active_avatar %}
-                            <img src="{{ active_avatar.image.file.url }}" alt="User 3">
-                        {% else %}
-                            <img src="{% static 'images/Avatarka-user-3.svg' %}" alt="User 3">
-                        {% endif %}
-                    {% endwith %}
-                    <div class="user-info">
-                        <p class="nick">Yeugen Jenua</p>
-                        <p class="subs">10.3к підписників</p>
-                    </div>
-                </div>
+                {% empty %}
+                <p style="padding: 10px; color: #888; font-size: 14px;">Немає нових запитів.</p>
+                {% endfor %}
             </div>
         </div>
         <div class="messege-frame">
@@ -104,54 +80,21 @@
                 <p class="see-title">Дивитись всі</p>
             </div>
             <div class="users-messeges">
+                {% for chat_data in recent_personal_chats %}
                 <div class="user-messege-1">
-                    {% with active_avatar=message_user1.profile.get_active_avatar %}
-                        {% if active_avatar %}
-                            <img src="{{ active_avatar.image.file.url }}" alt="User 4">
-                        {% else %}
-                            <img src="{% static 'images/Avatarka-user-4.svg' %}" alt="User 4">
-                        {% endif %}
-                    {% endwith %}
+                    {# ИЗМЕНЕНИЕ 2: Замена блока if/else на прямой вызов метода модели #}
+                    <img src="{{ chat_data.other_member.get_avatar_url }}" alt="{{ chat_data.other_member.user.username }}'s Avatar">
                     <div class="user-info">
                         <div class="nick-and-time">
-                            <p class="nick">Mona Lisa</p>
-                            <p class="time">09:41</p>
+                            <p class="nick">{{ chat_data.other_member.user.first_name }} {{ chat_data.other_member.user.last_name }}</p>
+                            <p class="time">{{ chat_data.last_message.sent_at|date:"H:i" }}</p>
                         </div>
-                        <p class="message-text">Привіт! Як справи?</p>
+                        <p class="message-text">{{ chat_data.last_message.content|truncatechars:25 }}</p>
                     </div>
                 </div>
-                <div class="user-messege-1">
-                    {% with active_avatar=message_user2.profile.get_active_avatar %}
-                        {% if active_avatar %}
-                            <img src="{{ active_avatar.image.file.url }}" alt="User 5">
-                        {% else %}
-                            <img src="{% static 'images/Avatarka-user-5.svg' %}" alt="User 5">
-                        {% endif %}
-                    {% endwith %}
-                    <div class="user-info">
-                        <div class="nick-and-time">
-                            <p class="nick">Ann Ti</p>
-                            <p class="time">25.04.2025</p>
-                        </div>
-                        <p class="message-text">Привіт!</p>
-                    </div>
-                </div>
-                <div class="user-messege-1">
-                    {% with active_avatar=message_user3.profile.get_active_avatar %}
-                        {% if active_avatar %}
-                            <img src="{{ active_avatar.image.file.url }}" alt="User 6">
-                        {% else %}
-                            <img src="{% static 'images/Avatarka-user-6.svg' %}" alt="User 6">
-                        {% endif %}
-                    {% endwith %}
-                    <div class="user-info">
-                        <div class="nick-and-time">
-                            <p class="nick">Nase Tu</p>
-                            <p class="time">26.04.2025</p>
-                        </div>
-                        <p class="message-text">Привіт!</p>
-                    </div>
-                </div>
+                {% empty %}
+                <p style="padding: 10px; color: #888; font-size: 14px;">Немає повідомлень.</p>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -178,10 +121,10 @@
                     <img src="{% static 'images/Dots.svg' %}" alt="3-dots" class="dots-icon" data-post-id="{{ post.id }}">
                     <div class="internal-header-post-frame">
                         {% with author_avatar=post.author.get_active_avatar %}
-                            {% if author_avatar %}
+                            {% if author_avatar and author_avatar.image.file.url %}
                                 <img src="{{ author_avatar.image.file.url }}" alt="avatar" class="avatar">
                             {% else %}
-                                <img src="{% static 'images/avatar.png' %}" alt="avatar" class="avatar">
+                                <img src="{% static 'images/no-avatar.svg' %}" alt="avatar" class="avatar">
                             {% endif %}
                         {% endwith %}
                         <p>{{ post.author.user.username }}</p>
@@ -350,9 +293,13 @@
 </div>
 {% endblock %}
 
+
 {% block scripts %}
+
 <script src="{% static 'js/pub.js' %}"></script>
+
 <script src="{% static 'js/Messenger.js' %}"></script>
+
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('modal');
@@ -926,4 +873,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+
 {% endblock %}

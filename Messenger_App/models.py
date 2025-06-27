@@ -19,7 +19,7 @@ class Profile(models.Model):
         if active_avatar_instance and active_avatar_instance.image and active_avatar_instance.image.file:
             return active_avatar_instance.image.file.url
 
-        return static('images/avatar.png')
+        return static('images/no-avatar.svg')
 
 
     def __str__(self):
